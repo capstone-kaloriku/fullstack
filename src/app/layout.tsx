@@ -3,11 +3,11 @@ import { Plus_Jakarta_Sans, Be_Vietnam_Pro, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plusJakarataSans",
-  weight: ["600", "700"],
+  weight: ["600", "700", "800"],
   subsets: ["latin"],
 });
 
@@ -31,9 +31,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", plusJakartaSans.variable, beVietnamPro.variable, "font-sans", inter.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        plusJakartaSans.variable,
+        beVietnamPro.variable,
+        "font-sans",
+        inter.variable,
+      )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className={`min-h-full flex flex-col`}>{children}</body>
     </html>
   );
 }
