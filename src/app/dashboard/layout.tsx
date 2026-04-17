@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Be_Vietnam_Pro, Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { cn } from "@/lib/utils";
+import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -18,9 +19,9 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata: Metadata = {
-  title: "KaloriKU",
+  title: "Dashboard - KaloriKu",
   description:
-    "Aplikasi untuk menghitung kalori makanan dan aktivitas fisik, membantu pengguna mencapai tujuan kesehatan mereka dengan mudah dan akurat. Biar gak gendutt wokk",
+    "Pantau asupan kalori harian Anda dengan Kaloriku. Aplikasi yang membantu Anda mencapai tujuan kesehatan dan kebugaran dengan mudah.",
 };
 
 export default function RootLayout({
@@ -42,6 +43,7 @@ export default function RootLayout({
     >
       <body className={`min-h-full flex flex-col`} suppressHydrationWarning>
         {children}
+        <Footer />
       </body>
     </html>
   );
