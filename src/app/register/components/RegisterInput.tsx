@@ -11,8 +11,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import { EyeClosed, Lock, Mail, User } from "lucide-react";
-import { FaWeightHanging } from "react-icons/fa6";
-import { GiBodyHeight } from "react-icons/gi";
+
 
 function RegisterInput() {
   return (
@@ -20,37 +19,40 @@ function RegisterInput() {
       <FieldSet>
         <FieldGroup>
           <Field>
-            <FieldLabel htmlFor="weight">Berat Badan</FieldLabel>
-            <InputGroup className="rounded-full px-4 py-6">
-              <InputGroupInput
-                id="weight"
-                type="number"
-                placeholder="Berat Badan"
-              />
-              <InputGroupAddon align="inline-start">
-                <FaWeightHanging size={20} />
-              </InputGroupAddon>
-              <InputGroupAddon align="inline-end">
-                <span className="text-muted-foreground">KG</span>
-              </InputGroupAddon>
-            </InputGroup>
+            <FieldLabel htmlFor="gender">Jenis Kelamin</FieldLabel>
+            <div className="flex items-center justify-center gap-4">
+              <Button className="w-[165px] p-5" variant={"default"}>Laki-laki</Button>
+              <Button className="w-[165px] p-5" variant={"outline"}>Wanita</Button>
+            </div>
           </Field>
-          <Field>
-            <FieldLabel htmlFor="height">Tinggi Badan</FieldLabel>
-            <InputGroup className="rounded-full px-4 py-6">
-              <InputGroupInput
-                id="height"
-                type="number"
-                placeholder="Tinggi Badan"
-              />
-              <InputGroupAddon align="inline-start">
-                <GiBodyHeight size={20} />
-              </InputGroupAddon>
-              <InputGroupAddon align="inline-end">
-                <span className="text-muted-foreground">CM</span>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
+          <div className="grid grid-cols-2 w-full gap-4">
+            <Field>
+              <FieldLabel htmlFor="weight">Berat Badan</FieldLabel>
+              <InputGroup className="rounded-full px-4 py-6">
+                <InputGroupInput
+                  id="weight"
+                  type="number"
+                  placeholder="0"
+                />
+                <InputGroupAddon align="inline-end">
+                  <span className="text-muted-foreground">KG</span>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="height">Tinggi Badan</FieldLabel>
+              <InputGroup className="rounded-full px-4 py-6">
+                <InputGroupInput
+                  id="height"
+                  type="number"
+                  placeholder="0"
+                />
+                <InputGroupAddon align="inline-end">
+                  <span className="text-muted-foreground">CM</span>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+          </div>
           <Field>
             <FieldLabel htmlFor="username">Nama User</FieldLabel>
             <InputGroup className="rounded-full px-4 py-6">
@@ -112,7 +114,7 @@ function RegisterInput() {
 
           <span className="text-sm text-muted-foreground text-center my-4">
             Sudah punya akun?{" "}
-            <Link href="/" className="text-primary underline font-medium">
+            <Link href="/login" className="text-primary underline font-medium">
               Login Sekarang
             </Link>
           </span>

@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "namaUser": "Kevin",
+    "kebutuhanHarian": {
+      "kalori": 2200,
+      "protein": 130,
+      "lemak": 70
+    },
+    "konsumsiSaatIni": {
+      "kalori": 1700,
+      "protein": 82,
+      "lemak": 46
+    }
+  }
+]

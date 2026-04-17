@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {
   FaArrowTrendUp,
@@ -12,39 +13,39 @@ function Footer() {
       id: 1,
       name: "Home",
       icon: <FaHouseChimney />,
-      href: "/",
+      href: "/dashboard",
     },
     {
       id: 2,
       name: "Logs",
       icon: <FaArrowTrendUp />,
-      href: "/",
+      href: "/logs",
     },
     {
       id: 3,
       name: "AI",
       icon: <FaCommentDots />,
-      href: "/",
+      href: "/ai",
     },
     {
       id: 4,
       name: "Profile",
       icon: <FaCircleUser />,
-      href: "/",
+      href: "/profile",
     },
   ];
 
   return (
-    <div className="max-w-4xl p-6">
-      <div className="flex justify-around">
+    <div className="max-w-4xl bg-primary/90 shadow rounded-t-2xl p-4 mx-auto w-full absolute bottom-0 left-0 right-0">
+      <div className="flex flex-row items-center justify-around">
         {icon.map((icon) => {
           return (
-            <Link key={icon.id} href={icon.href}>
-              <div className="flex flex-col items-center justify-center p-2.5 text-muted-foreground">
+            <Button nativeButton={false} render={<Link href={icon.href} />} key={icon.id} variant="link" className="w-auto h-fit p-0">
+              <div className="flex flex-col items-center justify-center p-2.5 text-primary-foreground">
                 {icon.icon}
                 <span>{icon.name}</span>
               </div>
-            </Link>
+            </Button>
           );
         })}
       </div>

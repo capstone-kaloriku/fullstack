@@ -1,7 +1,7 @@
 import Image from "next/image";
 import LoginInput from "./components/LoginInput";
 
-export default function Home() {
+export default function Login() {
   return (
     <div className="max-w-4xl mx-auto p-6 overflow-hidden">
       {/* Title Login Page */}
