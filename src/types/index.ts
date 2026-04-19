@@ -13,3 +13,11 @@ export interface persentageProps {
   value: number;
   maxValue: number;
 }
+
+export interface CategoryProps {
+  data: {
+    id: number;
+    icon: React.ReactNode;
+    title: string;
+  }[];
+}

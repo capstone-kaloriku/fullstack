@@ -3,12 +3,12 @@ import "../globals.css";
 import { Header } from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Dashboard - KaloriKu",
+  title: "Logs - KaloriKu",
   description:
-    "Halaman Dashboard di KaloriKu memungkinkan pengguna untuk melihat riwayat aktivitas mereka, termasuk catatan makanan, olahraga, dan berat badan. Dengan tampilan yang mudah dipahami, pengguna dapat melacak kemajuan mereka dalam mencapai tujuan kesehatan dan kebugaran mereka.",
+    "Halaman Logs di KaloriKu memungkinkan pengguna untuk melihat riwayat aktivitas mereka, termasuk catatan makanan, olahraga, dan berat badan. Dengan tampilan yang mudah dipahami, pengguna dapat melacak kemajuan mereka dalam mencapai tujuan kesehatan dan kebugaran mereka.",
 };
 
-export default function DashboardLayout({
+export default function LogsLayout({
   children,
 }: {
   children: React.ReactNode;

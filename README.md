@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Dokumentasi Proyek: Kaloriku
+Status: Dalam Pengembangan (Capstone Project Coding Camp by DBS 2026)
+Pengembang Utama: CC26-PSU028
 
-## Getting Started
+1. Ringkasan Proyek (Executive Summary)
+   Kaloriku (sebelumnya dikenal sebagai NutriScan) adalah aplikasi berbasis web terintegrasi kecerdasan buatan yang dirancang untuk membantu pengguna melacak asupan nutrisi dan kalori harian mereka. Sistem ini memanfaatkan Natural Language Processing (NLP) untuk menganalisis input teks dari pengguna mengenai makanan yang dikonsumsi, serta menggunakan model regresi untuk memperkirakan dan memproses nilai gizi dan kalori secara akurat.
 
-First, run the development server:
+2. Spesifikasi Teknologi (Tech Stack)
+   Aplikasi ini dikembangkan menggunakan tumpukan teknologi modern untuk memastikan performa yang cepat, antarmuka yang responsif, dan komputasi AI yang efisien:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Front-End & Framework: Next.js 16, React.js, TypeScript
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Styling: Tailwind CSS v4 & Shadcn UI
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Machine Learning / AI: \* Natural Language Processing (NLP) untuk ekstraksi entitas makanan dari input teks.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Model Regresi untuk estimasi dan kalkulasi data kalori/nutrisi.
 
-## Learn More
+Integrasi LLM (Google Gemini / Vertex AI) untuk pemrosesan teks tingkat lanjut.
 
-To learn more about Next.js, take a look at the following resources:
+Infrastruktur & Deployment: Supabase & Vercel (Free & Hobby Tier)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Fitur Utama (Core Features)
+   Smart Text Input (Pencatatan Makanan Berbasis Teks): Pengguna dapat mengetikkan makanan yang mereka konsumsi dalam bahasa alami (misal: "Saya makan satu piring nasi goreng dengan telur mata sapi"). Sistem NLP akan mengekstrak jenis dan porsi makanan.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Estimasi Nutrisi Presisi: Menggunakan model regresi untuk menghitung total kalori, makronutrien (protein, karbohidrat, lemak), dan mikronutrien berdasarkan entitas makanan yang terdeteksi.
 
-## Deploy on Vercel
+Dashboard Interaktif: Antarmuka visual yang dibangun dengan Next.js dan Tailwind CSS untuk menampilkan ringkasan asupan kalori harian, target nutrisi, dan riwayat konsumsi pengguna.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. Arsitektur Sistem (High-Level Architecture)
+   Client-Side (User Interface): Pengguna berinteraksi dengan aplikasi web Next.js, memasukkan data makanan harian melalui antarmuka.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+API Processing: Permintaan dikirim ke server backend/API. Jika input berupa bahasa alami, teks tersebut diproses terlebih dahulu.
+
+AI & ML Layer:
+
+Teks -> NLP: Mengekstrak nama makanan dan kuantitas.
+
+Data -> Regresi: Mencocokkan makanan dengan database nutrisi dan menghitung estimasi kalori dengan algoritma regresi.
+
+Database & Cloud: Data hasil pemrosesan disimpan di database, dan seluruh infrastruktur di-hosting serta dikelola melalui Google Cloud Platform.
+
+5. Manajemen Risiko & Rencana Mitigasi
+   Ambiguitas Input Teks: NLP mungkin kesulitan memproses teks dengan bahasa gaul atau singkatan. Mitigasi: Mengintegrasikan prompt engineering yang kuat pada Gemini/Vertex AI dan memberikan umpan balik (feedback loop) kepada pengguna jika input tidak dikenali.
+
+Akurasi Model Regresi: Ketidakcocokan estimasi kalori untuk makanan lokal/spesifik. Mitigasi: Memperkaya dataset pelatihan dengan data makanan lokal Indonesia.

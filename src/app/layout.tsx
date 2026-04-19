@@ -40,7 +40,7 @@ export default function RootLayout({
         inter.variable,
       )}
     >
-      <body suppressHydrationWarning>{children}</body>
+      <body className={`min-h-full flex flex-col`}>{children}</body>
     </html>
   );
 }

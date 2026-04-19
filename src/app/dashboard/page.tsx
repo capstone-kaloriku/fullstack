@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter, } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 import CircleProgressBar from "./components/CircleProgressBar";
 import ProgressBarDetail from "./components/ProgressBarDetail";
@@ -12,6 +12,8 @@ import FoodSummaries from "./components/FoodSummaries";
 
 import { FoodSummariesProps } from "@/types"
 import { persentageProps } from "@/types"
+
+import Reminder from "./components/Reminder";
 
 const user = dummy[0];
 
@@ -41,8 +43,8 @@ const foods: FoodSummariesProps[] = summary.slice(0, 2)
 const Dashboard = () => {
   return (
     <>
-      <div className="max-w-2xl p-6 mx-auto overflow-hidden">
-        <div className="flex flex-col items-center justify-center ">
+      <div className="flex flex-col items-center gap-4 max-w-2xl p-6 mx-auto overflow-hidden">
+        <div className="flex flex-col items-center justify-center mt-6">
           <CircleProgressBar value={currentKcal} maxValue={maxKcal} className="w-64 h-64 ">
             <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
           </CircleProgressBar>
@@ -76,6 +78,11 @@ const Dashboard = () => {
           </div>
           <FoodSummaries data={foods} />
         </div >
+
+        {/* Reminder Drink Water */}
+        <div className="w-full mt-8">
+          <Reminder />
+        </div>
       </div >
     </>
   );

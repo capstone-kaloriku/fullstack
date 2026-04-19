@@ -17,7 +17,7 @@ export function Header() {
   const navItems = [
     {
       name: "Home",
-      link: "/",
+      link: "/dashboard",
     },
     {
       name: "Logs",
