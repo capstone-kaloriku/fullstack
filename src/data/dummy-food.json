@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "nama": "Bubur Ayam",
+    "gambar": "/profile.jpg",
+    "kalori": 320,
+    "karbo": 45,
+    "protein": 14,
+    "lemak": 9,
+    "kategori": "sarapan"
+  },
+  {
+    "id": 2,
+    "nama": "Nasi Uduk Telur",
+    "gambar": "/profile.jpg",
+    "kalori": 520,
+    "karbo": 60,
+    "protein": 16,
+    "lemak": 22,
+    "kategori": "sarapan"
+  },
+  {
+    "id": 3,
+    "nama": "Lontong Sayur",
+    "gambar": "/profile.jpg",
+    "kalori": 410,
+    "karbo": 54,
+    "protein": 11,
+    "lemak": 16,
+    "kategori": "sarapan"
+  },
+  {
+    "id": 4,
+    "nama": "Roti Bakar Cokelat Keju",
+    "gambar": "/profile.jpg",
+    "kalori": 360,
+    "karbo": 42,
+    "protein": 10,
+    "lemak": 17,
+    "kategori": "sarapan"
+  },
+  {
+    "id": 5,
+    "nama": "Pisang Goreng",
+    "gambar": "/profile.jpg",
+    "kalori": 210,
+    "karbo": 28,
+    "protein": 2,
+    "lemak": 10,
+    "kategori": "camilan"
+  },
+  {
+    "id": 6,
+    "nama": "Klepon",
+    "gambar": "/profile.jpg",
+    "kalori": 170,
+    "karbo": 27,
+    "protein": 2,
+    "lemak": 6,
+    "kategori": "camilan"
+  },
+  {
+    "id": 7,
+    "nama": "Lemper Ayam",
+    "gambar": "/profile.jpg",
+    "kalori": 190,
+    "karbo": 25,
+    "protein": 7,
+    "lemak": 6,
+    "kategori": "camilan"
+  },
+  {
+    "id": 8,
+    "nama": "Martabak Mini",
+    "gambar": "/profile.jpg",
+    "kalori": 240,
+    "karbo": 20,
+    "protein": 8,
+    "lemak": 14,
+    "kategori": "camilan"
+  },
+  {
+    "id": 9,
+    "nama": "Nasi Goreng Ayam",
+    "gambar": "/profile.jpg",
+    "kalori": 650,
+    "karbo": 78,
+    "protein": 22,
+    "lemak": 25,
+    "kategori": "makan siang"
+  },
+  {
+    "id": 10,
+    "nama": "Soto Ayam + Nasi",
+    "gambar": "/profile.jpg",
+    "kalori": 480,
+    "karbo": 52,
+    "protein": 24,
+    "lemak": 18,
+    "kategori": "makan siang"
+  },
+  {
+    "id": 11,
+    "nama": "Gado-Gado",
+    "gambar": "/profile.jpg",
+    "kalori": 430,
+    "karbo": 38,
+    "protein": 15,
+    "lemak": 22,
+    "kategori": "makan siang"
+  },
+  {
+    "id": 12,
+    "nama": "Ayam Bakar + Nasi",
+    "gambar": "/profile.jpg",
+    "kalori": 560,
+    "karbo": 55,
+    "protein": 34,
+    "lemak": 20,
+    "kategori": "makan siang"
+  },
+  {
+    "id": 13,
+    "nama": "Pecel Lele + Nasi",
+    "gambar": "/profile.jpg",
+    "kalori": 620,
+    "karbo": 58,
+    "protein": 29,
+    "lemak": 28,
+    "kategori": "makan malam"
+  },
+  {
+    "id": 14,
+    "nama": "Nasi Padang (Rendang)",
+    "gambar": "/profile.jpg",
+    "kalori": 740,
+    "karbo": 70,
+    "protein": 30,
+    "lemak": 38,
+    "kategori": "makan malam"
+  },
+  {
+    "id": 15,
+    "nama": "Mie Goreng Jawa",
+    "gambar": "/profile.jpg",
+    "kalori": 610,
+    "karbo": 72,
+    "protein": 18,
+    "lemak": 24,
+    "kategori": "makan malam"
+  },
+  {
+    "id": 16,
+    "nama": "Capcay + Nasi",
+    "gambar": "/profile.jpg",
+    "kalori": 470,
+    "karbo": 50,
+    "protein": 19,
+    "lemak": 16,
+    "kategori": "makan malam"
+  },
+  {
+    "id": 17,
+    "nama": "Nasi Kuning",
+    "gambar": "/profile.jpg",
+    "kalori": 500,
+    "karbo": 62,
+    "protein": 14,
+    "lemak": 20,
+    "kategori": "sarapan"
+  },
+  {
+    "id": 18,
+    "nama": "Pempek Kapal Karam",
+    "gambar": "/profile.jpg",
+    "kalori": 330,
+    "karbo": 30,
+    "protein": 14,
+    "lemak": 16,
+    "kategori": "camilan"
+  },
+  {
+    "id": 19,
+    "nama": "Rawon + Nasi",
+    "gambar": "/profile.jpg",
+    "kalori": 540,
+    "karbo": 48,
+    "protein": 28,
+    "lemak": 24,
+    "kategori": "makan siang"
+  },
+  {
+    "id": 20,
+    "nama": "Nasi Campur Bali",
+    "gambar": "/profile.jpg",
+    "kalori": 690,
+    "karbo": 66,
+    "protein": 27,
+    "lemak": 31,
+    "kategori": "makan malam"
+  }
+]

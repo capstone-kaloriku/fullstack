@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import { EyeClosed, Lock, Mail, User } from "lucide-react";
+import { ToggleGroup } from "@base-ui/react";
+import { ToggleGroupItem } from "@/components/ui/toggle-group";
 
 
 function RegisterInput() {
@@ -20,10 +22,14 @@ function RegisterInput() {
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="gender">Jenis Kelamin</FieldLabel>
-            <div className="flex items-center justify-center gap-4">
-              <Button className="w-[165px] p-5" variant={"default"}>Laki-laki</Button>
-              <Button className="w-[165px] p-5" variant={"outline"}>Wanita</Button>
-            </div>
+            <ToggleGroup className="flex items-center justify-center gap-4 mx-auto w-full">
+              <ToggleGroupItem className="flex-1 border border-primary">
+                Laki Laki
+              </ToggleGroupItem>
+              <ToggleGroupItem className="flex-1 border border-primary">
+                Perempuan
+              </ToggleGroupItem>
+            </ToggleGroup>
           </Field>
           <div className="grid grid-cols-2 w-full gap-4">
             <Field>
@@ -119,7 +125,7 @@ function RegisterInput() {
             </Link>
           </span>
         </FieldGroup>
-      </FieldSet>
+      </FieldSet >
     </>
   );
 }

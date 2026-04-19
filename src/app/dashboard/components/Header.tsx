@@ -1,30 +1,82 @@
-import Image from "next/image";
-import { BsBellFill } from "react-icons/bs";
+"use client";
+import { Button } from "@/components/ui/button";
+import {
+  Navbar,
+  NavBody,
+  NavItems,
+  MobileNav,
+  NavbarLogo,
+  MobileNavHeader,
+  MobileNavToggle,
+  MobileNavMenu,
+} from "@/components/ui/resizable-navbar";
+import Link from "next/link";
+import { useState } from "react";
 
-interface HeaderProps {
-  children: React.ReactNode;
-  profileImageUrl?: string;
-}
+export function Header() {
+  const navItems = [
+    {
+      name: "Home",
+      link: "/",
+    },
+    {
+      name: "Logs",
+      link: "/logs",
+    },
+    {
+      name: "AI",
+      link: "/ai",
+    },
+    {
+      name: "Profile",
+      link: "/profile",
+    },
+  ];
 
-function Header({ children, profileImageUrl }: HeaderProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
-    <header className="flex items-center justify-between p-6 border-b bg-primary-foreground shadow-sm z-99">
-      <div className="flex items-center gap-4">
-        <div>
-          <Image
-            src={profileImageUrl || "/profile.jpg"}
-            width={50}
-            height={50}
-            alt="Profile"
-            className="w-8 h-8 rounded-full object-cover"
-          />
-        </div>
-        <h1 className="text-xl font-bold text-primary">{children}</h1>
-      </div>
+    <div className="relative w-full">
+      <Navbar>
+        {/* Desktop Navigation */}
+        <NavBody>
+          <NavbarLogo />
+          <NavItems items={navItems} />
+          <div className="flex items-center gap-4">
+            <Button
+              onClick={() => setIsMobileMenuOpen(false)}
+              variant="destructive"
+              className="w-full">
+              Logout
+            </Button>
+          </div>
+        </NavBody>
 
-      <BsBellFill className="text-xl text-primary" />
-    </header>
+        {/* Mobile Navigation */}
+        <MobileNav>
+          <MobileNavHeader>
+            <NavbarLogo />
+            <MobileNavToggle
+              isOpen={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
+          </MobileNavHeader>
+
+          <MobileNavMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)}>
+            {navItems.map((item, idx) => (
+              <Link
+                key={`mobile-link-${idx}`}
+                href={item.link}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="relative text-neutral-600 dark:text-neutral-300">
+                <span className="block">{item.name}</span>
+              </Link>
+            ))}
+            <div className="flex w-full flex-col gap-4">
+
+            </div>
+          </MobileNavMenu>
+        </MobileNav>
+      </Navbar>
+    </div>
   );
 }
-
-export default Header;

@@ -1,16 +1,17 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, } from "@/components/ui/card";
 
-import Header from "./components/Header";
 import CircleProgressBar from "./components/CircleProgressBar";
 import ProgressBarDetail from "./components/ProgressBarDetail";
 import ProgressBarPersentage from "./components/ProgressBarPersentage";
 
 import dummy from "@/data/dummy.json"
+import summary from "@/data/dummy-food.json"
 
-interface persentageProps {
-  value: number;
-  maxValue: number;
-}
+import Link from "next/link";
+import FoodSummaries from "./components/FoodSummaries";
+
+import { FoodSummariesProps } from "@/types"
+import { persentageProps } from "@/types"
 
 const user = dummy[0];
 
@@ -35,34 +36,47 @@ const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
   percentage: calculatePercentage({ value, maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian] })
 }));
 
+const foods: FoodSummariesProps[] = summary.slice(0, 2)
+
 const Dashboard = () => {
   return (
     <>
-      <Header>Dashboard</Header>
-      <div className="flex flex-col items-center justify-center max-w-2xl p-6 mx-auto overflow-hidden">
-        <CircleProgressBar value={currentKcal} maxValue={maxKcal} className="w-64 h-64 ">
-          <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
-        </CircleProgressBar>
-        <div className="flex flex-row justify-around w-full mx-auto mt-8 gap-4">
-          {/* Card */}
-          {daily.map((item, index) => (
-            <Card key={index}>
-              <CardContent>
-                <CircleProgressBar value={item.value} maxValue={item.maxValue} className="relative w-12 h-12w-12 max-w-20 mx-auto">
-                  <ProgressBarPersentage Percentage={item.percentage.toFixed(0) + "%"} />
-                </CircleProgressBar>
-              </CardContent>
-              <CardFooter className="text-base flex flex-col gap-2 font-bold">
-                {item.name.toUpperCase()}
-                <span className="text-sm text-muted-foreground font-medium">
-                  {item.value}g
-                </span>
-              </CardFooter>
-            </Card>
-          ))}
-
+      <div className="max-w-2xl p-6 mx-auto overflow-hidden">
+        <div className="flex flex-col items-center justify-center ">
+          <CircleProgressBar value={currentKcal} maxValue={maxKcal} className="w-64 h-64 ">
+            <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
+          </CircleProgressBar>
+          <div className="flex flex-row justify-around w-full mx-auto mt-8 gap-4">
+            {/* Card */}
+            {daily.map((item, index) => (
+              <Card key={index}>
+                <CardContent>
+                  <CircleProgressBar value={item.value} maxValue={item.maxValue} className="relative w-12 h-12w-12 max-w-20 mx-auto">
+                    <ProgressBarPersentage Percentage={item.percentage.toFixed(0) + "%"} />
+                  </CircleProgressBar>
+                </CardContent>
+                <CardFooter className="text-base flex flex-col gap-2 font-bold">
+                  {item.name.toUpperCase()}
+                  <span className="text-sm text-muted-foreground font-medium">
+                    {item.value}g
+                  </span>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
+
+        {/* Ringkasan Makanan Hari Ini */}
+        <div className="flex flex-col mt-8 gap-6">
+          <div className="flex items-center justify-between font-semibold text-[20px]">
+            <h2>Ringkasan Makanan Hari Ini</h2>
+            <Link href="/dashboard" className="text-secondary-foreground text-sm font-bold">
+              Lihat Semua
+            </Link>
+          </div>
+          <FoodSummaries data={foods} />
+        </div >
+      </div >
     </>
   );
 };
