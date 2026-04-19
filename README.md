@@ -1,6 +1,6 @@
 Dokumentasi Proyek: Kaloriku
-Status: Dalam Pengembangan (Capstone Project Bangkit Academy)
-Pengembang Utama: Muhammad Kevin Alvarel (Front-End / Full Stack Engineer)
+Status: Dalam Pengembangan (Capstone Project Coding Camp by DBS 2026)
+Pengembang Utama: CC26-PSU028
 
 1. Ringkasan Proyek (Executive Summary)
 Kaloriku (sebelumnya dikenal sebagai NutriScan) adalah aplikasi berbasis web terintegrasi kecerdasan buatan yang dirancang untuk membantu pengguna melacak asupan nutrisi dan kalori harian mereka. Sistem ini memanfaatkan Natural Language Processing (NLP) untuk menganalisis input teks dari pengguna mengenai makanan yang dikonsumsi, serta menggunakan model regresi untuk memperkirakan dan memproses nilai gizi dan kalori secara akurat.
@@ -18,7 +18,7 @@ Model Regresi untuk estimasi dan kalkulasi data kalori/nutrisi.
 
 Integrasi LLM (Google Gemini / Vertex AI) untuk pemrosesan teks tingkat lanjut.
 
-Infrastruktur & Deployment: Google Cloud Platform (GCP)
+Infrastruktur & Deployment: Supabase, Vercel (Free & Hobby Tier)
 
 3. Fitur Utama (Core Features)
 Smart Text Input (Pencatatan Makanan Berbasis Teks): Pengguna dapat mengetikkan makanan yang mereka konsumsi dalam bahasa alami (misal: "Saya makan satu piring nasi goreng dengan telur mata sapi"). Sistem NLP akan mengekstrak jenis dan porsi makanan.
