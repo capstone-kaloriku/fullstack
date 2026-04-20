@@ -37,9 +37,7 @@ const Profile = () => {
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col text-2xl font-extrabold">
             Sahrul Batagor
-            <span className="text-sm text-muted-foreground">
-              Cowok - Gendut
-            </span>
+            <span className="text-sm text-muted-foreground">Cowok - 90 KG</span>
           </div>
           <div className="flex">
             <Card className="flex items-center justify-center bg-primary text-secondary">
