@@ -41,7 +41,7 @@ const Logs = () => {
           <div className="w-full flex flex-col gap-6 my-6">
             <div className="text-lg font-bold justify-between flex items-center">
               Sering Dicatat
-              <Link href="/logs" className="text-sm text-primary">
+              <Link href="/all-foods" className="text-sm text-primary">
                 LIHAT SEMUA
               </Link>
             </div>
