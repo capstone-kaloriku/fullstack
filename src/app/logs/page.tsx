@@ -8,6 +8,10 @@ import Frequently from "./components/Frequently";
 import Searchbar from "./components/Searchbar";
 import Tips from "./components/Tips";
 
+import dummyData from "@/data/dummy-frequently.json"
+
+const frequentlyData = dummyData.slice(0, 2);
+
 const icon = [
   {
     id: 1,
@@ -45,7 +49,7 @@ const Logs = () => {
                 LIHAT SEMUA
               </Link>
             </div>
-            <Frequently />
+            <Frequently data={frequentlyData} />
           </div>
           <div className="w-full flex-col">
             <Tips />

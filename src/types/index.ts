@@ -21,3 +21,14 @@ export interface CategoryProps {
     title: string;
   }[];
 }
+
+export interface FrequentlyProps {
+  data: {
+    id: number;
+    nama: string;
+    gambar: string;
+    kalori: number;
+    porsi: number;
+    takaranSaji: number;
+  }[];
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nama": "Nasi Goreng",
+    "porsi": 1,
+    "kalori": 540,
+    "takaranSaji": 420,
+    "gambar": "/profile.jpg"
+  },
+  {
+    "id": 2,
+    "nama": "Mie Ayam Bakso",
+    "porsi": 1,
+    "kalori": 420,
+    "takaranSaji": 430,
+    "gambar": "/profile.jpg"
+  },
+  {
+    "id": 3,
+    "nama": "Bakmi Khas Jaksel",
+    "porsi": 1,
+    "kalori": 520,
+    "takaranSaji": 500,
+    "gambar": "/profile.jpg"
+  }
+]
