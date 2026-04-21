@@ -71,7 +71,7 @@ function LoginInput() {
               href="/register"
               className="text-primary underline font-medium"
             >
-              Daftar sekarang
+              Daftar Sekarang
             </Link>
           </span>
         </FieldGroup>
