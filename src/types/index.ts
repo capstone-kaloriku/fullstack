@@ -30,5 +30,10 @@ export interface FrequentlyProps {
     kalori: number;
     porsi: number;
     takaranSaji: number;
+    slug: string;
   }[];
+}
+
+export interface PageProps {
+  params: Promise<{ slug: string }>;
 }

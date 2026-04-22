@@ -5,7 +5,8 @@
     "porsi": 1,
     "kalori": 540,
     "takaranSaji": 420,
-    "gambar": "/profile.jpg"
+    "gambar": "/profile.jpg",
+    "slug": "nasi-goreng"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "porsi": 1,
     "kalori": 420,
     "takaranSaji": 430,
-    "gambar": "/profile.jpg"
+    "gambar": "/profile.jpg",
+    "slug": "mie-ayam-bakso"
   },
   {
     "id": 3,
@@ -21,6 +23,7 @@
     "porsi": 1,
     "kalori": 520,
     "takaranSaji": 500,
-    "gambar": "/profile.jpg"
+    "gambar": "/profile.jpg",
+    "slug": "bakmi-khas-jaksel"
   }
 ]
