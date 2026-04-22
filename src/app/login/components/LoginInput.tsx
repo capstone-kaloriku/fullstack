@@ -56,7 +56,13 @@ function LoginInput() {
           >
             Lupa Password?
           </Link>
-          <Button className="w-full py-6">Masuk</Button>
+          <Button
+            nativeButton={false}
+            render={<Link href="/dashboard" />}
+            className="w-full py-6"
+          >
+            Masuk
+          </Button>
           <FieldSeparator className="my-3 h-3 justify-center text-sm text-secondary">
             ATAU MASUK DENGAN
           </FieldSeparator>
