@@ -11,7 +11,7 @@ function Frequently({ data }: FrequentlyProps) {
   return (
     <>
       {data.map((item) => (
-        <Link key={item.id} href={`/logs/${item.slug}`}>
+        <Link key={item.id} href={`/all-foods/${item.slug}`}>
           <Card className="py-4 rounded-lg border border-gray-300">
             <CardContent>
               <div className="flex flex-row items-center justify-between">

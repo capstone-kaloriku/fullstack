@@ -10,7 +10,7 @@ const FrequentlyEats = ({ data }: FrequentlyProps) => {
   return (
     <>
       {data.map((item) => (
-        <Link key={item.id} href={"/logs/" + item.slug} className="w-full">
+        <Link key={item.id} href={"/all-foods/" + item.slug} className="w-full">
           <Card className="py-4 rounded-lg border border-gray-300 w-full">
             <CardContent>
               <div className="flex flex-row items-center justify-between">
