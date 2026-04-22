@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRightIcon, User2Icon } from "lucide-react";
+import Link from "next/link";
 import { FaClockRotateLeft } from "react-icons/fa6";
 import { IoFastFood } from "react-icons/io5";
 
@@ -9,24 +10,28 @@ const setting = [
     title: "Pengaturan Akun",
     description: "Profile, email, dan keamanan",
     icon: <User2Icon />,
+    url: "/profile/setting",
   },
   {
     id: 2,
     title: "Target Kalori",
     description: "2000 kcal / hari",
     icon: <IoFastFood />,
+    url: "/profile/target",
   },
   {
     id: 3,
     title: "Riwayat",
     description: "Lihat riwayat catatan kalori kamu",
     icon: <FaClockRotateLeft />,
+    url: "/profile/history",
   },
   {
     id: 4,
     title: "Bantuan",
     description: "FAQ, dan pusat bantuan",
     icon: <IoFastFood />,
+    url: "/profile/help",
   },
 ];
 
@@ -68,7 +73,8 @@ const Profile = () => {
         {/* Settings */}
         <div className="flex flex-col w-full gap-3 my-6">
           {setting.map((item) => (
-            <div
+            <Link
+              href={item.url}
               key={item.id}
               className="flex items-center justify-between gap-3 rounded-lg border border-muted/10 bg-surface p-4"
             >
@@ -84,7 +90,7 @@ const Profile = () => {
               <div className="flex items-center">
                 <ArrowRightIcon className="text-primary" />
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
