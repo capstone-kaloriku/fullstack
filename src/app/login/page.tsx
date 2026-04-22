@@ -13,7 +13,6 @@ export default function Login() {
           YOUR ENERGETIC SANCTUARY
         </span>
       </div>
-
       <div className="mt-4 relative flex items-center justify-center">
         <Image
           src="/login-screen.jpg"
