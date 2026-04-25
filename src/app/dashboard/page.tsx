@@ -46,12 +46,12 @@ const foods: FoodSummariesProps[] = summary.slice(0, 2);
 const Dashboard = () => {
   return (
     <>
-      <div className="flex flex-col items-center justify-center gap-4 max-w-2xl p-6 mx-auto overflow-hidden">
+      <div className="grid grid-cols-1 items-center justify-center gap-4 p-6 mx-auto overflow-hidden">
         <div className="flex flex-col items-center justify-center mt-6">
           <CircleProgressBar
             value={currentKcal}
             maxValue={maxKcal}
-            className="w-64 h-64 "
+            className="w-64 h-64"
           >
             <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
           </CircleProgressBar>
@@ -83,11 +83,11 @@ const Dashboard = () => {
 
         {/* Ringkasan Makanan Hari Ini */}
         <div className="flex flex-col mt-8 gap-6">
-          <div className="flex items-center justify-between font-semibold text-[20px]">
+          <div className="flex items-center justify-between font-semibold text-base md:text-xl">
             <h2>Ringkasan Makanan Hari Ini</h2>
             <Link
               href="/all-foods"
-              className="text-secondary-foreground text-sm font-bold"
+              className="text-secondary-foreground text-xs md:text-sm font-bold"
             >
               Lihat Semua
             </Link>
