@@ -1,36 +1,39 @@
 import NavWithSearch from "./components/NavWithSearchbar";
 import dummyData from "@/data/dummy-food.json";
-import FrequentlyEats from "./components/FrequentlyEats";
+import DisplayFood from "./components/DisplayFood";
+import CustomFood from "./components/CustomFood";
+
 
 const dataRecently = dummyData.slice(0, 3);
 const data = dummyData;
 
 const AllFood = () => {
   return (
-    <>
-      <NavWithSearch>
+    <div className="overflow-y-auto h-screen">
+      <NavWithSearch className="rounded-none mb-6">
         Katalog Makanan Indonesia
       </NavWithSearch>
-      <div className="max-w-2xl mx-auto px-6 py-42 w-full">
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-row items-center">
+      <div className="max-w-2xl mx-auto px-6 w-full">
+        <div className="grid grid-cols-1 gap-6">
+          <div className="flex flex-col items-start justify-center w-full gap-6">
             <h1 className="text-lg font-bold text-primary">Input Makanan Custommu</h1>
+            <CustomFood />
           </div>
           <div className="flex flex-col gap-6">
             <h1 className="text-lg font-bold text-primary">Sering Dimakan</h1>
             <div className="flex flex-col items-center w-full gap-6">
-              <FrequentlyEats data={dataRecently} />
+              <DisplayFood data={dataRecently} />
             </div>
           </div>
           <div className="flex flex-col gap-6">
             <h1 className="text-lg font-bold text-primary">Semua Makanan</h1>
             <div className="flex flex-col items-center w-full gap-6">
-              <FrequentlyEats data={data} />
+              <DisplayFood data={data} />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

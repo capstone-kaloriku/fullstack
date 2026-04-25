@@ -6,7 +6,7 @@ import { FaPlus } from "react-icons/fa6";
 import { FrequentlyProps } from "@/types";
 import Link from "next/link";
 
-const FrequentlyEats = ({ data }: FrequentlyProps) => {
+const DisplayFood = ({ data }: FrequentlyProps) => {
   return (
     <>
       {data.map((item) => (
@@ -46,4 +46,4 @@ const FrequentlyEats = ({ data }: FrequentlyProps) => {
   );
 };
 
-export default FrequentlyEats;
+export default DisplayFood;

@@ -1,14 +1,19 @@
-import Link from 'next/link'
-import React from 'react'
+'use client'
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+
 import { FaAngleLeft } from 'react-icons/fa6'
 
 const NavbarSlug = ({ children }: { children: React.ReactNode }) => {
+
+  const router = useRouter();
+
   return (
-    <header className="flex flex-col items-center justify-center px-6 bg-primary/80 backdrop-blur-sm py-6 w-full rounded-bl-4xl rounded-br-4xl fixed top-0">
+    <header className="flex flex-col items-center justify-center px-6 bg-primary/80 backdrop-blur-sm py-6 w-full rounded-none fixed top-0">
       <div className="flex items-center justify-center w-full">
-        <Link href="/all-foods">
+        <Button onClick={() => router.back()} variant="ghost" className="hover:bg-transparent">
           <FaAngleLeft size={20} className="text-primary-foreground" />
-        </Link>
+        </Button>
         <div className="flex items-center justify-center w-full">
           <h1 className="font-bold text-primary-foreground text-xl">
             {children}
