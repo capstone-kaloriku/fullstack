@@ -8,7 +8,7 @@ import Frequently from "./components/Frequently";
 import Searchbar from "./components/Searchbar";
 import Tips from "./components/Tips";
 
-import dummyData from "@/data/dummy-frequently.json"
+import dummyData from "@/data/dummy-food.json"
 
 const frequentlyData = dummyData.slice(0, 2);
 
@@ -46,7 +46,7 @@ const Logs = () => {
             <div className="text-lg font-bold justify-between flex items-center">
               Sering Dicatat
               <Link href="/all-foods" className="text-sm text-primary">
-                LIHAT SEMUA
+                Lihat Semua
               </Link>
             </div>
             <Frequently data={frequentlyData} />

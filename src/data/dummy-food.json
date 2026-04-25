@@ -7,7 +7,10 @@
     "karbo": 45,
     "protein": 14,
     "lemak": 9,
-    "kategori": "sarapan"
+    "kategori": "sarapan",
+    "porsi": 1,
+    "takaranSaji": 300,
+    "slug": "bubur-ayam"
   },
   {
     "id": 2,
@@ -17,7 +20,10 @@
     "karbo": 60,
     "protein": 16,
     "lemak": 22,
-    "kategori": "sarapan"
+    "kategori": "sarapan",
+    "porsi": 1,
+    "takaranSaji": 350,
+    "slug": "nasi-uduk-telur"
   },
   {
     "id": 3,
@@ -27,7 +33,10 @@
     "karbo": 54,
     "protein": 11,
     "lemak": 16,
-    "kategori": "sarapan"
+    "kategori": "sarapan",
+    "porsi": 1,
+    "takaranSaji": 320,
+    "slug": "lontong-sayur"
   },
   {
     "id": 4,
@@ -37,7 +46,10 @@
     "karbo": 42,
     "protein": 10,
     "lemak": 17,
-    "kategori": "sarapan"
+    "kategori": "sarapan",
+    "porsi": 1,
+    "takaranSaji": 180,
+    "slug": "roti-bakar-cokelat-keju"
   },
   {
     "id": 5,
@@ -47,7 +59,10 @@
     "karbo": 28,
     "protein": 2,
     "lemak": 10,
-    "kategori": "camilan"
+    "kategori": "camilan",
+    "porsi": 1,
+    "takaranSaji": 80,
+    "slug": "pisang-goreng"
   },
   {
     "id": 6,
@@ -57,7 +72,10 @@
     "karbo": 27,
     "protein": 2,
     "lemak": 6,
-    "kategori": "camilan"
+    "kategori": "camilan",
+    "porsi": 1,
+    "takaranSaji": 90,
+    "slug": "klepon"
   },
   {
     "id": 7,
@@ -67,7 +85,10 @@
     "karbo": 25,
     "protein": 7,
     "lemak": 6,
-    "kategori": "camilan"
+    "kategori": "camilan",
+    "porsi": 1,
+    "takaranSaji": 100,
+    "slug": "lemper-ayam"
   },
   {
     "id": 8,
@@ -77,7 +98,10 @@
     "karbo": 20,
     "protein": 8,
     "lemak": 14,
-    "kategori": "camilan"
+    "kategori": "camilan",
+    "porsi": 1,
+    "takaranSaji": 120,
+    "slug": "martabak-mini"
   },
   {
     "id": 9,
@@ -87,7 +111,10 @@
     "karbo": 78,
     "protein": 22,
     "lemak": 25,
-    "kategori": "makan siang"
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 400,
+    "slug": "nasi-goreng-ayam"
   },
   {
     "id": 10,
@@ -97,7 +124,10 @@
     "karbo": 52,
     "protein": 24,
     "lemak": 18,
-    "kategori": "makan siang"
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 380,
+    "slug": "soto-ayam-nasi"
   },
   {
     "id": 11,
@@ -107,7 +137,10 @@
     "karbo": 38,
     "protein": 15,
     "lemak": 22,
-    "kategori": "makan siang"
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 350,
+    "slug": "gado-gado"
   },
   {
     "id": 12,
@@ -117,7 +150,10 @@
     "karbo": 55,
     "protein": 34,
     "lemak": 20,
-    "kategori": "makan siang"
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 390,
+    "slug": "ayam-bakar-nasi"
   },
   {
     "id": 13,
@@ -127,7 +163,10 @@
     "karbo": 58,
     "protein": 29,
     "lemak": 28,
-    "kategori": "makan malam"
+    "kategori": "makan malam",
+    "porsi": 1,
+    "takaranSaji": 420,
+    "slug": "pecel-lele-nasi"
   },
   {
     "id": 14,
@@ -137,7 +176,10 @@
     "karbo": 70,
     "protein": 30,
     "lemak": 38,
-    "kategori": "makan malam"
+    "kategori": "makan malam",
+    "porsi": 1,
+    "takaranSaji": 450,
+    "slug": "nasi-padang-rendang"
   },
   {
     "id": 15,
@@ -147,7 +189,10 @@
     "karbo": 72,
     "protein": 18,
     "lemak": 24,
-    "kategori": "makan malam"
+    "kategori": "makan malam",
+    "porsi": 1,
+    "takaranSaji": 360,
+    "slug": "mie-goreng-jawa"
   },
   {
     "id": 16,
@@ -157,7 +202,10 @@
     "karbo": 50,
     "protein": 19,
     "lemak": 16,
-    "kategori": "makan malam"
+    "kategori": "makan malam",
+    "porsi": 1,
+    "takaranSaji": 340,
+    "slug": "capcay-nasi"
   },
   {
     "id": 17,
@@ -167,7 +215,10 @@
     "karbo": 62,
     "protein": 14,
     "lemak": 20,
-    "kategori": "sarapan"
+    "kategori": "sarapan",
+    "porsi": 1,
+    "takaranSaji": 320,
+    "slug": "nasi-kuning"
   },
   {
     "id": 18,
@@ -177,7 +228,10 @@
     "karbo": 30,
     "protein": 14,
     "lemak": 16,
-    "kategori": "camilan"
+    "kategori": "camilan",
+    "porsi": 1,
+    "takaranSaji": 150,
+    "slug": "pempek-kapal-karam"
   },
   {
     "id": 19,
@@ -187,7 +241,10 @@
     "karbo": 48,
     "protein": 28,
     "lemak": 24,
-    "kategori": "makan siang"
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 400,
+    "slug": "rawon-nasi"
   },
   {
     "id": 20,
@@ -197,6 +254,74 @@
     "karbo": 66,
     "protein": 27,
     "lemak": 31,
-    "kategori": "makan malam"
+    "kategori": "makan malam",
+    "porsi": 1,
+    "takaranSaji": 430,
+    "slug": "nasi-campur-bali"
+  },
+  {
+    "id": 21,
+    "nama": "Nasi Goreng",
+    "gambar": "/profile.jpg",
+    "kalori": 540,
+    "karbo": 64,
+    "protein": 15,
+    "lemak": 24,
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 420,
+    "slug": "nasi-goreng"
+  },
+  {
+    "id": 22,
+    "nama": "Mie Ayam Bakso",
+    "gambar": "/profile.jpg",
+    "kalori": 420,
+    "karbo": 54,
+    "protein": 18,
+    "lemak": 14,
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 430,
+    "slug": "mie-ayam-bakso"
+  },
+  {
+    "id": 23,
+    "nama": "Bakmi Khas Jaksel",
+    "gambar": "/profile.jpg",
+    "kalori": 520,
+    "karbo": 63,
+    "protein": 20,
+    "lemak": 21,
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 500,
+    "slug": "bakmi-khas-jaksel"
+  },
+  {
+    "id": 24,
+    "nama": "Ayam Celup Mang Asep",
+    "gambar": "/profile.jpg",
+    "kalori": 520,
+    "karbo": 42,
+    "protein": 33,
+    "lemak": 23,
+    "kategori": "makan siang",
+    "porsi": 1,
+    "takaranSaji": 500,
+    "slug": "ayam-celup-mang-asep"
+  },
+  {
+    "id": 25,
+    "nama": "CirengIN",
+    "gambar": "/profile.jpg",
+    "kalori": 520,
+    "karbo": 58,
+    "protein": 8,
+    "lemak": 28,
+    "kategori": "camilan",
+    "porsi": 1,
+    "takaranSaji": 500,
+    "slug": "cirengin"
   }
 ]

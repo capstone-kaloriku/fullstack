@@ -1,11 +1,14 @@
 import { PageProps } from "@/types";
 
-import dummyFood from "@/data/dummy-frequently.json";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import dummyFood from "@/data/dummy-food.json";
+
 import Image from "next/image";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaBowlFood, FaClock, FaSun } from "react-icons/fa6";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
 import NavbarSlug from "./components/NavbarSlug";
 
 const addFood = async ({ params }: PageProps) => {

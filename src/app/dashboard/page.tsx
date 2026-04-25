@@ -4,7 +4,7 @@ import CircleProgressBar from "./components/CircleProgressBar";
 import ProgressBarDetail from "./components/ProgressBarDetail";
 import ProgressBarPersentage from "./components/ProgressBarPersentage";
 
-import dummy from "@/data/dummy.json";
+import dummy from "@/data/dummyUserData.json";
 import summary from "@/data/dummy-food.json";
 
 import Link from "next/link";
@@ -86,7 +86,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between font-semibold text-base md:text-xl">
             <h2>Ringkasan Makanan Hari Ini</h2>
             <Link
-              href="/all-foods"
+              href="/logs"
               className="text-secondary-foreground text-xs md:text-sm font-bold"
             >
               Lihat Semua

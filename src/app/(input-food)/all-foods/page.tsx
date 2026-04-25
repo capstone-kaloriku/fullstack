@@ -1,8 +1,9 @@
 import NavWithSearch from "./components/NavWithSearchbar";
-import dummyData from "@/data/dummy-frequently.json";
+import dummyData from "@/data/dummy-food.json";
 import FrequentlyEats from "./components/FrequentlyEats";
 
-const data = dummyData.slice(0, 3);
+const dataRecently = dummyData.slice(0, 3);
+const data = dummyData;
 
 const AllFood = () => {
   return (
@@ -17,6 +18,12 @@ const AllFood = () => {
           </div>
           <div className="flex flex-col gap-6">
             <h1 className="text-lg font-bold text-primary">Sering Dimakan</h1>
+            <div className="flex flex-col items-center w-full gap-6">
+              <FrequentlyEats data={dataRecently} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-6">
+            <h1 className="text-lg font-bold text-primary">Semua Makanan</h1>
             <div className="flex flex-col items-center w-full gap-6">
               <FrequentlyEats data={data} />
             </div>
