@@ -72,7 +72,12 @@ export function Header() {
               </Link>
             ))}
             <div className="flex w-full flex-col gap-4">
-
+              <Button
+                onClick={() => setIsMobileMenuOpen(false)}
+                variant="destructive"
+                className="w-full">
+                Logout
+              </Button>
             </div>
           </MobileNavMenu>
         </MobileNav>
