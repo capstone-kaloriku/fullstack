@@ -31,7 +31,7 @@ function CustomFood() {
   }
 
   function onInvalid(errors: unknown) {
-    console.log("Form validation errors:", errors)
+    console.log("Formulir kosong", errors)
   }
 
   return (

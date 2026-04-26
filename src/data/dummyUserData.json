@@ -1,7 +1,12 @@
 [
   {
     "id": 1,
-    "namaUser": "Kevin",
+    "namaUser": "Sahrul Batagor",
+    "usia": 22,
+    "jenisKelamin": "Laki-Laki",
+    "beratBadan": 90,
+    "targetBeratBadan": 80,
+    "tinggiBadan": 182,
     "kebutuhanHarian": {
       "kalori": 2200,
       "protein": 130,
@@ -11,6 +16,7 @@
       "kalori": 1700,
       "protein": 82,
       "lemak": 46
-    }
+    },
+    "aktivitasFisik": "Sedentary"
   }
 ]

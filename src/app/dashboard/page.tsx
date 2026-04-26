@@ -47,6 +47,7 @@ const Dashboard = () => {
   return (
     <>
       <div className="grid grid-cols-1 items-center justify-center gap-4 p-6 mx-auto overflow-hidden">
+
         <div className="flex flex-col items-center justify-center mt-6">
           <CircleProgressBar
             value={currentKcal}

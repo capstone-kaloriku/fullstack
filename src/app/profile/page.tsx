@@ -1,8 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRightIcon, User2Icon } from "lucide-react";
-import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { User2Icon } from "lucide-react";
 import { FaClockRotateLeft } from "react-icons/fa6";
 import { IoFastFood } from "react-icons/io5";
+import profileData from "@/data/dummyUserData.json"
+import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress";
+import Options from "./components/Option";
 
 const setting = [
   {
@@ -35,64 +37,43 @@ const setting = [
   },
 ];
 
+const data = profileData[0];
+
 const Profile = () => {
   return (
     <div className="w-full mx-auto p-6 max-w-2xl my-6">
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col text-2xl font-extrabold">
-            Sahrul Batagor
-            <span className="text-sm text-muted-foreground">Cowok - 90 KG</span>
+            {data.namaUser}
+            <span className="text-sm text-muted-foreground">{data.usia} Tahun, {data.jenisKelamin}</span>
           </div>
           <div className="flex">
             <Card className="flex items-center justify-center bg-primary text-secondary">
               <CardContent className="flex flex-col items-center">
-                Status
-                <span className="font-extrabold text-lg">Aktif</span>
+                Aktifitas
+                <span className="font-extrabold text-lg">{data.aktivitasFisik}</span>
               </CardContent>
             </Card>
           </div>
         </div>
         <div className="w-full my-6">
           <Card className="bg-primary-foreground">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Informasi Pribadi{" "}
-                <span className="text-primary">89% Tercapai</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {/* Progress Bar Ditambahin Nanti */}
-
+            <CardContent className="flex flex-col gap-3">
+              <Progress value={89}>
+                <ProgressLabel className="text-base font-medium text-primary">
+                  Informasi Pribadi
+                </ProgressLabel>
+                <ProgressValue className="text-base font-medium text-primary" />
+              </Progress>
               <div className="flex items-center justify-between font-bold text-muted-foreground text-sm">
-                109 KG (TARGET) <span>80 KG (SEKARANG)</span>
+                {data.targetBeratBadan} KG (TARGET) <span>{data.beratBadan} KG (SEKARANG)</span>
               </div>
             </CardContent>
           </Card>
         </div>
-        {/* Settings */}
-        <div className="flex flex-col w-full gap-3 my-6">
-          {setting.map((item) => (
-            <Link
-              href={item.url}
-              key={item.id}
-              className="flex items-center justify-between gap-3 rounded-lg border border-muted/10 bg-surface p-4"
-            >
-              <div className="flex flex-row items-center gap-3">
-                {item.icon}
-                <div className="flex flex-col items-start justify-center">
-                  <span className="text-lg font-bold">{item.title}</span>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <ArrowRightIcon className="text-primary" />
-              </div>
-            </Link>
-          ))}
-        </div>
+        {/* Options */}
+        <Options data={setting} />
       </div>
     </div>
   );

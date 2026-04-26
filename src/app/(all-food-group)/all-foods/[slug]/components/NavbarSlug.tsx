@@ -9,7 +9,7 @@ const NavbarSlug = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   return (
-    <header className="flex flex-col items-center justify-center px-6 bg-primary/80 backdrop-blur-sm py-6 w-full rounded-none fixed top-0">
+    <header className="flex flex-row items-center justify-between px-6 bg-primary/80 backdrop-blur-sm py-6 w-full rounded-none sticky top-0">
       <div className="flex items-center justify-center w-full">
         <Button onClick={() => router.back()} variant="ghost" className="hover:bg-transparent">
           <FaAngleLeft size={20} className="text-primary-foreground" />

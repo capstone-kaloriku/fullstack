@@ -34,6 +34,16 @@ export interface FrequentlyProps {
   }[];
 }
 
+export interface SettingsProps {
+  data: {
+    id: number;
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    url: string;
+  }[];
+}
+
 export interface PageProps {
   params: Promise<{ slug: string }>;
 }
