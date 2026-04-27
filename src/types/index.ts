@@ -47,3 +47,12 @@ export interface SettingsProps {
 export interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+export interface SliderControlProps {
+  data: {
+    min: number;
+    max: number;
+    step: number;
+    defaultCalories: number;
+  };
+}

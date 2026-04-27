@@ -46,7 +46,6 @@ function CustomFood() {
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} >
             <FieldGroup>
-
               {/* Nama Makanan */}
               <Controller
                 name="foodNames"
@@ -73,6 +72,7 @@ function CustomFood() {
                   <InputGroup className="border border-gray-400">
                     <InputGroupInput
                       id="portions"
+                      min={0}
                       type="number"
                       value={field.value}
                       onChange={(event) => field.onChange(event.target.valueAsNumber)}

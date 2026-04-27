@@ -2,6 +2,7 @@
   {
     "id": 1,
     "namaUser": "Sahrul Batagor",
+    "email": "sahrulbatagor@gmail.com",
     "usia": 22,
     "jenisKelamin": "Laki-Laki",
     "beratBadan": 90,
@@ -17,6 +18,6 @@
       "protein": 82,
       "lemak": 46
     },
-    "aktivitasFisik": "Sedentary"
+    "aktivitasFisik": "Ringan"
   }
 ]
