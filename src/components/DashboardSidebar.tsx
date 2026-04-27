@@ -8,6 +8,7 @@ import Image from "next/image";
 import { RiGeminiFill } from "react-icons/ri";
 import { MdMonitorHeart } from "react-icons/md";
 import { FaHome } from "react-icons/fa";
+import { LogOutIcon } from "lucide-react";
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 
@@ -31,6 +32,13 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
       href: "/ai",
       icon: (
         <RiGeminiFill className="h-5 w-5 shrink-0 text-secondary-foreground dark:text-neutral-200" />
+      )
+    },
+    {
+      label: "Profile",
+      href: "/profile",
+      icon: (
+        <FaUser className="h-5 w-5 shrink-0 text-secondary-foreground dark:text-neutral-200" />
       )
     },
   ];
@@ -57,10 +65,10 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           <div>
             <SidebarLink
               link={{
-                label: "Sahrul Batagor",
+                label: "Keluar",
                 href: "/profile",
                 icon: (
-                  <FaUser className="text-secondary-foreground" />
+                  <LogOutIcon className="text-secondary-foreground" />
                 ),
               }}
             />
