@@ -48,7 +48,7 @@ export default function AIPage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-full mx-auto max-w-2xl">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-full mx-auto max-w-2xl overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col items-center gap-1.5 px-6 pt-4 pb-2">
         <h1 className="text-2xl font-extrabold text-secondary-foreground">

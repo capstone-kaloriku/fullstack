@@ -38,7 +38,7 @@ const icon = [
 const Logs = () => {
   return (
     <>
-      <div className="max-w-2xl p-6 mx-auto w-full">
+      <div className="max-w-2xl p-6 mx-auto w-full overflow-x-hidden">
         <div className="flex flex-col items-center justify-center">
           <Searchbar />
           <Category data={icon} />

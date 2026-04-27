@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import { Header } from "@/components/Header";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 
 export const metadata: Metadata = {
   title: "Logs - KaloriKu",
@@ -15,9 +15,10 @@ export default function LogsLayout({
 }) {
   return (
 
-    <section className={`min-h-full flex flex-col py-12 overflow-hidden`}>
-      <Header />
-      {children}
+    <section className={`h-screen overflow-y-auto`}>
+      <DashboardSidebar>
+        {children}
+      </DashboardSidebar>
     </section>
   );
 }

@@ -30,7 +30,7 @@ const data = profileData[0];
 
 const Profile = () => {
   return (
-    <div className="w-full mx-auto p-6 max-w-2xl my-6">
+    <div className="w-full mx-auto p-6 max-w-2xl my-6 overflow-x-hidden">
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col text-2xl font-extrabold">
