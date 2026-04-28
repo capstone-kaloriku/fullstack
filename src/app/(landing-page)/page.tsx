@@ -24,29 +24,48 @@ const whyKaloriku = [
     description:
       "Gratis untuk digunakan, KaloriKu menawarkan antarmuka yang sederhana dan intuitif sehingga kamu bisa langsung mulai mengelola kalori harianmu tanpa ribet.",
   },
+  {
+    id: 4,
+    title: "Pengingat Makan dan Minum",
+    description:
+      "Dapatkan notifikasi waktu makan dan minum supaya rutinitas sehatmu tetap konsisten sepanjang hari.",
+  },
+  {
+    id: 5,
+    title: "Riwayat dan Ringkasan Harian",
+    description:
+      "Lihat ringkasan asupan harian dan riwayat mingguan untuk memantau progres dengan mudah.",
+  },
+  {
+    id: 6,
+    title: "Cocok untuk Berbagai Target",
+    description:
+      "Baik ingin turun, naik, atau menjaga berat badan, KaloriKu membantu menyesuaikan kebutuhanmu.",
+  },
+
 ];
 
 const people = [
   {
     id: 1,
-    name: "Muhammad Kevin Alvarel",
-    designation: "Software Engineer",
+    name: "Fajrin Widianto",
+    designation: "Backend Lead",
     image:
-      "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3387&q=80",
+      "/developer/fajrin.jpeg",
   },
   {
     id: 2,
-    name: "Fajrin Widianto",
-    designation: "Software Engineer",
+    name: "Muhammad Kevin Alvarel",
+    designation: "Frontend Lead",
     image:
-      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+      "/developer/kevinn.jpg",
   },
   {
     id: 3,
     name: "Nabila Carrissa",
     designation: "Data Scientist",
     image:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+      "/developer/nabila.jpg",
   },
   {
     id: 4,
@@ -84,6 +103,7 @@ const Hero = () => {
           Pendamping setia untuk perjalanan hidup sehatmu. Tracking nutrisi
           presisi untuk bantu kamu mencapai target berat badan lebih efektif.
         </p>
+
       </div>
       <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full">
         <ContainerScroll
@@ -122,7 +142,7 @@ const Hero = () => {
               glowIntensity={1}
               coneSpread={25}
               animated={true}
-              colors={["#1c1917", "#ffedd5", "#0f766e"]}
+              colors={["#1c1917", "#6E4816", "#0f766e"]}
               key={item.id}
             >
               <div className="flex flex-col gap-3 p-[2em] text-primary-foreground">
@@ -146,7 +166,7 @@ const Hero = () => {
         position="bottom"
         height="7rem"
         strength={2}
-        divCount={5}
+        divCount={1}
         curve="linear"
         exponential
         opacity={1}
