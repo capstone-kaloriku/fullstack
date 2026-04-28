@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { ChatArea } from "./components/ChatArea";
 import { InputPrompt } from "./components/InputPrompt";
-import type { Message } from "./types";
+import type { Message } from "@/types/index";
 
 const AI_RESPONSES = [
   "Nasi goreng biasa mengandung sekitar 500-700 kalori per porsi, tergantung bahan dan minyak yang digunakan. Jika ditambahkan telur dan ayam, bisa mencapai 800+ kalori.",
@@ -48,9 +48,9 @@ export default function AIPage() {
   }, []);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-full mx-auto max-w-2xl overflow-x-hidden">
+    <div className="flex flex-col h-[calc(100vh-4rem)] w-full mx-auto max-w-2xl lg:max-w-3xl xl:max-w-4xl overflow-x-hidden mt-6">
       {/* Header */}
-      <div className="flex flex-col items-center gap-1.5 px-6 pt-4 pb-2">
+      <div className="flex flex-col items-center gap-1.5 px-6 pb-2">
         <h1 className="text-2xl font-extrabold text-secondary-foreground">
           Tanya KalorAI
         </h1>

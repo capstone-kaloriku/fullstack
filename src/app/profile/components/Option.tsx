@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 function Options({ data }: SettingsProps) {
   return (
-    <div className="flex flex-col w-full gap-3 my-6">
+    <div className="flex flex-col lg:grid lg:grid-cols-2 w-full gap-3 my-6">
       {data.map((item) => (
         <Link
           href={item.url}

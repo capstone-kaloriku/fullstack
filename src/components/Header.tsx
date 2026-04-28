@@ -9,6 +9,7 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
+  NavbarButton,
 } from "@/components/layout/resizable-navbar";
 import Link from "next/link";
 import { useState } from "react";
@@ -43,13 +44,14 @@ export function Header() {
           <NavbarLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
-            <Button
+            <NavbarButton
+              href="/login"
+              variant="primary"
               onClick={() => setIsMobileMenuOpen(false)}
-              variant="destructive"
-              className="w-full"
+              className="w-full px-6 py-2"
             >
-              Logout
-            </Button>
+              Masuk
+            </NavbarButton>
           </div>
         </NavBody>
 
@@ -80,10 +82,10 @@ export function Header() {
             <div className="flex w-full flex-col gap-4">
               <Button
                 onClick={() => setIsMobileMenuOpen(false)}
-                variant="destructive"
-                className="w-full"
+                variant="default"
+                className="w-full px-6 py-2"
               >
-                Logout
+                Masuk
               </Button>
             </div>
           </MobileNavMenu>

@@ -36,7 +36,7 @@ const Target = () => {
   return (
     <>
       <NavbarStandalone>Target</NavbarStandalone>
-      <div className="max-w-lg mx-auto w-full p-6">
+      <div className="max-w-lg lg:max-w-2xl mx-auto w-full p-6">
         <div className="grid grid-cols-1 gap-6">
           <div className="flex flex-col justify-center items-start gap-3">
             <h1 className="text-3xl font-bold text-primary">Target Kalori</h1>

@@ -38,7 +38,7 @@ const icon = [
 const Logs = () => {
   return (
     <>
-      <div className="max-w-2xl p-6 mx-auto w-full overflow-x-hidden">
+      <div className="max-w-2xl lg:max-w-5xl px-6 mx-auto w-full overflow-x-hidden">
         <div className="flex flex-col items-center justify-center">
           <Searchbar />
           <Category data={icon} />
@@ -49,9 +49,11 @@ const Logs = () => {
                 Lihat Semua
               </Link>
             </div>
-            <Frequently data={frequentlyData} />
+            <div className="lg:grid lg:grid-cols-2 lg:gap-4">
+              <Frequently data={frequentlyData} />
+            </div>
           </div>
-          <div className="w-full flex-col">
+          <div className="w-full flex-col mb-8">
             <Tips />
           </div>
         </div>

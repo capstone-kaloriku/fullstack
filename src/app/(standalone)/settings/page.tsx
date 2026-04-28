@@ -7,7 +7,7 @@ const Settings = () => {
   return (
     <>
       <NavbarStandalone>Pengaturan Akun</NavbarStandalone>
-      <div className='grid grid-cols-1 w-full mx-auto p-6 max-w-2xl gap-6'>
+      <div className='grid grid-cols-1 w-full mx-auto p-6 max-w-2xl lg:max-w-3xl gap-6'>
         <div className='flex flex-col justify-center gap-1.5'>
           <h1 className='text-2xl font-bold text-primary'>Pengaturan Akun</h1>
           <span className='text-base text-muted-foreground font-medium'>

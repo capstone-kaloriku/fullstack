@@ -46,24 +46,29 @@ const foods: FoodSummariesProps[] = summary.slice(0, 2);
 const Dashboard = () => {
   return (
     <>
-      <div className="grid grid-cols-1 items-center justify-center gap-4 p-6 mx-auto overflow-x-hidden bg-white w-full">
-        <div className="flex flex-col items-center justify-center mt-6">
-          <CircleProgressBar
-            value={currentKcal}
-            maxValue={maxKcal}
-            className="w-64 h-64"
-          >
-            <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
-          </CircleProgressBar>
-          <div className="flex flex-row justify-around w-full mx-auto mt-8 gap-4">
-            {/* Card */}
+      <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden bg-white w-full max-w-6xl">
+        {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
+        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-start mt-6 gap-8 lg:gap-12">
+          {/* Circle Progress */}
+          <div className="flex flex-col items-center">
+            <CircleProgressBar
+              value={currentKcal}
+              maxValue={maxKcal}
+              className="w-64 h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96"
+            >
+              <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
+            </CircleProgressBar>
+          </div>
+
+          {/* Nutrition Cards */}
+          <div className="grid grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 justify-around w-full lg:w-auto mx-auto mt-0 gap-4 lg:gap-5">
             {daily.map((item, index) => (
               <Card key={index}>
                 <CardContent>
                   <CircleProgressBar
                     value={item.value}
                     maxValue={item.maxValue}
-                    className="relative w-12 h-12w-12 max-w-20 mx-auto"
+                    className="relative w-12 h-12 max-w-20 mx-auto lg:w-16 lg:h-16 lg:max-w-24"
                   >
                     <ProgressBarPersentage
                       Percentage={item.percentage.toFixed(0) + "%"}
@@ -96,7 +101,7 @@ const Dashboard = () => {
         </div>
 
         {/* Reminder Drink Water */}
-        <div className="w-full mt-8">
+        <div className="w-full mt-8 mb-8">
           <Reminder />
         </div>
       </div>

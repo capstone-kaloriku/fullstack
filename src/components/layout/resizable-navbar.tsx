@@ -237,16 +237,16 @@ export const NavbarLogo = () => {
   return (
     <a
       href="#"
-      className="relative z-20 mr-4 flex items-center px-2 py-1 text-sm font-normal text-black"
+      className="relative z-20 mr-4 flex items-center px-2 py-1 text-sm font-normal text-black group"
     >
       <Image
         src="/product-logo.png"
         alt="logo"
-        width={30}
-        height={30}
-        className="-rotate-6"
+        width={40}
+        height={40}
+        className="group-hover:-rotate-6 transition-all duration-300"
       />
-      <span className="italic text-primary absolute left-8 text-lg">aloriku</span>
+      <span className="italic text-primary absolute left-10 bottom-2 text-lg">aloriku</span>
     </a>
   );
 };
@@ -273,7 +273,7 @@ export const NavbarButton = ({
 
   const variantStyles = {
     primary:
-      "shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
+      "bg-primary text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
     secondary: "bg-transparent shadow-none dark:text-white",
     dark: "bg-black text-white shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]",
     gradient:

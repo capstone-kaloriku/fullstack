@@ -1,5 +1,5 @@
 'use client';
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 
 import {
   InputGroup,
@@ -17,15 +17,17 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FaBirthdayCake } from "react-icons/fa";
 
 const formSchema = z.object({
   gender: z.enum(["laki-laki", "perempuan"], "Jenis kelamin harus dipilih"),
   weight: z.coerce.number<number>().min(1, "Berat badan harus diisi"),
   height: z.coerce.number<number>().min(1, "Tinggi badan harus diisi"),
+  age: z.coerce.number<number>().min(1, "Usia harus diisi"),
   username: z.string().min(2, "Nama user harus diisi"),
   email: z.email("Format email tidak valid").min(1, "Email harus diisi"),
-  password: z.string().min(6, "Kata sandi harus minimal 6 karakter"),
-  confirmPassword: z.string().min(6, "Konfirmasi kata sandi harus minimal 6 karakter")
+  password: z.string().min(8, "Kata sandi harus minimal 8 karakter"),
+  confirmPassword: z.string().min(8, "Konfirmasi kata sandi harus minimal 8 karakter")
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Kata sandi dan konfirmasi kata sandi harus sama",
 })
@@ -40,6 +42,7 @@ function RegisterInput() {
       gender: "laki-laki",
       weight: 0,
       height: 0,
+      age: 0,
       username: "",
       email: "",
       password: "",
@@ -81,6 +84,26 @@ function RegisterInput() {
                 )}
               </Field>
             )} />
+            <Controller name="age" control={form.control} render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel htmlFor="age">Usia</FieldLabel>
+                <InputGroup className="rounded-full px-4 py-6">
+                  <InputGroupInput
+                    id="age"
+                    type="number"
+                    placeholder="Usia"
+                    {...field}
+                  />
+                  <InputGroupAddon align="inline-start">
+                    <FaBirthdayCake size={20} />
+                  </InputGroupAddon>
+                </InputGroup>
+                <FieldDescription>Masukkan usia Anda</FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )} />
 
             <div className="grid grid-cols-2 w-full gap-4">
               <Controller name="weight" control={form.control} render={({ field, fieldState }) => (
@@ -97,6 +120,8 @@ function RegisterInput() {
                       <span className="text-muted-foreground">KG</span>
                     </InputGroupAddon>
                   </InputGroup>
+                  <FieldDescription>Masukkan berat badan Anda</FieldDescription>
+
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -117,6 +142,7 @@ function RegisterInput() {
                       <span className="text-muted-foreground">CM</span>
                     </InputGroupAddon>
                   </InputGroup>
+                  <FieldDescription>Masukkan tinggi badan Anda</FieldDescription>
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -137,6 +163,7 @@ function RegisterInput() {
                     <User size={20} />
                   </InputGroupAddon>
                 </InputGroup>
+                <FieldDescription>Masukkan nama pengguna Anda</FieldDescription>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -152,6 +179,8 @@ function RegisterInput() {
                     <Mail size={20} />
                   </InputGroupAddon>
                 </InputGroup>
+                <FieldDescription>Masukkan email Anda</FieldDescription>
+
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -176,6 +205,8 @@ function RegisterInput() {
                     <EyeClosed size={20} />
                   </InputGroupAddon>
                 </InputGroup>
+                <FieldDescription>Masukkan kata sandi sebanyak 8 karakter</FieldDescription>
+
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -201,6 +232,8 @@ function RegisterInput() {
                     <EyeClosed size={20} />
                   </InputGroupAddon>
                 </InputGroup>
+                <FieldDescription>Konfirmasi Password anda</FieldDescription>
+
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -210,7 +243,7 @@ function RegisterInput() {
 
             <Button type="submit" className="w-full py-6">Daftar</Button>
 
-            <span className="text-sm text-muted-foreground text-center my-4">
+            <span className="text-sm md:text-lg text-muted-foreground text-center my-4">
               Sudah punya akun?{" "}
               <Link href="/login" className="text-primary underline font-medium">
                 Login Sekarang
