@@ -225,15 +225,15 @@ const CardGlow: React.FC<BorderGlowProps> = ({
   const isVisible = isHovered || sweepActive;
   const borderOpacity = isVisible
     ? Math.max(
-        0,
-        (edgeProximity * 100 - colorSensitivity) / (100 - colorSensitivity),
-      )
+      0,
+      (edgeProximity * 100 - colorSensitivity) / (100 - colorSensitivity),
+    )
     : 0;
   const glowOpacity = isVisible
     ? Math.max(
-        0,
-        (edgeProximity * 100 - edgeSensitivity) / (100 - edgeSensitivity),
-      )
+      0,
+      (edgeProximity * 100 - edgeSensitivity) / (100 - edgeSensitivity),
+    )
     : 0;
 
   const meshGradients = buildMeshGradients(colors);

@@ -73,7 +73,7 @@ const people = [
 
 const Hero = () => {
   return (
-    <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-7xl">
+    <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-8xl">
       <BackgroundRippleEffect />
       <div className="mt-60 md:mt-72 w-full">
         <h2 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-neutral-800 md:text-3xl lg:text-6xl dark:text-neutral-100">
@@ -111,7 +111,7 @@ const Hero = () => {
       </div>
       <div className="grid grid-cols items-center gap-6 justify-center w-full my-36 mx-auto">
         <h1 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h1>
-        <div className="grid grid-cols md:grid-cols-3 gap-6 justify-center w-full max-w-7xl">
+        <div className="grid grid-cols md:grid-cols-3 gap-6 justify-center w-full max-w-6xl">
           {whyKaloriku.map((item) => (
             <CardGlow
               edgeSensitivity={30}
@@ -145,9 +145,9 @@ const Hero = () => {
         target="page"
         position="bottom"
         height="7rem"
-        strength={1}
+        strength={2}
         divCount={5}
-        curve="bezier"
+        curve="linear"
         exponential
         opacity={1}
         className="hidden md:block"
