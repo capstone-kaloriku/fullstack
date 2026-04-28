@@ -41,14 +41,14 @@ const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
   }),
 }));
 
-const foods: FoodSummariesProps[] = summary.slice(0, 2);
+const foods: FoodSummariesProps[] = summary.slice(0, 4);
 
 const Dashboard = () => {
   return (
     <>
-      <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden bg-white w-full max-w-6xl">
+      <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden bg-white w-full max-w-8xl ">
         {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
-        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-start mt-6 gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-center mt-6 gap-8 lg:gap-12">
           {/* Circle Progress */}
           <div className="flex flex-col items-center">
             <CircleProgressBar
@@ -61,14 +61,14 @@ const Dashboard = () => {
           </div>
 
           {/* Nutrition Cards */}
-          <div className="grid grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 justify-around w-full lg:w-auto mx-auto mt-0 gap-4 lg:gap-5">
+          <div className="grid grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 justify-between w-full lg:w-full mx-auto mt-0 gap-4 lg:gap-5">
             {daily.map((item, index) => (
               <Card key={index}>
-                <CardContent>
+                <CardContent className="flex flex-row items-center justify-center w-full mx-auto">
                   <CircleProgressBar
                     value={item.value}
                     maxValue={item.maxValue}
-                    className="relative w-12 h-12 max-w-20 mx-auto lg:w-16 lg:h-16 lg:max-w-24"
+                    className="relative w-12 h-12 max-w-20 mx-auto lg:w-18 lg:h-18 lg:max-w-24"
                   >
                     <ProgressBarPersentage
                       Percentage={item.percentage.toFixed(0) + "%"}

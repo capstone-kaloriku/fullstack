@@ -13,7 +13,6 @@ import React, { useRef, useState } from "react";
 
 import { FaBars, FaX } from "react-icons/fa6";
 
-
 interface NavbarProps {
   children: React.ReactNode;
   className?: string;
@@ -77,9 +76,9 @@ export const Navbar = ({ children, className }: NavbarProps) => {
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
           ? React.cloneElement(
-            child as React.ReactElement<{ visible?: boolean }>,
-            { visible },
-          )
+              child as React.ReactElement<{ visible?: boolean }>,
+              { visible },
+            )
           : child,
       )}
     </motion.div>
@@ -90,7 +89,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(5px)" : "none",
+        backdropFilter: visible ? "blur(15px)" : "none",
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
@@ -152,7 +151,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
   return (
     <motion.div
       animate={{
-        backdropFilter: visible ? "blur(5px)" : "none",
+        backdropFilter: visible ? "blur(15px)" : "none",
         boxShadow: visible
           ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
           : "none",
@@ -246,7 +245,9 @@ export const NavbarLogo = () => {
         height={40}
         className="group-hover:-rotate-6 transition-all duration-300"
       />
-      <span className="italic text-primary absolute left-10 bottom-2 text-lg">aloriku</span>
+      <span className="italic text-primary absolute left-10 bottom-2 text-lg">
+        aloriku
+      </span>
     </a>
   );
 };
@@ -265,9 +266,9 @@ export const NavbarButton = ({
   className?: string;
   variant?: "primary" | "secondary" | "dark" | "gradient";
 } & (
-    | React.ComponentPropsWithoutRef<"a">
-    | React.ComponentPropsWithoutRef<"button">
-  )) => {
+  | React.ComponentPropsWithoutRef<"a">
+  | React.ComponentPropsWithoutRef<"button">
+)) => {
   const baseStyles =
     "px-4 py-2 rounded-md bg-white button bg-white text-black text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
 

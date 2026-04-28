@@ -17,15 +17,15 @@ import { useState } from "react";
 export function Header() {
   const navItems = [
     {
-      name: "Home",
+      name: "Tentang",
       link: "/dashboard",
     },
     {
-      name: "Logs",
+      name: "Kenapa Kita",
       link: "/logs",
     },
     {
-      name: "AI",
+      name: "Cara Penggunaan  ",
       link: "/ai",
     },
     {
