@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BsStars } from "react-icons/bs";
 import { ChatMessage } from "./ChatMessage";
-import type { Message } from "../types";
+import type { Message } from "@/types/index";
 
 interface ChatAreaProps {
   messages: Message[];

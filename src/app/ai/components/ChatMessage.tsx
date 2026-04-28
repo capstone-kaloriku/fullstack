@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { BsStars } from "react-icons/bs";
-import type { Message } from "../types";
+import type { Message } from "@/types/index";
 
 interface ChatMessageProps {
   message: Message;
