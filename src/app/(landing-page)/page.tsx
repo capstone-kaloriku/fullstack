@@ -135,7 +135,7 @@ const Hero = () => {
       </div>
 
       <div className="flex flex-col items-center justify-center mb-10 w-full gap-6">
-        <h1>Meet our Developer</h1>
+        <h1 className="text-xl text-primary font-bold">Meet our Developer</h1>
         <div className="flex flex-row items-center justify-center w-full">
           <Tooltip items={people} />
         </div>

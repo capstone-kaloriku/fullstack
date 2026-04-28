@@ -25,7 +25,7 @@ export function Header() {
       link: "/logs",
     },
     {
-      name: "Cara Penggunaan  ",
+      name: "Cara Penggunaan",
       link: "/ai",
     },
     {
