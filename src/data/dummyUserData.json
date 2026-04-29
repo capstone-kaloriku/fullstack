@@ -11,12 +11,14 @@
     "kebutuhanHarian": {
       "kalori": 2200,
       "protein": 130,
-      "lemak": 70
+      "lemak": 70,
+      "karbohidrat": 370
     },
     "konsumsiSaatIni": {
       "kalori": 1700,
       "protein": 82,
-      "lemak": 46
+      "lemak": 46,
+      "karbohidrat": 200
     },
     "aktivitasFisik": "Ringan"
   }

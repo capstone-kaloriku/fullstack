@@ -48,7 +48,7 @@ const Dashboard = () => {
     <>
       <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden bg-white w-full max-w-8xl ">
         {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
-        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-center mt-6 gap-8 lg:gap-12">
+        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-center mt-6 gap-8 lg:gap-20">
           {/* Circle Progress */}
           <div className="flex flex-col items-center">
             <CircleProgressBar
@@ -61,27 +61,27 @@ const Dashboard = () => {
           </div>
 
           {/* Nutrition Cards */}
-          <div className="grid grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 justify-between w-full lg:w-full mx-auto mt-0 gap-4 lg:gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 justify-between w-full lg:w-full mx-auto mt-0 gap-4 lg:gap-5">
             {daily.map((item, index) => (
-              <Card key={index}>
-                <CardContent className="flex flex-row items-center justify-center w-full mx-auto">
-                  <CircleProgressBar
-                    value={item.value}
-                    maxValue={item.maxValue}
-                    className="relative w-12 h-12 max-w-20 mx-auto lg:w-18 lg:h-18 lg:max-w-24"
-                  >
-                    <ProgressBarPersentage
-                      Percentage={item.percentage.toFixed(0) + "%"}
-                    />
-                  </CircleProgressBar>
-                </CardContent>
-                <CardFooter className="text-base flex flex-col gap-2 font-bold">
-                  {item.name.toUpperCase()}
-                  <span className="text-sm text-muted-foreground font-medium">
-                    {item.value}g
-                  </span>
-                </CardFooter>
-              </Card>
+              <div className="flex flex-col gap-6 items-center justify-center" key={index}>
+                <CircleProgressBar
+                  value={item.value}
+                  maxValue={item.maxValue}
+                  className="relative w-20 h-20 max-w-20 md:w-24 md:h-24 lg:w-28 lg:h-28 lg:max-w-28 mx-auto "
+                >
+                  <ProgressBarPersentage
+                    Percentage={item.percentage.toFixed(0) + "%"}
+                  />
+                </CircleProgressBar>
+                <Card className="w-full lg:w-1/2">
+                  <CardContent className="flex flex-col items-center justify-center w-full mx-auto">
+                    {item.name.toUpperCase()}
+                    <span className="text-sm text-muted-foreground font-medium">
+                      {item.value}g
+                    </span>
+                  </CardContent>
+                </Card>
+              </div>
             ))}
           </div>
         </div>

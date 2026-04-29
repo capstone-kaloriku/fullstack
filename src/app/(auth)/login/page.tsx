@@ -1,10 +1,12 @@
 import Image from "next/image";
 import LoginInput from "./components/LoginInput";
+import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
+import GlassSurface from "@/components/GlassSurface";
 
 export default function Login() {
   return (
-    <div className="max-w-2xl lg:max-w-6xl w-full mx-auto p-6 md:p-12 overflow-hidden">
-      <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+    <div className="max-w-2xl lg:max-w-7xl w-full mx-auto p-6 md:p-12 overflow-hidden">
+      <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center mx-auto rounded-3xl p-6 md:p-12 w-full">
         {/* Left Side: Form */}
         <div>
           {/* Title Login Page */}
@@ -28,9 +30,20 @@ export default function Login() {
                 height={384}
                 loading="eager"
               />
-              <span className="text-secondary-foreground absolute bottom-5 left-5 right-5 text-sm text-center p-4 bg-secondary/80 backdrop-blur-sm rounded-3xl">
+              <GlassSurface
+                backgroundOpacity={0.45}
+                displace={2}
+                distortionScale={-180}
+                redOffset={0}
+                greenOffset={10}
+                blueOffset={20}
+                brightness={100}
+                opacity={0.93}
+                mixBlendMode="normal"
+                className="text-primary-foreground font-bold absolute left-1/2 top-1/2 translate-x-[-50%] -translate-y-[120%] text-sm text-center p-4 rounded-3xl"
+              >
                 Start your journey to a vibrant version of yourself today.
-              </span>
+              </GlassSurface>
             </div>
           </div>
 
@@ -41,18 +54,8 @@ export default function Login() {
         </div>
 
         {/* Right Side: Desktop Image — only visible on lg+ */}
-        <div className="hidden lg:flex flex-col items-center justify-center relative">
-          <Image
-            src="/login-screen.jpg"
-            alt="Login Screen Image"
-            className="rounded-3xl object-cover w-full max-w-md xl:max-w-lg"
-            width={500}
-            height={600}
-            loading="eager"
-          />
-          <span className="text-secondary-foreground absolute bottom-8 left-8 right-8 text-base text-center p-5 bg-secondary/80 backdrop-blur-sm rounded-3xl font-medium">
-            Start your journey to a vibrant version of yourself today.
-          </span>
+        <div className="hidden lg:grid grid-cols-1 items-center justify-center relative min-h-full w-full rounded-3xl">
+          <BackgroundRippleEffect rows={11} cols={9} />
         </div>
       </div>
     </div>
