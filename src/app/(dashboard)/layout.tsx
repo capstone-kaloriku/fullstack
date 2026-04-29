@@ -7,7 +7,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section className={`h-screen overflow-y-auto`}>
+    <section className={`w-full mx-auto h-full bg-white flex `}>
       <DashboardSidebar>
         {children}
       </DashboardSidebar>

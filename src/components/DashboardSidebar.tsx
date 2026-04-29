@@ -82,7 +82,9 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      {children}
+      <div className="w-full">
+        {children}
+      </div>
     </div>
   );
 }

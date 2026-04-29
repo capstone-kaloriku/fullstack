@@ -15,14 +15,14 @@ const setting = [
     title: "Pengaturan Akun",
     description: "Profile, email, dan keamanan",
     icon: <User2Icon />,
-    url: "/settings",
+    url: "/profile/settings",
   },
   {
     id: 2,
     title: "Target Kalori",
     description: "2000 kcal / hari",
     icon: <IoFastFood />,
-    url: "/target",
+    url: "/profile/target",
   },
 ];
 

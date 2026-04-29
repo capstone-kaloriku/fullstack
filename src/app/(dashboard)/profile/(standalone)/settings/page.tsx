@@ -1,6 +1,6 @@
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 
 const Settings = () => {
   return (
@@ -16,37 +16,45 @@ const Settings = () => {
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
-              <Input
-                id="email"
-                type="email"
-                placeholder="sahrulbatagor@gmail.com"
-                value="sahrulbatagor@gmail.com"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="email"
+                  type="email"
+                  placeholder="sahrulbatagor@gmail.com"
+                  value="sahrulbatagor@gmail.com"
+                />
+              </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="name">Nama Lengkap</FieldLabel>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Sahrul Batagor"
-                value="Sahrul Batagor"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="name"
+                  type="text"
+                  placeholder="Sahrul Batagor"
+                  value="Sahrul Batagor"
+                />
+              </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Kata Sandi Lama</FieldLabel>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Kata sandi lama"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="password"
+                  type="password"
+                  placeholder="Kata sandi lama"
+                />
+              </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="changepassword">Kata Sandi Baru</FieldLabel>
-              <Input
-                id="changepassword"
-                type="password"
-                placeholder="Kata sandi baru"
-              />
+              <InputGroup>
+                <InputGroupInput
+                  id="changepassword"
+                  type="password"
+                  placeholder="Kata sandi baru"
+                />
+              </InputGroup>
             </Field>
             <Button variant="default" className="w-full mt-4">
               Simpan Perubahan

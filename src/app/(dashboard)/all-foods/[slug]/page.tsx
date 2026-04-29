@@ -6,10 +6,9 @@ import Image from "next/image";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaBowlFood, FaClock, FaSun } from "react-icons/fa6";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-import NavbarSlug from "./components/NavbarSlug";
 import { FieldGroup } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 
@@ -40,9 +39,7 @@ const addFood = async ({ params }: PageProps) => {
 
   return (
     <div className="h-screen overflow-y-auto">
-      <NavbarSlug>
-        {food?.nama || "Makanan Tidak Ditemukan"}
-      </NavbarSlug>
+
       <div className="max-w-xl mx-auto px-6 w-full py-6">
         <div className="flex flex-col items-center justify-center gap-6">
           <div className="w-full">

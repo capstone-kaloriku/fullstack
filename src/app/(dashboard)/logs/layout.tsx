@@ -12,7 +12,7 @@ export default function LogsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section>
+    <section className="w-full h-full bg-white">
       {children}
     </section>
   );
