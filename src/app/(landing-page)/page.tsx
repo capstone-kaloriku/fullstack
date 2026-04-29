@@ -1,3 +1,4 @@
+import { FadeUpPyramid } from "@/components/animations/FadeUpPyramid";
 import CardGlow from "@/components/CardGlow";
 import GradualBlurMemo from "@/components/GradualBlurBackground";
 import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
@@ -42,7 +43,6 @@ const whyKaloriku = [
     description:
       "Baik ingin turun, naik, atau menjaga berat badan, KaloriKu membantu menyesuaikan kebutuhanmu.",
   },
-
 ];
 
 const people = [
@@ -50,22 +50,19 @@ const people = [
     id: 1,
     name: "Fajrin Widianto",
     designation: "Backend Lead",
-    image:
-      "/developer/fajrin.jpeg",
+    image: "/developer/fajrin.jpeg",
   },
   {
     id: 2,
     name: "Muhammad Kevin Alvarel",
     designation: "Frontend Lead",
-    image:
-      "/developer/kevinn.jpg",
+    image: "/developer/kevinn.jpg",
   },
   {
     id: 3,
     name: "Nabila Carrissa",
     designation: "Data Scientist",
-    image:
-      "/developer/nabila.jpg",
+    image: "/developer/nabila.jpg",
   },
   {
     id: 4,
@@ -95,39 +92,44 @@ const Hero = () => {
     <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-8xl">
       <BackgroundRippleEffect />
       <div className="mt-60 md:mt-72 w-full">
-        <h2 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-neutral-800 md:text-3xl lg:text-6xl dark:text-neutral-100">
-          Kendalikan Kalori harianmu, dengan{" "}
-          <span className="text-primary">KaloriKu.</span>
-        </h2>
-        <p className="relative z-10 mx-auto mt-4 max-w-xl text-center text-neutral-800 dark:text-neutral-500">
-          Pendamping setia untuk perjalanan hidup sehatmu. Tracking nutrisi
-          presisi untuk bantu kamu mencapai target berat badan lebih efektif.
-        </p>
-
+        <FadeUpPyramid position="center" delay={0.05} >
+          <h2 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-neutral-800 md:text-3xl lg:text-6xl dark:text-neutral-100">
+            Kendalikan Kalori harianmu, dengan{" "}
+            <span className="text-primary">KaloriKu.</span>
+          </h2>
+        </FadeUpPyramid>
+        <FadeUpPyramid position="center" delay={0.05} >
+          <p className="relative z-10 mx-auto mt-4 max-w-xl text-center text-neutral-800 dark:text-neutral-500">
+            Pendamping setia untuk perjalanan hidup sehatmu. Tracking nutrisi
+            presisi untuk bantu kamu mencapai target berat badan lebih efektif.
+          </p>
+        </FadeUpPyramid>
       </div>
       <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full">
-        <ContainerScroll
-          titleComponent={
-            <>
-              <h1 className="text-4xl font-semibold text-black dark:text-white">
-                Terus pantau kesehatan kamu dengan
-                <br />
-                <span className="text-7xl md:text-[6rem] font-bold mt-1 leading-none text-primary">
-                  Kaloriku
-                </span>
-              </h1>
-            </>
-          }
-        >
-          <Image
-            src={`/landingpage.jpg`}
-            alt="hero"
-            height={720}
-            width={1400}
-            className="mx-auto rounded-2xl object-cover h-full object-left-top"
-            draggable={false}
-          />
-        </ContainerScroll>
+        <FadeUpPyramid position="center" delay={0.05} >
+          <ContainerScroll
+            titleComponent={
+              <>
+                <h1 className="text-4xl font-semibold text-black dark:text-white">
+                  Terus pantau kesehatan kamu dengan
+                  <br />
+                  <span className="text-7xl md:text-[6rem] font-bold mt-1 leading-none text-primary">
+                    Kaloriku
+                  </span>
+                </h1>
+              </>
+            }
+          >
+            <Image
+              src={`/landingpage.jpg`}
+              alt="hero"
+              height={720}
+              width={1400}
+              className="mx-auto rounded-2xl object-cover h-full object-left-top"
+              draggable={false}
+            />
+          </ContainerScroll>
+        </FadeUpPyramid>
       </div>
       <div className="grid grid-cols items-center gap-6 justify-center w-full my-36 mx-auto">
         <h1 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h1>
@@ -141,7 +143,7 @@ const Hero = () => {
               glowRadius={40}
               glowIntensity={1}
               coneSpread={25}
-              animated={true}
+              animated={false}
               colors={["#1c1917", "#6E4816", "#0f766e"]}
               key={item.id}
             >
@@ -172,7 +174,7 @@ const Hero = () => {
         opacity={1}
         className="hidden md:block"
       />
-    </div>
+    </div >
   );
 };
 

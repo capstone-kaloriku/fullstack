@@ -1,4 +1,3 @@
-import NavWithSearch from "./components/NavWithSearchbar";
 import dummyData from "@/data/dummy-food.json";
 import DisplayFood from "./components/DisplayFood";
 import CustomFood from "./components/CustomFood";
@@ -9,9 +8,6 @@ const data = dummyData;
 const AllFood = () => {
   return (
     <div className="overflow-y-auto h-screen">
-      <NavWithSearch className="rounded-none mb-6">
-        Katalog Makanan Indonesia
-      </NavWithSearch>
       <div className="max-w-2xl mx-auto px-6 w-full">
         <div className="grid grid-cols-1 gap-6">
           <div className="flex flex-col items-start justify-center w-full gap-6">

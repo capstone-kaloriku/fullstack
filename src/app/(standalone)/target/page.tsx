@@ -1,4 +1,3 @@
-import NavbarStandalone from "../components/NavbarStandalone";
 import TargetSlider from "./components/TargetSlider";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -35,7 +34,6 @@ const objective = [
 const Target = () => {
   return (
     <>
-      <NavbarStandalone>Target</NavbarStandalone>
       <div className="max-w-lg lg:max-w-2xl mx-auto w-full p-6">
         <div className="grid grid-cols-1 gap-6">
           <div className="flex flex-col justify-center items-start gap-3">

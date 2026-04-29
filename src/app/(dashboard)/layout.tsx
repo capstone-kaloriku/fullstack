@@ -1,14 +1,7 @@
-import type { Metadata } from "next";
-import "../globals.css";
-import { Header } from "@/components/Header";
+import "@/app/globals.css";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 
-export const metadata: Metadata = {
-  title: "Profile - KaloriKu",
-  description: "Atur profile kamu yaa .",
-};
-
-export default function ProfileLayout({
+export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;

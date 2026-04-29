@@ -1,10 +1,4 @@
-import type { Metadata } from "next";
-import "../globals.css";
-
-export const metadata: Metadata = {
-  title: "Profile - KaloriKu",
-  description: "Atur profile kamu yaa .",
-};
+import "@/app/globals.css";
 
 export default function ProfileLayout({
   children,

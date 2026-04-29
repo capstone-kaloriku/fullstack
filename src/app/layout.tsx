@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Be_Vietnam_Pro, Inter } from "next/font/google";
-import "./globals.css";
+import "@/app/globals.css";
 import { cn } from "@/lib/utils";
-import { Header } from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 

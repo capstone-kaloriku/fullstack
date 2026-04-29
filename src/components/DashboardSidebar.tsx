@@ -7,7 +7,7 @@ import { FaUser } from "react-icons/fa6";
 import Image from "next/image";
 import { RiGeminiFill } from "react-icons/ri";
 import { MdMonitorHeart } from "react-icons/md";
-import { FaHome } from "react-icons/fa";
+import { FaAppleAlt, FaHome } from "react-icons/fa";
 import { LogOutIcon } from "lucide-react";
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
@@ -25,6 +25,13 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
       href: "/logs",
       icon: (
         <MdMonitorHeart className="h-5 w-5 shrink-0 text-secondary-foreground dark:text-neutral-200" />
+      ),
+    },
+    {
+      label: "All Foods",
+      href: "/all-foods",
+      icon: (
+        <FaAppleAlt className="h-5 w-5 shrink-0 text-secondary-foreground dark:text-neutral-200" />
       ),
     },
     {

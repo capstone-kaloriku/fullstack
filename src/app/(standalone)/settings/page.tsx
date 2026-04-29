@@ -1,12 +1,10 @@
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import NavbarStandalone from "../components/NavbarStandalone";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const Settings = () => {
   return (
     <>
-      <NavbarStandalone>Pengaturan Akun</NavbarStandalone>
       <div className="grid grid-cols-1 w-full mx-auto p-6 max-w-2xl lg:max-w-3xl gap-6">
         <div className="flex flex-col justify-center gap-1.5">
           <h1 className="text-2xl font-bold text-primary">Pengaturan Akun</h1>
