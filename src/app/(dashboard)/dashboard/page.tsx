@@ -46,7 +46,7 @@ const foods: FoodSummariesProps[] = summary.slice(0, 4);
 const Dashboard = () => {
   return (
     <>
-      <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden bg-white w-full max-w-8xl ">
+      <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden w-full max-w-2xl lg:max-w-5xl">
         {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
         <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-center mt-6 gap-8 lg:gap-20">
           {/* Circle Progress */}

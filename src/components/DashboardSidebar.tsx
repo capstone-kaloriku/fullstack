@@ -55,12 +55,12 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-full flex-1 flex-col overflow-x-hidden overflow-y-auto border border-neutral-500 bg-gray-100/20 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-        "h-screen", // for your use case, use `h-screen` instead of `h-[60vh]`
+        "mx-auto flex w-full max-w-full flex-1 flex-col overflow-x-hidden border border-neutral-500 bg-gray-100/20 md:flex-row dark:border-neutral-700 dark:bg-neutral-800 sticky top-0 z-50",
+        "min-h-screen overflow-y-hidden"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
+        <SidebarBody className="justify-between gap-10 md:sticky md:top-0 md:h-screen">
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-4">
@@ -82,7 +82,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <div className="w-full">
+      <div className="w-full flex-1 overflow-y-auto h-screen">
         {children}
       </div>
     </div>

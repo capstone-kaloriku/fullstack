@@ -1,39 +1,14 @@
 import Link from "next/link";
-
-import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
-import { LiaCookieBiteSolid } from "react-icons/lia";
-
-import Category from "./components/Category";
 import Frequently from "./components/Frequently";
 import Searchbar from "./components/Searchbar";
 import Tips from "./components/Tips";
 
 import dummyData from "@/data/dummy-food.json"
+import CustomFood from "./components/CustomFood";
 
-const frequentlyData = dummyData.slice(0, 2);
+const frequentlyData = dummyData.slice(0, 4);
 
-const icon = [
-  {
-    id: 1,
-    icon: <BsSunriseFill size={24} className="text-primary" />,
-    title: "MAKAN PAGI",
-  },
-  {
-    id: 2,
-    icon: <BsFillSunFill size={24} className="text-primary" />,
-    title: "MAKAN SIANG",
-  },
-  {
-    id: 3,
-    icon: <BsFillMoonFill size={24} className="text-primary" />,
-    title: "MAKAN MALAM",
-  },
-  {
-    id: 4,
-    icon: <LiaCookieBiteSolid size={24} className="text-primary" />,
-    title: "MAKANAN RINGAN",
-  },
-];
+
 
 const Logs = () => {
   return (
@@ -41,7 +16,12 @@ const Logs = () => {
       <div className="max-w-2xl lg:max-w-5xl px-6 mx-auto w-full overflow-x-hidden">
         <div className="flex flex-col items-center justify-center">
           <Searchbar />
-          <Category data={icon} />
+          <div className="flex flex-col items-start justify-center w-full gap-6">
+            <h1 className="text-lg font-bold text-primary">
+              Input Makanan Custommu
+            </h1>
+            <CustomFood />
+          </div>
           <div className="w-full flex flex-col gap-6 my-6">
             <div className="text-lg font-bold justify-between flex items-center">
               Sering Dicatat
@@ -49,7 +29,7 @@ const Logs = () => {
                 Lihat Semua
               </Link>
             </div>
-            <div className="lg:grid lg:grid-cols-2 lg:gap-4">
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-4 w-full">
               <Frequently data={frequentlyData} />
             </div>
           </div>
