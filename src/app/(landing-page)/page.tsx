@@ -76,7 +76,7 @@ const people = [
     name: "Muhammad Sausan Syafiq",
     designation: "AI Engineer",
     image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3540&q=80",
+      "/developer/syafiq.jpeg",
   },
   {
     id: 6,
@@ -121,11 +121,11 @@ const Hero = () => {
             }
           >
             <Image
-              src={`/landingpage.jpg`}
+              src={`/dashboard.png`}
               alt="hero"
               height={720}
               width={1400}
-              className="mx-auto rounded-2xl object-cover h-full object-left-top"
+              className="mx-auto rounded-2xl object-cover h-full object-center"
               draggable={false}
             />
           </ContainerScroll>
@@ -167,8 +167,8 @@ const Hero = () => {
         target="page"
         position="bottom"
         height="7rem"
-        strength={2}
-        divCount={1}
+        strength={5}
+        divCount={3}
         curve="linear"
         exponential
         opacity={1}

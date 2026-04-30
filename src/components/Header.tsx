@@ -88,13 +88,14 @@ export function Header() {
               </Link>
             ))}
             <div className="flex w-full flex-col gap-4">
-              <Button
+              <NavbarButton
+                href="/login"
+                variant="primary"
                 onClick={() => setIsMobileMenuOpen(false)}
-                variant="default"
                 className="w-full px-6 py-2"
               >
                 Masuk
-              </Button>
+              </NavbarButton>
             </div>
           </MobileNavMenu>
         </MobileNav>

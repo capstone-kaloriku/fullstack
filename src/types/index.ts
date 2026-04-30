@@ -7,6 +7,7 @@ export interface FoodSummariesProps {
   protein: number;
   lemak: number;
   kategori: string;
+  slug: string;
 }
 
 export interface persentageProps {
@@ -19,7 +20,10 @@ export interface CategoryProps {
     id: number;
     icon: React.ReactNode;
     title: string;
+    filterKey: string;
   }[];
+  activeFilter: string | null;
+  onFilter: (filterKey: string | null) => void;
 }
 
 export interface FrequentlyProps {

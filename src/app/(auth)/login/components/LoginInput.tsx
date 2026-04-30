@@ -1,3 +1,4 @@
+'use client'
 import {
   Field,
   FieldGroup,
@@ -17,9 +18,26 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import { FaGoogle } from "react-icons/fa";
-import { EyeClosed, Lock, Mail } from "lucide-react";
+import { EyeClosed, EyeIcon, Lock, Mail } from "lucide-react";
+import { useState } from "react";
+import { z } from "zod";
+
+const formSchema = z.object({
+  email: z.email("Format email tidak valid"),
+  password: z.string().min(8, "Kata sandi harus minimal 8 karakter")
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 
 function LoginInput() {
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <>
       <FieldSet>
@@ -39,19 +57,25 @@ function LoginInput() {
             <InputGroup className="rounded-full px-4 py-6">
               <InputGroupInput
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Kata Sandi"
               />
               <InputGroupAddon align="inline-start">
                 <Lock size={20} />
               </InputGroupAddon>
               <InputGroupAddon align="inline-end">
-                <EyeClosed size={20} />
+                {
+                  showPassword ? (
+                    <EyeIcon size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
+                  ) : (
+                    <EyeClosed size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
+                  )
+                }
               </InputGroupAddon>
             </InputGroup>
           </Field>
           <Link
-            href="/forgot-password"
+            href="/reset-password"
             className="text-sm text-secondary-foreground flex justify-end"
           >
             Lupa Password?
@@ -71,7 +95,7 @@ function LoginInput() {
             <FaGoogle size={20} />
             Google
           </Button>
-          <span className="text-sm text-muted-foreground text-center my-4">
+          <span className="text-sm md:text-base text-muted-foreground text-center my-4">
             Belum punya akun?{" "}
             <Link
               href="/register"

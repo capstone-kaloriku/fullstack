@@ -16,47 +16,54 @@ const Settings = () => {
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
-              <InputGroup>
+              <InputGroup className="py-6">
                 <InputGroupInput
                   id="email"
                   type="email"
                   placeholder="sahrulbatagor@gmail.com"
                   value="sahrulbatagor@gmail.com"
+                  className="p-6"
                 />
               </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="name">Nama Lengkap</FieldLabel>
-              <InputGroup>
+              <InputGroup className="py-6">
                 <InputGroupInput
                   id="name"
                   type="text"
                   placeholder="Sahrul Batagor"
                   value="Sahrul Batagor"
+                  className="p-6"
+
                 />
               </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Kata Sandi Lama</FieldLabel>
-              <InputGroup>
+              <InputGroup className="py-6">
                 <InputGroupInput
                   id="password"
                   type="password"
                   placeholder="Kata sandi lama"
+                  className="p-6"
+
                 />
               </InputGroup>
             </Field>
             <Field>
               <FieldLabel htmlFor="changepassword">Kata Sandi Baru</FieldLabel>
-              <InputGroup>
+              <InputGroup className="py-6">
                 <InputGroupInput
                   id="changepassword"
                   type="password"
                   placeholder="Kata sandi baru"
+                  className="p-6"
+
                 />
               </InputGroup>
             </Field>
-            <Button variant="default" className="w-full mt-4">
+            <Button variant="default" className="text-sm md:text-base w-full mt-4 py-6">
               Simpan Perubahan
             </Button>
           </FieldGroup>

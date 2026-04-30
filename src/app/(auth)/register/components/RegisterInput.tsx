@@ -11,13 +11,15 @@ import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 
-import { EyeClosed, Lock, Mail, User } from "lucide-react";
+import { EyeClosed, EyeIcon, Lock, Mail, User } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaBirthdayCake } from "react-icons/fa";
+
+import { useState } from "react";
 
 const formSchema = z.object({
   gender: z.enum(["laki-laki", "perempuan"], "Jenis kelamin harus dipilih"),
@@ -35,6 +37,13 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 function RegisterInput() {
+
+  const [showPassword, setShowPassword] = useState(false)
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -193,7 +202,7 @@ function RegisterInput() {
                 <InputGroup className="rounded-full px-4 py-6">
                   <InputGroupInput
                     id="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Kata Sandi"
                     {...field}
 
@@ -202,7 +211,13 @@ function RegisterInput() {
                     <Lock size={20} />
                   </InputGroupAddon>
                   <InputGroupAddon align="inline-end">
-                    <EyeClosed size={20} />
+                    {
+                      showPassword ? (
+                        <EyeIcon size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
+                      ) : (
+                        <EyeClosed size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
+                      )
+                    }
                   </InputGroupAddon>
                 </InputGroup>
                 <FieldDescription>Masukkan kata sandi sebanyak 8 karakter</FieldDescription>
@@ -221,7 +236,7 @@ function RegisterInput() {
                 <InputGroup className="rounded-full px-4 py-6">
                   <InputGroupInput
                     id="confirmPassword"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Konfirmasi Password"
                     {...field}
                   />
@@ -229,7 +244,13 @@ function RegisterInput() {
                     <Lock size={20} />
                   </InputGroupAddon>
                   <InputGroupAddon align="inline-end">
-                    <EyeClosed size={20} />
+                    {
+                      showPassword ? (
+                        <EyeIcon size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
+                      ) : (
+                        <EyeClosed size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
+                      )
+                    }
                   </InputGroupAddon>
                 </InputGroup>
                 <FieldDescription>Konfirmasi Password anda</FieldDescription>
