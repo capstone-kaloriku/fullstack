@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import { Header } from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "KaloriKU",
@@ -17,6 +18,7 @@ export default function LandingPageLayout({
     <section className={`min-h-full flex flex-col`}>
       <Header />
       {children}
+      <Footer />
     </section>
   );
 }

@@ -1,49 +1,11 @@
 import { FadeUpPyramid } from "@/components/animations/FadeUpPyramid";
-import CardGlow from "@/components/CardGlow";
 import GradualBlurMemo from "@/components/GradualBlurBackground";
 import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
+import MagicBento from "@/components/MagicBento";
+import ScrollReveal from "@/components/ScrollReveal";
 import { Tooltip } from "@/components/Tooltip";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import Image from "next/image";
-
-const whyKaloriku = [
-  {
-    id: 1,
-    title: "Tracking Nutrisi Presisi",
-    description:
-      "KaloriKu memberikan data nutrisi yang akurat untuk membantu kamu memahami asupan harianmu dengan lebih baik.",
-  },
-  {
-    id: 2,
-    title: "Rencana Makan yang Disesuaikan",
-    description:
-      "Dapatkan rekomendasi rencana makan yang disesuaikan dengan kebutuhan dan preferensi kamu untuk mencapai tujuan kesehatanmu.",
-  },
-  {
-    id: 3,
-    title: "Gratis dan Mudah Digunakan",
-    description:
-      "Gratis untuk digunakan, KaloriKu menawarkan antarmuka yang sederhana dan intuitif sehingga kamu bisa langsung mulai mengelola kalori harianmu tanpa ribet.",
-  },
-  {
-    id: 4,
-    title: "Pengingat Makan dan Minum",
-    description:
-      "Dapatkan notifikasi waktu makan dan minum supaya rutinitas sehatmu tetap konsisten sepanjang hari.",
-  },
-  {
-    id: 5,
-    title: "Riwayat dan Ringkasan Harian",
-    description:
-      "Lihat ringkasan asupan harian dan riwayat mingguan untuk memantau progres dengan mudah.",
-  },
-  {
-    id: 6,
-    title: "Cocok untuk Berbagai Target",
-    description:
-      "Baik ingin turun, naik, atau menjaga berat badan, KaloriKu membantu menyesuaikan kebutuhanmu.",
-  },
-];
 
 const people = [
   {
@@ -75,8 +37,7 @@ const people = [
     id: 5,
     name: "Muhammad Sausan Syafiq",
     designation: "AI Engineer",
-    image:
-      "/developer/syafiq.jpeg",
+    image: "/developer/syafiq.jpeg",
   },
   {
     id: 6,
@@ -92,13 +53,13 @@ const Hero = () => {
     <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-8xl">
       <BackgroundRippleEffect />
       <div className="mt-60 md:mt-72 w-full">
-        <FadeUpPyramid position="center" delay={0.05} >
+        <FadeUpPyramid position="center" delay={0.05}>
           <h2 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-neutral-800 md:text-3xl lg:text-6xl dark:text-neutral-100">
             Kendalikan Kalori harianmu, dengan{" "}
             <span className="text-primary">KaloriKu.</span>
           </h2>
         </FadeUpPyramid>
-        <FadeUpPyramid position="center" delay={0.05} >
+        <FadeUpPyramid position="center" delay={0.05}>
           <p className="relative z-10 mx-auto mt-4 max-w-xl text-center text-neutral-800 dark:text-neutral-500">
             Pendamping setia untuk perjalanan hidup sehatmu. Tracking nutrisi
             presisi untuk bantu kamu mencapai target berat badan lebih efektif.
@@ -106,7 +67,7 @@ const Hero = () => {
         </FadeUpPyramid>
       </div>
       <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full">
-        <FadeUpPyramid position="center" delay={0.05} >
+        <FadeUpPyramid position="center" delay={0.05}>
           <ContainerScroll
             titleComponent={
               <>
@@ -131,29 +92,33 @@ const Hero = () => {
           </ContainerScroll>
         </FadeUpPyramid>
       </div>
+      <div className="flex flex-col overflow-hidden mx-auto my-60 w-full max-w-6xl items-center">
+        <ScrollReveal
+          baseOpacity={0.2}
+          enableBlur
+          baseRotation={7}
+          blurStrength={15}
+          textClassName="text-primary text-center"
+        >
+          Kaloriku mengatur semua kebutuhan nutrisi harianmu dengan mudah,
+          membantu kamu mencapai tujuan kesehatan dengan lebih efektif.
+        </ScrollReveal>
+      </div>
       <div className="grid grid-cols items-center gap-6 justify-center w-full my-36 mx-auto">
         <h1 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h1>
-        <div className="grid grid-cols md:grid-cols-3 gap-6 justify-center w-full max-w-6xl">
-          {whyKaloriku.map((item) => (
-            <CardGlow
-              edgeSensitivity={30}
-              glowColor="80 80 80"
-              backgroundColor="#ff6b00"
-              borderRadius={28}
-              glowRadius={40}
-              glowIntensity={1}
-              coneSpread={25}
-              animated={false}
-              colors={["#1c1917", "#6E4816", "#0f766e"]}
-              key={item.id}
-            >
-              <div className="flex flex-col gap-3 p-[2em] text-primary-foreground">
-                <h2 className="font-extrabold text-lg">{item.title}</h2>
-                <p className="text-sm text-secondary">{item.description}</p>
-              </div>
-            </CardGlow>
-          ))}
-        </div>
+        <MagicBento
+          textAutoHide={true}
+          enableStars
+          enableSpotlight
+          enableBorderGlow={true}
+          enableTilt={false}
+          enableMagnetism={false}
+          clickEffect
+          spotlightRadius={400}
+          particleCount={12}
+          glowColor="255, 107, 0"
+          disableAnimations={false}
+        />
       </div>
 
       <div className="flex flex-col items-center justify-center mb-10 w-full gap-6">
@@ -162,19 +127,17 @@ const Hero = () => {
           <Tooltip items={people} />
         </div>
       </div>
-
       <GradualBlurMemo
         target="page"
         position="bottom"
         height="7rem"
         strength={5}
-        divCount={3}
+        divCount={2}
         curve="linear"
-        exponential
         opacity={1}
         className="hidden md:block"
       />
-    </div >
+    </div>
   );
 };
 
