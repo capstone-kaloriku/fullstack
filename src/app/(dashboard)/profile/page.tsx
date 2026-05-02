@@ -1,13 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { User2Icon } from "lucide-react";
 import { IoFastFood } from "react-icons/io5";
-import profileData from "@/data/dummyUserData.json";
 import {
   Progress,
   ProgressLabel,
   ProgressValue,
 } from "@/components/ui/progress";
 import Options from "./components/Option";
+import { getUserProfile } from "../actions";
 
 const setting = [
   {
@@ -26,17 +26,30 @@ const setting = [
   },
 ];
 
-const data = profileData[0];
+const Profile = async () => {
+  const data = await getUserProfile();
 
-const Profile = () => {
+
+  const namaUser = data?.namaUser || "User";
+  const usia = data?.usia || 0;
+  const jenisKelamin = data?.jenisKelamin || "Laki-Laki";
+  const beratBadan = data?.beratBadan || 0;
+  const aktivitasFisik = data?.aktivitasFisik || "Ringan";
+
+  const targetBeratBadan = beratBadan > 0 ? beratBadan - 10 : 0;
+
+  const progressPercentage = beratBadan > 0 && targetBeratBadan > 0
+    ? Math.min(Math.round((targetBeratBadan / beratBadan) * 100), 100)
+    : 89;
+
   return (
     <div className="w-full mx-auto p-6 max-w-2xl lg:max-w-5xl my-6 overflow-x-hidden">
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col text-2xl font-extrabold">
-            {data.namaUser}
+            {namaUser}
             <span className="text-sm text-muted-foreground">
-              {data.usia} Tahun, {data.jenisKelamin}
+              {usia} Tahun, {jenisKelamin}
             </span>
           </div>
           <div className="flex">
@@ -44,7 +57,7 @@ const Profile = () => {
               <CardContent className="flex flex-col items-center">
                 Aktifitas
                 <span className="font-extrabold text-lg">
-                  {data.aktivitasFisik}
+                  {aktivitasFisik}
                 </span>
               </CardContent>
             </Card>
@@ -53,15 +66,15 @@ const Profile = () => {
         <div className="w-full my-6">
           <Card className="bg-primary-foreground">
             <CardContent className="flex flex-col gap-3">
-              <Progress value={89}>
+              <Progress value={progressPercentage}>
                 <ProgressLabel className="text-base font-medium text-primary">
                   Informasi Pribadi
                 </ProgressLabel>
                 <ProgressValue className="text-base font-medium text-primary" />
               </Progress>
               <div className="flex items-center justify-between font-bold text-muted-foreground text-sm">
-                {data.targetBeratBadan} KG (TARGET){" "}
-                <span>{data.beratBadan} KG (SEKARANG)</span>
+                {targetBeratBadan} KG (TARGET){" "}
+                <span>{beratBadan} KG (SEKARANG)</span>
               </div>
             </CardContent>
           </Card>

@@ -1,14 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import dummyData from "@/data/dummy-food.json";
+import { useState, useEffect } from "react";
 import DisplayFood from "./components/DisplayFood";
 import Category from "./components/Category";
 import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
 import { LiaCookieBiteSolid } from "react-icons/lia";
-
-const dataRecently = dummyData.slice(0, 4);
-const data = dummyData;
+import { getAllFoods } from "../actions";
 
 const icon = [
   {
@@ -39,14 +36,35 @@ const icon = [
 
 const AllFood = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [data, setData] = useState<Awaited<ReturnType<typeof getAllFoods>>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchFoods() {
+      setIsLoading(true);
+      const foods = await getAllFoods();
+      setData(foods);
+      setIsLoading(false);
+    }
+    fetchFoods();
+  }, []);
 
   const filteredData = activeFilter
     ? data.filter((item) => item.kategori === activeFilter)
     : data;
 
+  const dataRecently = data.slice(0, 4);
   const filteredRecently = activeFilter
     ? dataRecently.filter((item) => item.kategori === activeFilter)
     : dataRecently;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="">

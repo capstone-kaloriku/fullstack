@@ -1,7 +1,5 @@
 import { PageProps } from "@/types";
 
-import dummyFood from "@/data/dummy-food.json";
-
 import Image from "next/image";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,12 +9,13 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { FieldGroup } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
+import { getFoodBySlug } from "../../actions";
 
 const addFood = async ({ params }: PageProps) => {
 
   const { slug } = await params;
 
-  const food = dummyFood.find((item) => item.slug === slug);
+  const food = await getFoodBySlug(slug);
 
   const foodTypes = [
     {

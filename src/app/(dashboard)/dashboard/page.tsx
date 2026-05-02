@@ -4,24 +4,13 @@ import CircleProgressBar from "./components/CircleProgressBar";
 import ProgressBarDetail from "./components/ProgressBarDetail";
 import ProgressBarPersentage from "./components/ProgressBarPersentage";
 
-import dummy from "@/data/dummyUserData.json";
-import summary from "@/data/dummy-food.json";
-
 import Link from "next/link";
 import FoodSummaries from "./components/FoodSummaries";
 
-import { FoodSummariesProps } from "@/types";
 import { persentageProps } from "@/types";
 
 import Reminder from "./components/Reminder";
-
-const user = dummy[0];
-
-const { kebutuhanHarian, konsumsiSaatIni } = user;
-
-const maxKcal = kebutuhanHarian.kalori;
-const currentKcal = konsumsiSaatIni.kalori;
-const remainingKcal = maxKcal - currentKcal;
+import { getUserProfile, getTodayConsumption, getAllFoods } from "../actions";
 
 const calculatePercentage = ({ value, maxValue }: persentageProps) => {
   if (maxValue === 0) return 0;
@@ -31,19 +20,43 @@ const calculatePercentage = ({ value, maxValue }: persentageProps) => {
   return Math.min(Percentage, 100);
 };
 
-const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
-  name: key,
-  value: value,
-  maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
-  percentage: calculatePercentage({
-    value,
+const Dashboard = async () => {
+  // Fetch data from Supabase
+  const [userProfile, todayConsumption, allFoods] = await Promise.all([
+    getUserProfile(),
+    getTodayConsumption(),
+    getAllFoods(),
+  ]);
+
+  // Fallback values if user profile not found
+  const kebutuhanHarian = userProfile?.kebutuhanHarian || {
+    kalori: 2200,
+    protein: 130,
+    lemak: 70,
+    karbohidrat: 370,
+  };
+
+  const konsumsiSaatIni = todayConsumption.totals;
+
+  const maxKcal = kebutuhanHarian.kalori;
+  const currentKcal = konsumsiSaatIni.kalori;
+  const remainingKcal = maxKcal - currentKcal;
+
+  const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
+    name: key,
+    value: value,
     maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
-  }),
-}));
+    percentage: calculatePercentage({
+      value,
+      maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
+    }),
+  }));
 
-const foods: FoodSummariesProps[] = summary.slice(0, 4);
+  // Use today's consumed foods, or fallback to first 4 foods from catalog
+  const foods = todayConsumption.logs.length > 0
+    ? todayConsumption.logs.slice(0, 4)
+    : allFoods.slice(0, 4);
 
-const Dashboard = () => {
   return (
     <>
       <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden w-full max-w-2xl lg:max-w-5xl">
