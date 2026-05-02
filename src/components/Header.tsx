@@ -19,19 +19,19 @@ export function Header() {
   const navItems = [
     {
       name: "Tentang",
-      link: "/dashboard",
+      link: "about",
     },
     {
       name: "Kenapa Kita",
-      link: "/logs",
+      link: "why-us",
     },
     {
       name: "Cara Penggunaan",
-      link: "/ai",
+      link: "how-to",
     },
     {
       name: "Profile",
-      link: "/profile",
+      link: "Profile",
     },
   ];
 
@@ -42,14 +42,18 @@ export function Header() {
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
-          <FadeUpPyramid position="left" delay={0.02} >
+          <FadeUpPyramid position="left" delay={0.02}>
             <NavbarLogo />
           </FadeUpPyramid>
 
-          <FadeUpPyramid className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium hover:text-zinc-800 lg:flex lg:space-x-2" position="center" delay={0.02} >
+          <FadeUpPyramid
+            className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium hover:text-zinc-800 lg:flex lg:space-x-2"
+            position="center"
+            delay={0.02}
+          >
             <NavItems items={navItems} />
           </FadeUpPyramid>
-          <FadeUpPyramid position="right" delay={0.02} >
+          <FadeUpPyramid position="right" delay={0.02}>
             <div className="flex items-center gap-4">
               <NavbarButton
                 href="/login"

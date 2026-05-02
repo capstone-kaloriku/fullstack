@@ -58,7 +58,7 @@ const socialLinks = [
 
 function Footer() {
   return (
-    <footer className="relative w-full overflow-hidden z-[1000]">
+    <footer className="relative w-full overflow-hidden z-90">
       {/* Gradient separator */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#ff6b00]/40 to-transparent" />
 
@@ -140,7 +140,7 @@ function Footer() {
           <div className="mt-14 h-px w-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
           {/* Text Pressure section */}
-          <div className="my-2 h-[120px] md:h-[160px] lg:h-[200px] w-full select-none">
+          <div className="my-2 h-[140px] md:h-[200px] lg:h-[240px] xl:h-[260px] w-full select-none">
             <TextPressure
               text="Kaloriku"
               fontFamily="Compressa VF"

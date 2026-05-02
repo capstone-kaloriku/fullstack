@@ -5,6 +5,7 @@ import MagicBento from "@/components/MagicBento";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Tooltip } from "@/components/Tooltip";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+import HowToUse from "@/components/HowToUse";
 import Image from "next/image";
 
 const people = [
@@ -43,8 +44,7 @@ const people = [
     id: 6,
     name: "Ananda Safrida",
     designation: "AI Engineer",
-    image:
-      "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3534&q=80",
+    image: "/developer/nanda.jpeg",
   },
 ];
 
@@ -66,7 +66,7 @@ const Hero = () => {
           </p>
         </FadeUpPyramid>
       </div>
-      <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full">
+      <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full ">
         <FadeUpPyramid position="center" delay={0.05}>
           <ContainerScroll
             titleComponent={
@@ -92,9 +92,13 @@ const Hero = () => {
           </ContainerScroll>
         </FadeUpPyramid>
       </div>
-      <div className="flex flex-col overflow-hidden mx-auto my-60 w-full max-w-6xl items-center">
+      <div
+        id="about"
+        className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center
+      "
+      >
         <ScrollReveal
-          baseOpacity={0.2}
+          baseOpacity={2}
           enableBlur
           baseRotation={7}
           blurStrength={15}
@@ -104,7 +108,10 @@ const Hero = () => {
           membantu kamu mencapai tujuan kesehatan dengan lebih efektif.
         </ScrollReveal>
       </div>
-      <div className="grid grid-cols items-center gap-6 justify-center w-full my-36 mx-auto">
+      <div
+        id="why-us"
+        className="flex flex-col items-center justify-center gap-6 w-full my-36 mx-auto"
+      >
         <h1 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h1>
         <MagicBento
           textAutoHide={true}
@@ -120,6 +127,7 @@ const Hero = () => {
           disableAnimations={false}
         />
       </div>
+      <HowToUse />
 
       <div className="flex flex-col items-center justify-center mb-10 w-full gap-6">
         <h1 className="text-xl text-primary font-bold">Meet our Developer</h1>
