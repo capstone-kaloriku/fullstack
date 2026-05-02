@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { logFoodConsumption } from "../../actions";
 
 const formSchema = z.object({
   foodNames: z.string().min(1, "Nama makanan harus diisi"),
@@ -17,6 +20,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 function CustomFood() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -26,8 +32,30 @@ function CustomFood() {
     }
   })
 
-  function onSubmit(data: FormValues) {
-    console.log(data)
+  async function onSubmit(data: FormValues) {
+    setIsLoading(true);
+    setSuccessMessage(null);
+    setErrorMessage(null);
+
+    try {
+      const result = await logFoodConsumption({
+        rawInputText: data.foodNames,
+        portion: data.portions,
+        mealType: 'custom',
+      });
+
+      if (!result.success) {
+        setErrorMessage(result.error || 'Gagal menyimpan data.');
+        return;
+      }
+
+      setSuccessMessage(`"${data.foodNames}" berhasil dicatat!`);
+      form.reset();
+    } catch {
+      setErrorMessage('Terjadi kesalahan jaringan.');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function onInvalid(errors: unknown) {
@@ -44,6 +72,20 @@ function CustomFood() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Success Message */}
+          {successMessage && (
+            <div className="rounded-xl bg-green-500/10 border border-green-500/30 text-green-700 text-sm px-4 py-3 mb-4">
+              ✅ {successMessage}
+            </div>
+          )}
+
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3 mb-4">
+              {errorMessage}
+            </div>
+          )}
+
           <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} >
             <FieldGroup>
               {/* Nama Makanan */}
@@ -87,7 +129,16 @@ function CustomFood() {
                 </Field>
               )} />
               <Field>
-                <Button type="submit">Submit</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin mr-2" />
+                      Menyimpan...
+                    </>
+                  ) : (
+                    "Submit"
+                  )}
+                </Button>
               </Field>
             </FieldGroup>
           </form>

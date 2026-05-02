@@ -97,31 +97,43 @@ export type Database = {
           base_portion_gram: number | null
           calories: number | null
           carbs_gram: number | null
+          category: string | null
           fat_gram: number | null
           food_id: string
+          image_url: string | null
           is_verified: boolean | null
           name: string
+          portion: number | null
           protein_gram: number | null
+          slug: string | null
         }
         Insert: {
           base_portion_gram?: number | null
           calories?: number | null
           carbs_gram?: number | null
+          category?: string | null
           fat_gram?: number | null
           food_id?: string
+          image_url?: string | null
           is_verified?: boolean | null
           name: string
+          portion?: number | null
           protein_gram?: number | null
+          slug?: string | null
         }
         Update: {
           base_portion_gram?: number | null
           calories?: number | null
           carbs_gram?: number | null
+          category?: string | null
           fat_gram?: number | null
           food_id?: string
+          image_url?: string | null
           is_verified?: boolean | null
           name?: string
+          portion?: number | null
           protein_gram?: number | null
+          slug?: string | null
         }
         Relationships: []
       }
@@ -218,7 +230,6 @@ export type Database = {
           gender: string | null
           is_active: boolean | null
           name: string | null
-          password_hash: string
           user_id: string
         }
         Insert: {
@@ -227,7 +238,6 @@ export type Database = {
           gender?: string | null
           is_active?: boolean | null
           name?: string | null
-          password_hash: string
           user_id?: string
         }
         Update: {
@@ -236,7 +246,6 @@ export type Database = {
           gender?: string | null
           is_active?: boolean | null
           name?: string | null
-          password_hash?: string
           user_id?: string
         }
         Relationships: []

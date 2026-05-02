@@ -10,40 +10,40 @@ import {
 import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { EyeClosed, EyeIcon, Lock, Mail, User } from "lucide-react";
+import { EyeClosed, Eye, Lock, Mail, User, Loader2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaBirthdayCake } from "react-icons/fa";
-
 import { useState } from "react";
+import { registerUser } from "../actions";
 
 const formSchema = z.object({
-  gender: z.enum(["laki-laki", "perempuan"], "Jenis kelamin harus dipilih"),
-  weight: z.coerce.number<number>().min(1, "Berat badan harus diisi"),
-  height: z.coerce.number<number>().min(1, "Tinggi badan harus diisi"),
-  age: z.coerce.number<number>().min(1, "Usia harus diisi"),
+  gender: z.enum(["laki-laki", "perempuan"], { error: "Jenis kelamin harus dipilih" }),
+  weight: z.coerce.number().min(1, "Berat badan harus diisi"),
+  height: z.coerce.number().min(1, "Tinggi badan harus diisi"),
+  age: z.coerce.number().min(1, "Usia harus diisi"),
   username: z.string().min(2, "Nama user harus diisi"),
-  email: z.email("Format email tidak valid").min(1, "Email harus diisi"),
+  email: z.email("Format email tidak valid"),
   password: z.string().min(8, "Kata sandi harus minimal 8 karakter"),
   confirmPassword: z.string().min(8, "Konfirmasi kata sandi harus minimal 8 karakter")
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Kata sandi dan konfirmasi kata sandi harus sama",
+  path: ["confirmPassword"],
 })
 
 type FormValues = z.infer<typeof formSchema>;
 
 function RegisterInput() {
-
-  const [showPassword, setShowPassword] = useState(false)
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
-
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -59,8 +59,33 @@ function RegisterInput() {
     }
   })
 
-  function onSubmit(data: FormValues) {
-    console.log(data)
+  async function onSubmit(data: FormValues) {
+    setIsLoading(true);
+    setServerError(null);
+
+    try {
+      const result = await registerUser({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        gender: data.gender,
+        age: data.age,
+        weight: data.weight,
+        height: data.height,
+      });
+
+      if (!result.success) {
+        setServerError(result.error || "Terjadi kesalahan saat mendaftar.");
+        return;
+      }
+
+      // Registration successful — redirect to login
+      router.push("/login");
+    } catch {
+      setServerError("Terjadi kesalahan jaringan. Coba lagi.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function onInvalid(errors: unknown) {
@@ -72,6 +97,13 @@ function RegisterInput() {
       <form onSubmit={form.handleSubmit(onSubmit, onInvalid)}>
         <FieldSet>
           <FieldGroup>
+            {/* Server Error Banner */}
+            {serverError && (
+              <div className="rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3">
+                {serverError}
+              </div>
+            )}
+
             <Controller name="gender" control={form.control} render={({ field, fieldState }) => (
               <Field >
                 <FieldLabel htmlFor="gender">Jenis Kelamin</FieldLabel>
@@ -211,13 +243,9 @@ function RegisterInput() {
                     <Lock size={20} />
                   </InputGroupAddon>
                   <InputGroupAddon align="inline-end">
-                    {
-                      showPassword ? (
-                        <EyeIcon size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
-                      ) : (
-                        <EyeClosed size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
-                      )
-                    }
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="cursor-pointer">
+                      {showPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
+                    </button>
                   </InputGroupAddon>
                 </InputGroup>
                 <FieldDescription>Masukkan kata sandi sebanyak 8 karakter</FieldDescription>
@@ -236,7 +264,7 @@ function RegisterInput() {
                 <InputGroup className="rounded-full px-4 py-6">
                   <InputGroupInput
                     id="confirmPassword"
-                    type={showPassword ? "text" : "password"}
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Konfirmasi Password"
                     {...field}
                   />
@@ -244,13 +272,9 @@ function RegisterInput() {
                     <Lock size={20} />
                   </InputGroupAddon>
                   <InputGroupAddon align="inline-end">
-                    {
-                      showPassword ? (
-                        <EyeIcon size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
-                      ) : (
-                        <EyeClosed size={20} onClick={togglePasswordVisibility} className="cursor-pointer" />
-                      )
-                    }
+                    <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="cursor-pointer">
+                      {showConfirmPassword ? <Eye size={20} /> : <EyeClosed size={20} />}
+                    </button>
                   </InputGroupAddon>
                 </InputGroup>
                 <FieldDescription>Konfirmasi Password anda</FieldDescription>
@@ -262,7 +286,16 @@ function RegisterInput() {
             )} />
 
 
-            <Button type="submit" className="w-full py-6">Daftar</Button>
+            <Button type="submit" className="w-full py-6" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 size={20} className="animate-spin mr-2" />
+                  Mendaftar...
+                </>
+              ) : (
+                "Daftar"
+              )}
+            </Button>
 
             <span className="text-sm md:text-lg text-muted-foreground text-center my-4">
               Sudah punya akun?{" "}

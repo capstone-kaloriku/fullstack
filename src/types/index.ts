@@ -1,5 +1,5 @@
 export interface FoodSummariesProps {
-  id: number;
+  id: string | number;
   nama: string;
   gambar: string;
   kalori: number;
@@ -17,7 +17,7 @@ export interface persentageProps {
 
 export interface CategoryProps {
   data: {
-    id: number;
+    id: string | number;
     icon: React.ReactNode;
     title: string;
     filterKey: string;
@@ -28,7 +28,7 @@ export interface CategoryProps {
 
 export interface FrequentlyProps {
   data: {
-    id: number;
+    id: string | number;
     nama: string;
     gambar: string;
     kalori: number;
