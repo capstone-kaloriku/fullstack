@@ -1,12 +1,12 @@
-import { FadeUpPyramid } from "@/components/animations/FadeUpPyramid";
 import GradualBlurMemo from "@/components/GradualBlurBackground";
 import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
 import MagicBento from "@/components/MagicBento";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Tooltip } from "@/components/Tooltip";
-import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import HowToUse from "@/components/HowToUse";
-import Image from "next/image";
+import HeroSection from "./layout/HeroSection";
+import TabletScrollReveal from "./layout/TabletScrollReveal";
+import WhyUs from "./layout/WhyUs";
 
 const people = [
   {
@@ -53,44 +53,10 @@ const Hero = () => {
     <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-8xl">
       <BackgroundRippleEffect />
       <div className="mt-60 md:mt-72 w-full">
-        <FadeUpPyramid position="center" delay={0.05}>
-          <h2 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-neutral-800 md:text-3xl lg:text-6xl dark:text-neutral-100">
-            Kendalikan Kalori harianmu, dengan{" "}
-            <span className="text-primary">KaloriKu.</span>
-          </h2>
-        </FadeUpPyramid>
-        <FadeUpPyramid position="center" delay={0.05}>
-          <p className="relative z-10 mx-auto mt-4 max-w-xl text-center text-neutral-800 dark:text-neutral-500">
-            Pendamping setia untuk perjalanan hidup sehatmu. Tracking nutrisi
-            presisi untuk bantu kamu mencapai target berat badan lebih efektif.
-          </p>
-        </FadeUpPyramid>
+        <HeroSection />
       </div>
       <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full ">
-        <FadeUpPyramid position="center" delay={0.05}>
-          <ContainerScroll
-            titleComponent={
-              <>
-                <h1 className="text-4xl font-semibold text-black dark:text-white">
-                  Terus pantau kesehatan kamu dengan
-                  <br />
-                  <span className="text-7xl md:text-[6rem] font-bold mt-1 leading-none text-primary">
-                    Kaloriku
-                  </span>
-                </h1>
-              </>
-            }
-          >
-            <Image
-              src={`/dashboard.png`}
-              alt="hero"
-              height={720}
-              width={1400}
-              className="mx-auto rounded-2xl object-cover h-full object-center"
-              draggable={false}
-            />
-          </ContainerScroll>
-        </FadeUpPyramid>
+        <TabletScrollReveal />
       </div>
       <div
         id="about"
@@ -112,20 +78,7 @@ const Hero = () => {
         id="why-us"
         className="flex flex-col items-center justify-center gap-6 w-full my-36 mx-auto"
       >
-        <h1 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h1>
-        <MagicBento
-          textAutoHide={true}
-          enableStars
-          enableSpotlight
-          enableBorderGlow={true}
-          enableTilt={false}
-          enableMagnetism={false}
-          clickEffect
-          spotlightRadius={400}
-          particleCount={12}
-          glowColor="255, 107, 0"
-          disableAnimations={false}
-        />
+        <WhyUs />
       </div>
       <HowToUse />
 
