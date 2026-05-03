@@ -1,6 +1,5 @@
 import GradualBlurMemo from "@/components/GradualBlurBackground";
 import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
-import MagicBento from "@/components/MagicBento";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Tooltip } from "@/components/Tooltip";
 import HowToUse from "@/components/HowToUse";

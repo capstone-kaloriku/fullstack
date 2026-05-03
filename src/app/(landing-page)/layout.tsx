@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "KaloriKU",
   description:
-    "Aplikasi untuk menghitung kalori makanan dan aktivitas fisik, membantu pengguna mencapai tujuan kesehatan mereka dengan mudah dan akurat. Biar gak gendutt wokk",
+    "Aplikasi untuk membantu Anda menghitung kalori makanan dengan mudah dan cepat. Cukup masukkan nama makanan atau jumlah kalori yang ingin Anda ketahui, dan KaloriKU akan memberikan informasi yang akurat dan terpercaya. Dengan KaloriKU, Anda dapat mengelola asupan kalori harian Anda dengan lebih baik dan mencapai tujuan kesehatan Anda dengan lebih efektif.",
 };
 
 export default function LandingPageLayout({

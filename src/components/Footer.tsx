@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "react-scroll";
 import TextPressure from "@/components/TextPressure";
-import { FaGithub, FaInstagram, FaX } from "react-icons/fa6";
-import { FaLinkedin } from "react-icons/fa";
+
 
 const footerNavigation = {
   product: {
@@ -18,43 +17,14 @@ const footerNavigation = {
   landing: {
     title: "Halaman",
     links: [
-      { name: "Tentang", href: "#tentang" },
-      { name: "Kenapa Kita", href: "#kenapa-kita" },
-      { name: "Cara Penggunaan", href: "#cara-penggunaan" },
-      { name: "Developer", href: "#developer" },
-    ],
-  },
-  legal: {
-    title: "Legal",
-    links: [
-      { name: "Kebijakan Privasi", href: "#" },
-      { name: "Syarat & Ketentuan", href: "#" },
+      { name: "Tentang", href: "about" },
+      { name: "Kenapa Kita", href: "why-us" },
+      { name: "Cara Penggunaan", href: "how-to" },
+      { name: "Developer", href: "developer" },
     ],
   },
 };
 
-const socialLinks = [
-  {
-    name: "GitHub",
-    href: "https://github.com",
-    icon: <FaGithub />,
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com",
-    icon: <FaInstagram />,
-  },
-  {
-    name: "LinkedIn",
-    href: "https://linkedin.com",
-    icon: <FaLinkedin />,
-  },
-  {
-    name: "Twitter / X",
-    href: "https://x.com",
-    icon: <FaX />,
-  },
-];
 
 function Footer() {
   return (
@@ -78,35 +48,19 @@ function Footer() {
           <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
             {/* Brand column */}
             <div className="md:col-span-4">
-              <Link href="/" className="group inline-flex items-center gap-2">
+              <a className="group inline-flex items-center gap-2">
                 <span className="text-2xl font-bold tracking-tight">
                   <span className="text-[#ff6b00] transition-colors duration-300 group-hover:text-[#ff8533]">
                     K
                   </span>
                   <span className="text-white/90">aloriku</span>
                 </span>
-              </Link>
+              </a>
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
                 Pendamping setia untuk perjalanan hidup sehatmu. Tracking
                 nutrisi presisi untuk bantu kamu mencapai target berat badan
                 lebih efektif.
               </p>
-
-              {/* Social links */}
-              <div className="mt-6 flex items-center gap-3">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.name}
-                    className="group/icon flex h-9 w-9 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/40 transition-all duration-300 hover:border-[#ff6b00]/30 hover:bg-[#ff6b00]/10 hover:text-[#ff6b00] hover:shadow-[0_0_15px_rgba(255,107,0,0.1)]"
-                  >
-                    {social.icon}
-                  </a>
-                ))}
-              </div>
             </div>
 
             {/* Navigation columns */}
@@ -120,8 +74,10 @@ function Footer() {
                     {section.links.map((link) => (
                       <li key={link.name}>
                         <Link
-                          href={link.href}
-                          className="group/link relative inline-flex text-sm text-white/45 transition-colors duration-300 hover:text-white/90"
+                          to={link.href}
+                          smooth={true}
+                          duration={500}
+                          className="group/link relative inline-flex text-sm text-white/45 transition-colors duration-300 hover:text-white/90 cursor-pointer"
                         >
                           <span className="relative">
                             {link.name}
