@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import DisplayFood from "./components/DisplayFood";
 import Category from "./components/Category";
+import Pagination from "./components/Pagination";
 import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
 import { LiaCookieBiteSolid } from "react-icons/lia";
 import { getAllFoods } from "../actions";
+
+// ============================================================
+// Constants
+// ============================================================
+
+const ITEMS_PER_PAGE = 6;
 
 const icon = [
   {
@@ -34,10 +41,15 @@ const icon = [
   },
 ];
 
+// ============================================================
+// Component
+// ============================================================
+
 const AllFood = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [data, setData] = useState<Awaited<ReturnType<typeof getAllFoods>>>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     async function fetchFoods() {
@@ -49,14 +61,29 @@ const AllFood = () => {
     fetchFoods();
   }, []);
 
+  // Reset ke halaman 1 saat filter berubah
+  function handleFilter(filter: string | null) {
+    setActiveFilter(filter);
+    setCurrentPage(1);
+  }
+
+  // Data yang sudah di-filter
   const filteredData = activeFilter
     ? data.filter((item) => item.kategori === activeFilter)
     : data;
 
+  // "Sering Dimakan" — tetap 4 item, tanpa pagination
   const dataRecently = data.slice(0, 4);
   const filteredRecently = activeFilter
     ? dataRecently.filter((item) => item.kategori === activeFilter)
     : dataRecently;
+
+  // Pagination — hitung total halaman dan slice data
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredData, currentPage]);
 
   if (isLoading) {
     return (
@@ -74,7 +101,7 @@ const AllFood = () => {
             <Category
               data={icon}
               activeFilter={activeFilter}
-              onFilter={setActiveFilter}
+              onFilter={handleFilter}
             />
           </div>
           {filteredRecently.length > 0 && (
@@ -90,16 +117,22 @@ const AllFood = () => {
               <h1 className="text-lg font-bold text-primary">
                 {activeFilter ? `Hasil Filter` : "Semua Makanan"}
               </h1>
-              {activeFilter && (
-                <span className="text-sm text-muted-foreground">
-                  {filteredData.length} makanan ditemukan
-                </span>
-              )}
+              <span className="text-sm text-muted-foreground">
+                {filteredData.length} makanan
+                {activeFilter ? ' ditemukan' : ''}
+              </span>
             </div>
-            {filteredData.length > 0 ? (
-              <div className="flex flex-col md:grid md:grid-cols-2 items-center w-full gap-6">
-                <DisplayFood data={filteredData} />
-              </div>
+            {paginatedData.length > 0 ? (
+              <>
+                <div className="flex flex-col md:grid md:grid-cols-2 items-center w-full gap-6">
+                  <DisplayFood data={paginatedData} />
+                </div>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
+              </>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground">
                 <span className="text-4xl">🍽️</span>

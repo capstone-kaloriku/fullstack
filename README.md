@@ -3,7 +3,6 @@ Status: Dalam Pengembangan (Capstone Project Coding Camp by DBS 2026)
 Pengembang Utama: CC26-PSU028
 
 1. Ringkasan Proyek (Executive Summary)
-<<<<<<< HEAD
    Kaloriku (sebelumnya dikenal sebagai NutriScan) adalah aplikasi berbasis web terintegrasi kecerdasan buatan yang dirancang untuk membantu pengguna melacak asupan nutrisi dan kalori harian mereka. Sistem ini memanfaatkan Natural Language Processing (NLP) untuk menganalisis input teks dari pengguna mengenai makanan yang dikonsumsi, serta menggunakan model regresi untuk memperkirakan dan memproses nilai gizi dan kalori secara akurat.
 
 2. Spesifikasi Teknologi (Tech Stack)
@@ -14,7 +13,6 @@ Front-End & Framework: Next.js 16, React.js, TypeScript
 Styling: Tailwind CSS v4 & Shadcn UI
 
 Machine Learning / AI: \* Natural Language Processing (NLP) untuk ekstraksi entitas makanan dari input teks.
-=======
 Kaloriku (sebelumnya dikenal sebagai NutriScan) adalah aplikasi berbasis web terintegrasi kecerdasan buatan yang dirancang untuk membantu pengguna melacak asupan nutrisi dan kalori harian mereka. Sistem ini memanfaatkan Natural Language Processing (NLP) untuk menganalisis input teks dari pengguna mengenai makanan yang dikonsumsi, serta menggunakan model regresi untuk memperkirakan dan memproses nilai gizi dan kalori secara akurat.
 
 2. Spesifikasi Teknologi (Tech Stack)
@@ -25,7 +23,6 @@ Front-End & Framework: Next.js 15, React.js, TypeScript
 Styling: Tailwind CSS v4
 
 Machine Learning / AI: * Natural Language Processing (NLP) untuk ekstraksi entitas makanan dari input teks.
->>>>>>> 310993b527bfbd155a07a24897974164fe2a7ebb
 
 Model Regresi untuk estimasi dan kalkulasi data kalori/nutrisi.
 
