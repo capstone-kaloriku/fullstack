@@ -8,6 +8,11 @@ const Settings = async () => {
     name: profile?.namaUser || "",
     email: profile?.email || "",
     gender: profile?.jenisKelamin || "laki-laki",
+    // Health profile fields
+    dateOfBirth: profile?.tanggalLahir || "",
+    weightKg: profile?.beratBadan || 0,
+    heightCm: profile?.tinggiBadan || 0,
+    activityLevel: profile?.aktivitasFisik || "Ringan",
   };
 
   return (
@@ -28,3 +33,4 @@ const Settings = async () => {
 };
 
 export default Settings;
+

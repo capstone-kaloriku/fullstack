@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Field, FieldGroup, FieldLabel, FieldError } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Loader2 } from "lucide-react";
-import { updateAccountSettings } from "../../../../actions";
+import { updateAccountSettings, updateHealthProfile } from "../../../../actions";
 import { useRouter } from "next/navigation";
 
 interface SettingsFormProps {
@@ -13,8 +13,21 @@ interface SettingsFormProps {
     name: string;
     email: string;
     gender: string;
+    // Health profile
+    dateOfBirth: string;
+    weightKg: number;
+    heightCm: number;
+    activityLevel: string;
   };
 }
+
+const ACTIVITY_LEVELS = [
+  "Sangat Ringan",
+  "Ringan",
+  "Sedang",
+  "Berat",
+  "Sangat Berat",
+];
 
 export default function SettingsForm({ initialData }: SettingsFormProps) {
   const router = useRouter();
@@ -26,6 +39,11 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
     name: initialData.name,
     gender: initialData.gender,
     password: "",
+    // Health profile
+    dateOfBirth: initialData.dateOfBirth,
+    weightKg: initialData.weightKg || "",
+    heightCm: initialData.heightCm || "",
+    activityLevel: initialData.activityLevel,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -39,19 +57,34 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
     setSuccessMsg(null);
 
     try {
-      const res = await updateAccountSettings({
+      // Update account settings (name, gender, password)
+      const accountRes = await updateAccountSettings({
         name: formData.name,
         gender: formData.gender,
         password: formData.password || undefined,
       });
 
-      if (!res.success) {
-        setErrorMsg(res.error || "Gagal menyimpan perubahan.");
-      } else {
-        setSuccessMsg("Profil berhasil diperbarui!");
-        setFormData({ ...formData, password: "" }); // Reset password field
-        router.refresh(); // Refresh page untuk data baru
+      if (!accountRes.success) {
+        setErrorMsg(accountRes.error || "Gagal menyimpan pengaturan akun.");
+        return;
       }
+
+      // Update health profile (dateOfBirth, weight, height, activity)
+      const healthRes = await updateHealthProfile({
+        dateOfBirth: formData.dateOfBirth || undefined,
+        weightKg: formData.weightKg ? Number(formData.weightKg) : undefined,
+        heightCm: formData.heightCm ? Number(formData.heightCm) : undefined,
+        activityLevel: formData.activityLevel,
+      });
+
+      if (!healthRes.success) {
+        setErrorMsg(healthRes.error || "Gagal menyimpan profil kesehatan.");
+        return;
+      }
+
+      setSuccessMsg("Profil berhasil diperbarui!");
+      setFormData({ ...formData, password: "" });
+      router.refresh();
     } catch {
       setErrorMsg("Terjadi kesalahan sistem.");
     } finally {
@@ -74,6 +107,7 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
       )}
 
       <FieldGroup>
+        {/* ─── Pengaturan Akun ─── */}
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <InputGroup className="py-6 bg-muted/50">
@@ -133,6 +167,93 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
               placeholder="Kosongkan jika tidak ingin mengubah"
               className="p-6"
             />
+          </InputGroup>
+        </Field>
+
+        {/* ─── Separator ─── */}
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-background px-4 text-sm font-semibold text-muted-foreground">
+              Profil Kesehatan
+            </span>
+          </div>
+        </div>
+
+        {/* ─── Profil Kesehatan ─── */}
+        <Field>
+          <FieldLabel htmlFor="dateOfBirth">Tanggal Lahir</FieldLabel>
+          <InputGroup className="py-6">
+            <InputGroupInput
+              id="dateOfBirth"
+              name="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="p-6"
+            />
+          </InputGroup>
+          <span className="text-xs text-muted-foreground mt-1">
+            Usia dihitung otomatis dari tanggal lahir.
+          </span>
+        </Field>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Field>
+            <FieldLabel htmlFor="weightKg">Berat Badan (KG)</FieldLabel>
+            <InputGroup className="py-6">
+              <InputGroupInput
+                id="weightKg"
+                name="weightKg"
+                type="number"
+                value={formData.weightKg}
+                onChange={handleChange}
+                placeholder="0"
+                className="p-6"
+                min={20}
+                max={300}
+                step={0.1}
+              />
+            </InputGroup>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="heightCm">Tinggi Badan (CM)</FieldLabel>
+            <InputGroup className="py-6">
+              <InputGroupInput
+                id="heightCm"
+                name="heightCm"
+                type="number"
+                value={formData.heightCm}
+                onChange={handleChange}
+                placeholder="0"
+                className="p-6"
+                min={50}
+                max={250}
+                step={0.1}
+              />
+            </InputGroup>
+          </Field>
+        </div>
+
+        <Field>
+          <FieldLabel htmlFor="activityLevel">Tingkat Aktivitas</FieldLabel>
+          <InputGroup className="py-6 px-4">
+            <select
+              id="activityLevel"
+              name="activityLevel"
+              value={formData.activityLevel}
+              onChange={handleChange}
+              className="w-full bg-transparent outline-none focus:ring-0 text-sm py-2"
+            >
+              {ACTIVITY_LEVELS.map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </select>
           </InputGroup>
         </Field>
 

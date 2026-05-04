@@ -90,6 +90,21 @@ export async function getFoodsByCategory(category: string) {
 // ============================================================
 
 /**
+ * Calculate age from date of birth.
+ */
+function calculateAge(dateOfBirth: string | null): number {
+  if (!dateOfBirth) return 0;
+  const today = new Date();
+  const birth = new Date(dateOfBirth);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+/**
  * Fetch the current user's profile data (from public.users + health_profiles).
  * Since login is not yet implemented, fetches the first available user.
  */
@@ -142,10 +157,14 @@ export async function getUserProfile() {
     console.error('Error fetching health profile:', healthError.message);
   }
 
+  // Calculate age dynamically from date_of_birth
+  const usia = calculateAge(healthData?.date_of_birth);
+
   return {
     namaUser: userData.name || 'User',
     email: userData.email,
-    usia: healthData?.age || 0,
+    usia,
+    tanggalLahir: (healthData?.date_of_birth as string) || '',
     jenisKelamin: userData.gender || 'Laki-Laki',
     beratBadan: Number(healthData?.weight_kg) || 0,
     tinggiBadan: Number(healthData?.height_cm) || 0,
@@ -154,7 +173,7 @@ export async function getUserProfile() {
     kebutuhanHarian: calculateDailyNeeds({
       weight: Number(healthData?.weight_kg) || 70,
       height: Number(healthData?.height_cm) || 170,
-      age: healthData?.age || 25,
+      age: usia || 25,
       gender: userData.gender || 'laki-laki',
       activityLevel: healthData?.activity_level || 'Ringan',
     }),
@@ -398,6 +417,89 @@ export async function updateAccountSettings(data: {
     if (authError) {
       return { success: false, error: 'Profil diperbarui, tapi gagal mengubah kata sandi: ' + authError.message };
     }
+  }
+
+  return { success: true };
+}
+
+/**
+ * Update the current user's health profile (weight, height, date_of_birth, activity_level).
+ * Updates the existing row in health_profiles.
+ */
+export async function updateHealthProfile(data: {
+  dateOfBirth?: string;
+  weightKg?: number;
+  heightCm?: number;
+  activityLevel?: string;
+}) {
+  const supabase = await createClient();
+
+  // Get user
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  let userId: string | null = authUser?.id || null;
+
+  if (!userId) {
+    const { data: firstUser } = await supabase
+      .from('users')
+      .select('user_id')
+      .limit(1)
+      .single();
+    userId = firstUser?.user_id || null;
+  }
+
+  if (!userId) {
+    return { success: false, error: 'User tidak ditemukan.' };
+  }
+
+  // Build the update payload — only include provided fields
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const updatePayload: Record<string, any> = {
+    recorded_at: new Date().toISOString(),
+  };
+
+  if (data.dateOfBirth !== undefined) {
+    updatePayload.date_of_birth = data.dateOfBirth || null;
+  }
+  if (data.weightKg !== undefined) {
+    updatePayload.weight_kg = data.weightKg;
+  }
+  if (data.heightCm !== undefined) {
+    updatePayload.height_cm = data.heightCm;
+  }
+  if (data.activityLevel !== undefined) {
+    updatePayload.activity_level = data.activityLevel;
+  }
+
+  // Calculate BMR and TDEE if we have enough data
+  if (data.weightKg && data.heightCm && data.dateOfBirth) {
+    const age = calculateAge(data.dateOfBirth);
+    // Get gender from users table
+    const { data: userData } = await supabase
+      .from('users')
+      .select('gender')
+      .eq('user_id', userId)
+      .single();
+
+    const gender = userData?.gender || 'laki-laki';
+    const needs = calculateDailyNeeds({
+      weight: data.weightKg,
+      height: data.heightCm,
+      age: age || 25,
+      gender,
+      activityLevel: data.activityLevel || 'Ringan',
+    });
+
+    updatePayload.bmr = needs.kalori; // Store TDEE as the main calorie target
+    updatePayload.tdee = needs.kalori;
+  }
+
+  const { error } = await supabase
+    .from('health_profiles')
+    .update(updatePayload)
+    .eq('user_id', userId);
+
+  if (error) {
+    return { success: false, error: 'Gagal memperbarui profil kesehatan: ' + error.message };
   }
 
   return { success: true };
