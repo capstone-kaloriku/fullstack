@@ -75,7 +75,7 @@ function LoginInput() {
             </InputGroup>
           </Field>
           <Link
-            href="/reset-password"
+            href="/forgot-password"
             className="text-sm text-secondary-foreground flex justify-end"
           >
             Lupa Password?
