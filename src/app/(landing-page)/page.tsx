@@ -51,13 +51,13 @@ const Hero = () => {
   return (
     <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-8xl">
       <BackgroundRippleEffect />
-      <div className="mt-60 md:mt-72 w-full">
+      <section className="mt-60 md:mt-72 w-full">
         <HeroSection />
-      </div>
-      <div className="flex flex-col overflow-hidden mx-auto mt-60 w-full ">
+      </section>
+      <section className="flex flex-col overflow-hidden mx-auto mt-60 w-full ">
         <TabletScrollReveal />
-      </div>
-      <div
+      </section>
+      <section
         id="about"
         className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center
       "
@@ -72,21 +72,26 @@ const Hero = () => {
           Kaloriku mengatur semua kebutuhan nutrisi harianmu dengan mudah,
           membantu kamu mencapai tujuan kesehatan dengan lebih efektif.
         </ScrollReveal>
-      </div>
-      <div
+      </section>
+      <section
         id="why-us"
         className="flex flex-col items-center justify-center gap-6 w-full my-36 mx-auto"
       >
         <WhyUs />
-      </div>
-      <HowToUse />
+      </section>
+      <section
+        id="how-to"
+        className="relative flex w-full flex-col items-center justify-center py-24 md:py-36"
+      >
+        <HowToUse />
+      </section>
 
-      <div className="flex flex-col items-center justify-center mb-10 w-full gap-6">
+      <section className="flex flex-col items-center justify-center mb-10 w-full gap-6">
         <h1 className="text-xl text-primary font-bold">Meet our Developer</h1>
         <div className="flex flex-row items-center justify-center w-full">
           <Tooltip items={people} />
         </div>
-      </div>
+      </section>
       <GradualBlurMemo
         target="page"
         position="bottom"

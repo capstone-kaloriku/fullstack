@@ -42,10 +42,7 @@ const steps = [
 
 export default function HowToUse() {
   return (
-    <section
-      id="how-to"
-      className="relative flex w-full flex-col items-center justify-center py-24 md:py-36"
-    >
+    <>
       {/* Section header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -112,6 +109,6 @@ export default function HowToUse() {
           ))}
         </Stepper>
       </motion.div>
-    </section>
+    </>
   );
 }
