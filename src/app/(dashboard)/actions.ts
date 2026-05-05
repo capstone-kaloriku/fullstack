@@ -110,15 +110,19 @@ function calculateAge(dateOfBirth: string | null): number {
  */
 export async function getUserProfile() {
   const supabase = await createClient();
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
 
-  // Try to get logged-in user first
+  // 1. Check for manually switched account (cookie)
+  const activeUserId = cookieStore.get('active_user_id')?.value;
+
+  // 2. Try auth user
   const { data: { user: authUser } } = await supabase.auth.getUser();
 
-  let userId: string | null = null;
+  // Priority: cookie > auth > fallback first user
+  let userId: string | null = activeUserId || authUser?.id || null;
 
-  if (authUser) {
-    userId = authUser.id;
-  } else {
+  if (!userId) {
     // Fallback: get first user (development mode)
     const { data: firstUser } = await supabase
       .from('users')
@@ -368,6 +372,116 @@ export async function logFoodConsumption(data: {
   return { success: true };
 }
 
+/**
+ * Fetch consumption history for a date range.
+ * Groups logs by date for timeline display.
+ */
+export async function getConsumptionHistory(startDate: string, endDate: string) {
+  const supabase = await createClient();
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
+
+  // Get user (same priority as getUserProfile: cookie > auth > fallback)
+  const activeUserId = cookieStore.get('active_user_id')?.value;
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  let userId: string | null = activeUserId || authUser?.id || null;
+
+  if (!userId) {
+    const { data: firstUser } = await supabase
+      .from('users')
+      .select('user_id')
+      .limit(1)
+      .single();
+    userId = firstUser?.user_id || null;
+  }
+
+  if (!userId) {
+    return { days: [] };
+  }
+
+  // Query logs within the date range
+  const { data: logs, error } = await supabase
+    .from('consumption_logs')
+    .select(`
+      *,
+      food_items (*)
+    `)
+    .eq('user_id', userId)
+    .gte('logged_at', startDate)
+    .lt('logged_at', endDate)
+    .order('logged_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching consumption history:', error.message);
+    return { days: [] };
+  }
+
+  // Group logs by date (YYYY-MM-DD)
+  const grouped: Record<string, {
+    date: string;
+    logs: ReturnType<typeof mapConsumptionLog>[];
+    totalKalori: number;
+  }> = {};
+
+  for (const log of logs || []) {
+    const dateKey = new Date(log.logged_at).toLocaleDateString('sv-SE'); // YYYY-MM-DD format
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = { date: dateKey, logs: [], totalKalori: 0 };
+    }
+    const mapped = mapConsumptionLog(log);
+    grouped[dateKey].logs.push(mapped);
+    grouped[dateKey].totalKalori += mapped.kalori;
+  }
+
+  // Sort by date descending
+  const days = Object.values(grouped)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .map((day) => ({
+      ...day,
+      totalKalori: Math.round(day.totalKalori),
+    }));
+
+  return { days };
+}
+
+/**
+ * Map a raw consumption_log row to frontend shape.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapConsumptionLog(log: any) {
+  const food = log.food_items;
+  const calories = log.total_calories || (food?.calories || 0);
+  const portion = Number(log.consumed_portion) || 1;
+
+  return {
+    id: log.log_id as string,
+    nama: (food?.name || log.raw_input_text || 'Makanan Custom') as string,
+    gambar: (food?.image_url || '/profile.jpg') as string,
+    kalori: calories as number,
+    porsi: portion,
+    mealType: (log.meal_type || '') as string,
+    loggedAt: log.logged_at as string,
+  };
+}
+
+/**
+ * Delete a single consumption log entry.
+ */
+export async function deleteConsumptionLog(logId: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from('consumption_logs')
+    .delete()
+    .eq('log_id', logId);
+
+  if (error) {
+    return { success: false, error: 'Gagal menghapus log: ' + error.message };
+  }
+
+  return { success: true };
+}
+
 // ============================================================
 // SETTINGS / PROFILE UPDATE
 // ============================================================
@@ -501,6 +615,90 @@ export async function updateHealthProfile(data: {
   if (error) {
     return { success: false, error: 'Gagal memperbarui profil kesehatan: ' + error.message };
   }
+
+  return { success: true };
+}
+
+// ============================================================
+// ACCOUNT LIST & DELETE (for testing/development)
+// ============================================================
+
+/**
+ * Fetch all registered accounts from public.users table.
+ * Returns basic info for account switching UI.
+ */
+export async function getAllAccounts() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('user_id, name, email, gender')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching accounts:', error.message);
+    return [];
+  }
+
+  return data || [];
+}
+
+/**
+ * Delete a user account from public tables (users + health_profiles).
+ * NOTE: This does NOT delete the Auth user — Supabase Auth admin API
+ * requires service_role key which should not be used client-side.
+ * For testing purposes only.
+ */
+export async function deleteAccount(userId: string) {
+  const supabase = await createClient();
+
+  // 1. Delete health_profiles first (foreign key dependency)
+  const { error: healthError } = await supabase
+    .from('health_profiles')
+    .delete()
+    .eq('user_id', userId);
+
+  if (healthError) {
+    return { success: false, error: 'Gagal menghapus profil kesehatan: ' + healthError.message };
+  }
+
+  // 2. Delete consumption_logs
+  const { error: logsError } = await supabase
+    .from('consumption_logs')
+    .delete()
+    .eq('user_id', userId);
+
+  if (logsError) {
+    return { success: false, error: 'Gagal menghapus log konsumsi: ' + logsError.message };
+  }
+
+  // 3. Delete from public.users
+  const { error: userError } = await supabase
+    .from('users')
+    .delete()
+    .eq('user_id', userId);
+
+  if (userError) {
+    return { success: false, error: 'Gagal menghapus akun: ' + userError.message };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Switch the active account by storing user_id in a cookie.
+ * This overrides the auth-based user lookup for testing.
+ */
+export async function switchAccount(userId: string) {
+  const { cookies } = await import('next/headers');
+  const cookieStore = await cookies();
+
+  // Set cookie — expires in 7 days
+  cookieStore.set('active_user_id', userId, {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7,
+    httpOnly: true,
+  });
 
   return { success: true };
 }

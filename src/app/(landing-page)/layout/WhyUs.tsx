@@ -5,6 +5,7 @@ function WhyUs() {
     <>
       <h1 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h1>
       <MagicBento
+      
         textAutoHide={true}
         enableStars
         enableSpotlight

@@ -7,17 +7,40 @@ import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { Controller, useForm, type FieldValues, type Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { format, differenceInYears } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale/id';
 
-import { Loader2, Mail, User } from 'lucide-react';
-import { FaBirthdayCake } from 'react-icons/fa';
+import { CalendarIcon, Loader2, Mail, User } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from '@/components/ui/field';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 import FormField from './FormField';
 import PasswordField from './PasswordField';
 import { registerUser } from '../actions';
+
+// ============================================================
+// Helpers
+// ============================================================
+
+function calculateAge(birthday: Date): number {
+  return differenceInYears(new Date(), birthday);
+}
 
 // ============================================================
 // Schema & Types
@@ -30,7 +53,11 @@ const formSchema = z
     }),
     weight: z.coerce.number().min(1, 'Berat badan harus diisi'),
     height: z.coerce.number().min(1, 'Tinggi badan harus diisi'),
-    age: z.coerce.number().min(1, 'Usia harus diisi'),
+    birthday: z
+      .date({ message: 'Tanggal lahir harus dipilih' })
+      .refine((date) => date <= new Date(), 'Tanggal lahir tidak boleh di masa depan')
+      .refine((date) => calculateAge(date) >= 1, 'Usia minimal 1 tahun')
+      .refine((date) => calculateAge(date) <= 120, 'Usia tidak valid'),
     username: z.string().min(2, 'Nama pengguna harus diisi'),
     email: z.email('Format email tidak valid'),
     password: z.string().min(8, 'Kata sandi harus minimal 8 karakter'),
@@ -51,6 +78,7 @@ function RegisterInput() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -60,7 +88,7 @@ function RegisterInput() {
       gender: 'laki-laki',
       weight: '',
       height: '',
-      age: '',
+      birthday: undefined,
       username: '',
       email: '',
       password: '',
@@ -81,7 +109,7 @@ function RegisterInput() {
         email: data.email,
         password: data.password,
         gender: data.gender,
-        age: data.age,
+        birthday: data.birthday,
         weight: data.weight,
         height: data.height,
       });
@@ -146,16 +174,70 @@ function RegisterInput() {
             )}
           />
 
-          {/* Usia */}
-          <FormField
-            name="age"
-            control={control}
-            label="Usia"
-            description="Masukkan usia Anda"
-            id="age"
-            type="number"
-            placeholder="Usia"
-            icon={<FaBirthdayCake size={20} />}
+          {/* Tanggal Lahir — Calendar Popover (from Kevin's feature) */}
+          <Controller
+            name="birthday"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel htmlFor="birthday">Tanggal Lahir</FieldLabel>
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                  <PopoverTrigger
+                    render={
+                      <button
+                        id="birthday"
+                        type="button"
+                        className={cn(
+                          'flex items-center w-full rounded-full px-4 py-3.5 border border-input bg-background text-sm ring-offset-background transition-colors',
+                          'hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                          !field.value && 'text-muted-foreground',
+                        )}
+                      />
+                    }
+                  >
+                    <CalendarIcon className="mr-3 h-5 w-5 text-muted-foreground shrink-0" />
+                    <span className="flex-1 text-left">
+                      {field.value ? (
+                        <>
+                          {format(field.value, 'dd MMMM yyyy', {
+                            locale: idLocale,
+                          })}
+                          <span className="ml-2 text-muted-foreground">
+                            ({calculateAge(field.value)} tahun)
+                          </span>
+                        </>
+                      ) : (
+                        'Pilih tanggal lahir'
+                      )}
+                    </span>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(date: Date | undefined) => {
+                        field.onChange(date);
+                        setCalendarOpen(false);
+                      }}
+                      captionLayout="dropdown"
+                      defaultMonth={field.value || new Date(2000, 0)}
+                      startMonth={new Date(1920, 0)}
+                      endMonth={new Date()}
+                      disabled={{ after: new Date() }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FieldDescription>
+                  {field.value
+                    ? `Usia Anda: ${calculateAge(field.value)} tahun`
+                    : 'Pilih tanggal lahir untuk menghitung usia'}
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
           />
 
           {/* Berat & Tinggi Badan — side by side */}

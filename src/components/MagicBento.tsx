@@ -32,42 +32,42 @@ const MOBILE_BREAKPOINT = 768;
 
 const cardData: BentoCardProps[] = [
   {
-    color: "#13110f",
+    color: "#fff7ed",
     title: "Nutrisi",
     description:
       "KaloriKu memberikan data nutrisi yang akurat untuk membantu kamu memahami asupan harianmu dengan lebih baik",
     label: "Tracking Nutrisi Presisi",
   },
   {
-    color: "#13110f",
+    color: "#fff1e6",
     title: "Reminder",
     description:
       "Dapatkan notifikasi waktu makan dan minum supaya rutinitas sehatmu tetap konsisten sepanjang hari.",
     label: "Pengingat Makan dan Minum",
   },
   {
-    color: "#13110f",
+    color: "#ffedd5",
     title: "Personalized",
     description:
       "Dapatkan rekomendasi rencana makan yang disesuaikan dengan kebutuhan dan preferensi kamu untuk mencapai tujuan kesehatanmu",
     label: "Rencana Makan yang Disesuaikan",
   },
   {
-    color: "#13110f",
+    color: "#fef3c7",
     title: "Accessibility",
     description:
       "Gratis untuk digunakan, KaloriKu menawarkan antarmuka yang sederhana dan intuitif sehingga kamu bisa langsung mulai mengelola kalori harianmu tanpa ribet.",
     label: "Gratis & Mudah Digunakan",
   },
   {
-    color: "#13110f",
+    color: "#fff7ed",
     title: "History",
     description:
       "Lihat ringkasan asupan harian dan riwayat mingguan untuk memantau progres.",
     label: "Riwayat dan Ringkasan Harian",
   },
   {
-    color: "#13110f",
+    color: "#fff1e6",
     title: "Goals",
     description:
       "Baik ingin turun, naik, atau menjaga berat badan, KaloriKu membantu menyesuaikan kebutuhanmu.",
@@ -589,8 +589,10 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-intensity: 0;
             --glow-radius: 200px;
             --glow-color: ${glowColor};
-            --border-color: #3a2a1a;
-            --background-dark: #13110f;
+            --border-color: rgba(${glowColor}, 0.2);
+            --background-dark: #fff7ed;
+            --card-text: #1a1c1e;
+            --card-text-muted: #78350f;
             --white: hsl(0, 0%, 100%);
             --primary-glow-full: rgba(${glowColor}, 1);
             --primary-glow-soft: rgba(${glowColor}, 0.2);
@@ -656,7 +658,7 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .card--border-glow:hover {
-            box-shadow: 0 4px 20px rgba(80, 40, 0, 0.4), 0 0 30px rgba(${glowColor}, 0.25);
+            box-shadow: 0 4px 20px rgba(${glowColor}, 0.15), 0 0 30px rgba(${glowColor}, 0.1);
           }
           
           .particle::before {
@@ -672,7 +674,7 @@ const MagicBento: React.FC<BentoProps> = ({
           }
           
           .particle-container:hover {
-            box-shadow: 0 4px 20px rgba(80, 40, 0, 0.2), 0 0 30px rgba(${glowColor}, 0.2);
+            box-shadow: 0 4px 20px rgba(${glowColor}, 0.1), 0 0 30px rgba(${glowColor}, 0.12);
           }
           
           .text-clamp-1 {
@@ -729,7 +731,7 @@ const MagicBento: React.FC<BentoProps> = ({
             const cardStyle = {
               backgroundColor: card.color || "var(--background-dark)",
               borderColor: "var(--border-color)",
-              color: "var(--white)",
+              color: "var(--card-text)",
               "--glow-x": "50%",
               "--glow-y": "50%",
               "--glow-intensity": "0",
@@ -749,17 +751,24 @@ const MagicBento: React.FC<BentoProps> = ({
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
                 >
-                  <div className="card__header flex justify-between gap-3 relative text-white">
-                    <span className="card__label text-base">{card.label}</span>
+                  <div
+                    className="card__header flex justify-between gap-3 relative"
+                    style={{ color: "#9a3412" }}
+                  >
+                    <span className="card__label text-base font-medium">
+                      {card.label}
+                    </span>
                   </div>
-                  <div className="card__content flex flex-col relative text-white">
+                  <div className="card__content flex flex-col relative">
                     <h3
-                      className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? "text-clamp-1" : ""}`}
+                      className={`card__title font-semibold text-base m-0 mb-1 ${textAutoHide ? "text-clamp-1" : ""}`}
+                      style={{ color: "#1a1c1e" }}
                     >
                       {card.title}
                     </h3>
                     <p
-                      className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? "text-clamp-2" : ""}`}
+                      className={`card__description text-xs leading-5 ${textAutoHide ? "text-clamp-2" : ""}`}
+                      style={{ color: "#78350f", opacity: 0.85 }}
                     >
                       {card.description}
                     </p>
@@ -883,17 +892,24 @@ const MagicBento: React.FC<BentoProps> = ({
                   el.addEventListener("click", handleClick);
                 }}
               >
-                <div className="card__header flex justify-between gap-3 relative text-white">
-                  <span className="card__label text-base">{card.label}</span>
+                <div
+                  className="card__header flex justify-between gap-3 relative"
+                  style={{ color: "#9a3412" }}
+                >
+                  <span className="card__label text-base font-medium">
+                    {card.label}
+                  </span>
                 </div>
-                <div className="card__content flex flex-col relative text-white">
+                <div className="card__content flex flex-col relative">
                   <h3
-                    className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? "text-clamp-1" : ""}`}
+                    className={`card__title font-semibold text-base m-0 mb-1 ${textAutoHide ? "text-clamp-1" : ""}`}
+                    style={{ color: "#1a1c1e" }}
                   >
                     {card.title}
                   </h3>
                   <p
-                    className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? "text-clamp-2" : ""}`}
+                    className={`card__description text-xs leading-5 ${textAutoHide ? "text-clamp-2" : ""}`}
+                    style={{ color: "#78350f", opacity: 0.85 }}
                   >
                     {card.description}
                   </p>

@@ -7,7 +7,8 @@ import {
   ProgressValue,
 } from "@/components/ui/progress";
 import Options from "./components/Option";
-import { getUserProfile } from "../actions";
+import AccountList from "./components/AccountList";
+import { getUserProfile, getAllAccounts } from "../actions";
 
 const setting = [
   {
@@ -27,7 +28,11 @@ const setting = [
 ];
 
 const Profile = async () => {
-  const data = await getUserProfile();
+  // Fetch user profile + all registered accounts in parallel
+  const [data, accounts] = await Promise.all([
+    getUserProfile(),
+    getAllAccounts(),
+  ]);
 
 
   const namaUser = data?.namaUser || "User";
@@ -81,6 +86,9 @@ const Profile = async () => {
         </div>
         {/* Options */}
         <Options data={setting} />
+
+        {/* Account List — for testing: list all accounts + delete */}
+        <AccountList accounts={accounts} />
       </div>
     </div>
   );

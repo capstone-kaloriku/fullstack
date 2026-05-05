@@ -7,7 +7,7 @@ interface RegisterData {
   email: string;
   password: string;
   gender: 'laki-laki' | 'perempuan';
-  age: number;
+  birthday: Date;
   weight: number;
   height: number;
 }
@@ -66,7 +66,7 @@ export async function registerUser(data: RegisterData): Promise<RegisterResult> 
       user_id: userId,
       weight_kg: data.weight,
       height_cm: data.height,
-      age: data.age,
+      date_of_birth: data.birthday.toISOString().split('T')[0],
     });
 
   if (profileError) {

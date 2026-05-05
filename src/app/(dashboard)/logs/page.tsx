@@ -2,6 +2,7 @@ import Link from "next/link";
 import Frequently from "./components/Frequently";
 import Searchbar from "./components/Searchbar";
 import Tips from "./components/Tips";
+import ConsumptionHistory from "./components/ConsumptionHistory";
 
 import CustomFood from "./components/CustomFood";
 import { getAllFoods } from "../actions";
@@ -42,6 +43,12 @@ const Logs = async ({ searchParams }: { searchParams: Promise<{ [key: string]: s
               )}
             </div>
           </div>
+
+          {/* Riwayat Konsumsi — weekly navigation + delete */}
+          <div className="w-full flex flex-col gap-6 my-6">
+            <ConsumptionHistory />
+          </div>
+
           <div className="w-full flex-col mb-8">
             <Tips />
           </div>
