@@ -51,8 +51,8 @@ const formSchema = z
     gender: z.enum(['laki-laki', 'perempuan'], {
       error: 'Jenis kelamin harus dipilih',
     }),
-    weight: z.coerce.number().min(1, 'Berat badan harus diisi'),
-    height: z.coerce.number().min(1, 'Tinggi badan harus diisi'),
+    weight: z.coerce.number<number>().min(1, 'Berat badan harus diisi'),
+    height: z.coerce.number<number>().min(1, 'Tinggi badan harus diisi'),
     birthday: z
       .date({ message: 'Tanggal lahir harus dipilih' })
       .refine((date) => date <= new Date(), 'Tanggal lahir tidak boleh di masa depan')
