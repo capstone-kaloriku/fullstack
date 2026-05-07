@@ -140,8 +140,8 @@ export type Database = {
       health_profiles: {
         Row: {
           activity_level: string | null
-          age: number | null
           bmr: number | null
+          date_of_birth: string | null
           height_cm: number | null
           profile_id: string
           recorded_at: string | null
@@ -151,8 +151,8 @@ export type Database = {
         }
         Insert: {
           activity_level?: string | null
-          age?: number | null
           bmr?: number | null
+          date_of_birth?: string | null
           height_cm?: number | null
           profile_id?: string
           recorded_at?: string | null
@@ -162,8 +162,8 @@ export type Database = {
         }
         Update: {
           activity_level?: string | null
-          age?: number | null
           bmr?: number | null
+          date_of_birth?: string | null
           height_cm?: number | null
           profile_id?: string
           recorded_at?: string | null
