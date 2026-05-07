@@ -1,172 +1,168 @@
 'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Loader2, CheckCircle } from 'lucide-react';
+
 import {
-  Field,
-  FieldDescription,
-  FieldError,
   FieldGroup,
-  FieldLabel,
   FieldSet,
-} from "@/components/ui/field";
+} from '@/components/ui/field';
+import { Button } from '@/components/ui/button';
+import PasswordField from '@/app/(auth)/register/components/PasswordField';
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { z } from 'zod';
+import { useForm, type FieldValues } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Button } from "@/components/ui/button";
+import { resetPassword } from '../actions';
 
-import Link from "next/link";
-
-import { EyeClosed, Lock, Mail } from "lucide-react";
-
-import { z } from "zod";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+// ============================================================
+// Validation schema — hanya password baru + konfirmasi
+// ============================================================
 
 const formSchema = z
   .object({
-    email: z
-      .email("Format email tidak valid")
-      .min(1, "Email harus diisi"),
-    password: z.string().min(8, "Kata sandi harus minimal 8 karakter"),
+    password: z.string().min(8, 'Kata sandi harus minimal 8 karakter'),
     confirmPassword: z
       .string()
-      .min(8, "Konfirmasi kata sandi harus minimal 8 karakter"),
+      .min(8, 'Konfirmasi kata sandi harus minimal 8 karakter'),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Kata sandi dan konfirmasi kata sandi harus sama",
-    path: ["confirmPassword"],
+    message: 'Kata sandi dan konfirmasi kata sandi harus sama',
+    path: ['confirmPassword'],
   });
 
 type FormValues = z.infer<typeof formSchema>;
 
+// ============================================================
+// Component — Reset password form (password + confirm only)
+// ============================================================
+
 function ResetPassword() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      confirmPassword: "",
+      password: '',
+      confirmPassword: '',
     },
   });
 
-  function onSubmit(data: FormValues) {
-    console.log(data);
+  async function onSubmit(data: FormValues) {
+    setIsLoading(true);
+    setServerError(null);
+
+    try {
+      const result = await resetPassword(data.password);
+
+      if (!result.success) {
+        setServerError(result.error ?? 'Gagal mengatur ulang kata sandi.');
+        return;
+      }
+
+      // Show success state, then redirect to login
+      setIsSuccess(true);
+      setTimeout(() => {
+        router.push('/login');
+      }, 2500);
+    } catch {
+      setServerError('Terjadi kesalahan. Coba lagi nanti.');
+    } finally {
+      setIsLoading(false);
+    }
   }
 
-  function onInvalid(errors: unknown) {
-    console.log("Formulir kosong", errors);
+  // ============================================================
+  // Success state — password has been reset
+  // ============================================================
+
+  if (isSuccess) {
+    return (
+      <div className="flex flex-col items-center gap-6 py-4">
+        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+          <CheckCircle size={28} className="text-primary" />
+        </div>
+
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h2 className="text-xl font-bold text-secondary-foreground">
+            Kata Sandi Diperbarui!
+          </h2>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            Kata sandi kamu berhasil diubah. Kamu akan dialihkan ke halaman
+            login...
+          </p>
+        </div>
+      </div>
+    );
   }
+
+  // ============================================================
+  // Form state — input new password + confirm
+  // ============================================================
 
   return (
-    <>
-      <form onSubmit={form.handleSubmit(onSubmit, onInvalid)}>
-        <FieldSet>
-          <FieldGroup>
-            <Controller
-              name="email"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <InputGroup className="rounded-full px-4 py-6">
-                    <InputGroupInput
-                      id="email"
-                      type="email"
-                      placeholder="Email"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
-                    <InputGroupAddon align="inline-start">
-                      <Mail size={20} />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <FieldDescription>
-                    Gunakan email yang terdaftar di akun Anda.
-                  </FieldDescription>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+    <form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldSet>
+        <FieldGroup>
+          {/* Server error banner */}
+          {serverError && (
+            <div className="rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3">
+              {serverError}
+            </div>
+          )}
 
-            <Controller
-              name="password"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="password">Kata Sandi Baru</FieldLabel>
-                  <InputGroup className="rounded-full px-4 py-6">
-                    <InputGroupInput
-                      id="password"
-                      type="password"
-                      placeholder="Kata Sandi Baru"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
-                    <InputGroupAddon align="inline-start">
-                      <Lock size={20} />
-                    </InputGroupAddon>
-                    <InputGroupAddon align="inline-end">
-                      <EyeClosed size={20} />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <FieldDescription>
-                    Minimal 8 karakter dengan kombinasi huruf dan angka.
-                  </FieldDescription>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+          {/* New password */}
+          <PasswordField
+            name="password"
+            control={form.control as unknown as import('react-hook-form').Control<FieldValues>}
+            label="Kata Sandi Baru"
+            description="Minimal 8 karakter dengan kombinasi huruf dan angka."
+            id="password"
+            placeholder="Kata Sandi Baru"
+          />
 
-            <Controller
-              name="confirmPassword"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel htmlFor="confirmPassword">
-                    Konfirmasi Kata Sandi
-                  </FieldLabel>
-                  <InputGroup className="rounded-full px-4 py-6">
-                    <InputGroupInput
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="Konfirmasi Kata Sandi"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
-                    <InputGroupAddon align="inline-start">
-                      <Lock size={20} />
-                    </InputGroupAddon>
-                    <InputGroupAddon align="inline-end">
-                      <EyeClosed size={20} />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+          {/* Confirm password */}
+          <PasswordField
+            name="confirmPassword"
+            control={form.control as unknown as import('react-hook-form').Control<FieldValues>}
+            label="Konfirmasi Kata Sandi"
+            description="Masukkan ulang kata sandi baru kamu."
+            id="confirmPassword"
+            placeholder="Konfirmasi Kata Sandi"
+          />
 
-            <Button type="submit" className="w-full py-6">
-              Atur Ulang Kata Sandi
-            </Button>
+          {/* Submit button */}
+          <Button
+            type="submit"
+            className="w-full py-6"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 size={20} className="animate-spin mr-2" />
+                Menyimpan...
+              </>
+            ) : (
+              'Atur Ulang Kata Sandi'
+            )}
+          </Button>
 
-            <span className="text-sm md:text-base text-muted-foreground text-center my-4">
-              Sudah ingat kata sandi?{" "}
-              <Link href="/login" className="text-primary underline font-medium">
-                Login Sekarang
-              </Link>
-            </span>
-          </FieldGroup>
-        </FieldSet>
-      </form>
-    </>
+          {/* Back to login */}
+          <span className="text-sm md:text-base text-muted-foreground text-center my-4">
+            Sudah ingat kata sandi?{' '}
+            <Link href="/login" className="text-primary underline font-medium">
+              Login Sekarang
+            </Link>
+          </span>
+        </FieldGroup>
+      </FieldSet>
+    </form>
   );
 }
 

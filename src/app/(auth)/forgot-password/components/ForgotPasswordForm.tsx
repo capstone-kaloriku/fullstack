@@ -23,6 +23,8 @@ import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { sendPasswordResetEmail } from '../actions';
+
 // ============================================================
 // Validation schema
 // ============================================================
@@ -54,15 +56,18 @@ function ForgotPasswordForm() {
     },
   });
 
-  // Handle submit — will call Supabase resetPasswordForEmail later
+  // Handle submit — calls server action to send reset email
   async function onSubmit(data: FormValues) {
     setIsLoading(true);
     setServerError(null);
 
     try {
-      // TODO: Connect to server action / Supabase Auth
-      // For now, simulate success after a short delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const result = await sendPasswordResetEmail(data.email);
+
+      if (!result.success) {
+        setServerError(result.error ?? 'Terjadi kesalahan. Coba lagi nanti.');
+        return;
+      }
 
       // Mark as sent
       setSentEmail(data.email);

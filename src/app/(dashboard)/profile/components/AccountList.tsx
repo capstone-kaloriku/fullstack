@@ -12,9 +12,9 @@ import { deleteAccount, switchAccount } from '../../actions';
 
 interface Account {
   user_id: string;
-  name: string;
+  name: string | null;
   email: string;
-  gender: string;
+  gender: string | null;
 }
 
 interface AccountListProps {

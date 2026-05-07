@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import type { TablesUpdate } from '@/lib/supabase/types';
 
 /**
  * Maps a Supabase food_items row to the frontend FoodSummariesProps shape.
@@ -162,7 +163,7 @@ export async function getUserProfile() {
   }
 
   // Calculate age dynamically from date_of_birth
-  const usia = calculateAge(healthData?.date_of_birth);
+  const usia = calculateAge(healthData?.date_of_birth ?? null);
 
   return {
     namaUser: userData.name || 'User',
@@ -424,7 +425,7 @@ export async function getConsumptionHistory(startDate: string, endDate: string) 
   }> = {};
 
   for (const log of logs || []) {
-    const dateKey = new Date(log.logged_at).toLocaleDateString('sv-SE'); // YYYY-MM-DD format
+    const dateKey = new Date(log.logged_at ?? new Date()).toLocaleDateString('sv-SE'); // YYYY-MM-DD format
     if (!grouped[dateKey]) {
       grouped[dateKey] = { date: dateKey, logs: [], totalKalori: 0 };
     }
@@ -566,8 +567,7 @@ export async function updateHealthProfile(data: {
   }
 
   // Build the update payload — only include provided fields
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updatePayload: Record<string, any> = {
+  const updatePayload: TablesUpdate<'health_profiles'> = {
     recorded_at: new Date().toISOString(),
   };
 

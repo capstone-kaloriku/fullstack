@@ -48,7 +48,7 @@ const ResetPasswordPage = () => {
               Atur ulang kata sandi
             </h1>
             <span className="font-mono text-sm text-muted-foreground">
-              Masukkan email dan kata sandi baru untuk mengamankan akun Anda.
+              Masukkan kata sandi baru untuk mengamankan akun kamu.
             </span>
           </div>
 

@@ -1,7 +1,8 @@
-import Image from "next/image";
-import LoginInput from "./components/LoginInput";
-import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
-import GlassSurface from "@/components/GlassSurface";
+import { Suspense } from 'react';
+import Image from 'next/image';
+import LoginInput from './components/LoginInput';
+import { BackgroundRippleEffect } from '@/components/layout/background-ripple-effect';
+import GlassSurface from '@/components/GlassSurface';
 
 export default function Login() {
   return (
@@ -49,7 +50,9 @@ export default function Login() {
 
           {/* Form */}
           <div className="mt-4">
-            <LoginInput />
+            <Suspense>
+              <LoginInput />
+            </Suspense>
           </div>
         </div>
 
