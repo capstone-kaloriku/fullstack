@@ -31,19 +31,19 @@ type GradualBlurProps = PropsWithChildren<{
   desktopWidth?: string;
 
   preset?:
-    | "top"
-    | "bottom"
-    | "left"
-    | "right"
-    | "subtle"
-    | "intense"
-    | "smooth"
-    | "sharp"
-    | "header"
-    | "footer"
-    | "sidebar"
-    | "page-header"
-    | "page-footer";
+  | "top"
+  | "bottom"
+  | "left"
+  | "right"
+  | "subtle"
+  | "intense"
+  | "smooth"
+  | "sharp"
+  | "header"
+  | "footer"
+  | "sidebar"
+  | "page-header"
+  | "page-footer";
   gpuOptimized?: boolean;
   hoverIntensity?: number;
   target?: "parent" | "page";

@@ -28,7 +28,7 @@ const footerNavigation = {
 
 function Footer() {
   return (
-    <footer className="relative w-full overflow-hidden z-90">
+    <footer className="relative w-full overflow-hidden">
       {/* Gradient separator */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-[#ff6b00]/40 to-transparent" />
 
