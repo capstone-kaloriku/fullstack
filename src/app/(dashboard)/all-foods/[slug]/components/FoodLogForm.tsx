@@ -86,7 +86,7 @@ function FoodLogForm({ food }: FoodLogFormProps) {
     }
 
     // Success — redirect to dashboard
-    router.push('/');
+    router.push('/dashboard');
   }
 
   return (

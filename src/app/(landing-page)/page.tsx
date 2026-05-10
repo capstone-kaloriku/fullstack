@@ -6,8 +6,7 @@ import HowToUse from "@/components/HowToUse";
 import HeroSection from "./layout/HeroSection";
 import TabletScrollReveal from "./layout/TabletScrollReveal";
 import WhyUs from "./layout/WhyUs";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+
 
 const people = [
   {
@@ -33,7 +32,7 @@ const people = [
     name: "Shulha Diyana",
     designation: "Data Scientist",
     image:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
+      "/developer/nana.jpeg",
   },
   {
     id: 5,
@@ -100,9 +99,9 @@ const Hero = () => {
 
       <section className="flex flex-col mx-auto max-w-6xl w-full text-center items-center py-24 md:py-36 z-3 gap-6">
         <div className="space-y-6">
-          <h2 className="text-4xl font-bold text-primary">Harga</h2>
+          <h2 className="text-4xl font-bold text-primary">Support Us</h2>
           <p className="max-w-xl text-base text-muted-foreground md:text-lg">
-            Bercanda kami membuat Kaloriku tanpa meminta biaya sedikitpun.
+            Kami membuat Kaloriku tanpa meminta biaya sedikitpun.
             <br />
             Tapi kalian bisa tetap support kami !
           </p>

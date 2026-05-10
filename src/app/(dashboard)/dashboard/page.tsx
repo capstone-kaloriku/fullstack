@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import CircleProgressBar from "./components/CircleProgressBar";
 import ProgressBarDetail from "./components/ProgressBarDetail";
@@ -11,6 +11,8 @@ import { persentageProps } from "@/types";
 
 import Reminder from "./components/Reminder";
 import { getUserProfile, getTodayConsumption, getAllFoods } from "../actions";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const calculatePercentage = ({ value, maxValue }: persentageProps) => {
   if (maxValue === 0) return 0;
@@ -30,7 +32,7 @@ const Dashboard = async () => {
 
   // Fallback values if user profile not found
   const kebutuhanHarian = userProfile?.kebutuhanHarian || {
-    kalori: 2200,
+    kalori: 2000,
     protein: 130,
     lemak: 70,
     karbohidrat: 370,
@@ -41,6 +43,7 @@ const Dashboard = async () => {
   const maxKcal = kebutuhanHarian.kalori;
   const currentKcal = konsumsiSaatIni.kalori;
   const remainingKcal = maxKcal - currentKcal;
+  const remainingPercentage = calculatePercentage({ value: currentKcal, maxValue: maxKcal });
 
   const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
     name: key,
@@ -59,44 +62,69 @@ const Dashboard = async () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 items-center justify-center gap-4 px-6 mx-auto overflow-x-hidden w-full max-w-2xl lg:max-w-5xl">
+      <div className="grid grid-cols-1 items-center justify-center gap-6 px-12 mx-auto overflow-x-hidden w-full max-w-2xl md:max-w-7xl lg:max-w-full">
         {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
-        <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-around lg:items-center mt-6 gap-8 lg:gap-20">
-          {/* Circle Progress */}
-          <div className="flex flex-col items-center">
-            <CircleProgressBar
-              value={currentKcal}
-              maxValue={maxKcal}
-              className="w-64 h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96"
-            >
-              <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
-            </CircleProgressBar>
+        <div className="flex flex-col lg:grid lg:grid-cols-4 items-center md:items-stretch justify-center lg:justify-around mt-6 gap-8 lg:gap-20">
+          {/* Circle Progress Sudah Responsive Wok */}
+          <Card className="flex flex-row justify-center w-full h-full md:col-span-3">
+            <CardHeader className="hidden md:flex flex-col items-start justify-center w-full space-y-5">
+              <div>
+                <h2 className="text-lg md:text-xl font-semibold text-primary">Statistik Harian</h2>
+                <p className="text-muted-foreground">Sisa Kalori Hari ini</p>
+              </div>
+              <div className="text-xl font-bold">
+                <span className="text-4xl">{remainingKcal}</span> kcal
+              </div>
+              <div className="text-sm text-muted-foreground">
+                <p>Kamu sudah memenuhi {remainingPercentage.toFixed(0)}% target harianmu. Pertahankan momentum energinya!</p>
+              </div>
+              <Button>
+                <Plus /> Tambah Makan
+              </Button>
+            </CardHeader>
+            <CardContent className="flex flex-row items-center justify-center">
+              <CircleProgressBar
+                value={currentKcal}
+                maxValue={maxKcal}
+                className="w-58 h-58 lg:w-48 lg:h-w-48 xl:w-72 xl:h-72"
+              >
+                <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
+              </CircleProgressBar>
+            </CardContent>
+          </Card>
+
+          {/* Reminder Desktop Mode*/}
+          <div className="hidden lg:flex w-full h-full items-stretch">
+            <Reminder />
           </div>
 
-          {/* Nutrition Cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 justify-between w-full lg:w-full mx-auto mt-0 gap-4 lg:gap-5">
-            {daily.map((item, index) => (
-              <div className="flex flex-col gap-6 items-center justify-center" key={index}>
-                <CircleProgressBar
-                  value={item.value}
-                  maxValue={item.maxValue}
-                  className="relative w-20 h-20 max-w-20 md:w-24 md:h-24 lg:w-28 lg:h-28 lg:max-w-28 mx-auto "
-                >
-                  <ProgressBarPersentage
-                    Percentage={item.percentage.toFixed(0) + "%"}
+        </div>
+        {/* Daily Nutrition Progress */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-between w-full lg:w-full mx-auto mt-0 gap-4 lg:gap-6">
+          {daily
+            .filter((_, index) => index !== 0)
+            .map((item, index) => (
+              <Card className="w-full" key={index}>
+                <CardContent className="flex items-center gap-4 p-4 sm:p-5">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold tracking-wide text-muted-foreground lg:text-sm">
+                      {item.name.toUpperCase()}
+                    </p>
+                    <div className="text-lg font-bold text-foreground lg:text-xl">
+                      {item.value} g
+                    </div>
+                    <p className="text-xs text-muted-foreground lg:text-sm">
+                      {item.percentage.toFixed(0)}% dari target
+                    </p>
+                  </div>
+                  <CircleProgressBar
+                    value={item.value}
+                    maxValue={item.maxValue}
+                    className="relative h-12 w-12 shrink-0 mx-0 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
                   />
-                </CircleProgressBar>
-                <Card className="w-full lg:w-1/2">
-                  <CardContent className="flex flex-col items-center justify-center w-full mx-auto">
-                    {item.name.toUpperCase()}
-                    <span className="text-sm text-muted-foreground font-medium">
-                      {item.value}g
-                    </span>
-                  </CardContent>
-                </Card>
-              </div>
+                </CardContent>
+              </Card>
             ))}
-          </div>
         </div>
 
         {/* Ringkasan Makanan Hari Ini */}
@@ -113,8 +141,8 @@ const Dashboard = async () => {
           <FoodSummaries data={foods} />
         </div>
 
-        {/* Reminder Drink Water */}
-        <div className="w-full mt-8 mb-8">
+        {/* Reminder Mobile Mode */}
+        <div className="w-full mt-8 mb-8 md:hidden">
           <Reminder />
         </div>
       </div>
