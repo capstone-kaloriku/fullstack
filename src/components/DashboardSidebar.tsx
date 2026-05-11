@@ -9,6 +9,7 @@ import { RiGeminiFill } from "react-icons/ri";
 import { MdMonitorHeart } from "react-icons/md";
 import { FaAppleAlt, FaHome } from "react-icons/fa";
 import { LogOutIcon } from "lucide-react";
+import { logoutUser } from "@/app/(auth)/logout/actions";
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 
@@ -70,15 +71,23 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div>
-            <SidebarLink
-              link={{
-                label: "Keluar",
-                href: "/profile",
-                icon: (
-                  <LogOutIcon className="text-secondary-foreground" />
-                ),
-              }}
-            />
+            <form action={logoutUser}>
+              <button
+                type="submit"
+                className="flex items-center justify-start gap-2 group/sidebar py-2 w-full cursor-pointer"
+              >
+                <LogOutIcon className="text-secondary-foreground" />
+                <motion.span
+                  animate={{
+                    display: open ? "inline-block" : "none",
+                    opacity: open ? 1 : 0,
+                  }}
+                  className="text-primary dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+                >
+                  Keluar
+                </motion.span>
+              </button>
+            </form>
           </div>
         </SidebarBody>
       </Sidebar>
