@@ -13,7 +13,7 @@ import {
 } from "@/components/layout/resizable-navbar";
 import Link from "next/link";
 import { useState } from "react";
-import { FadeUpPyramid } from "./animations/FadeUpPyramid";
+import { FadeUpPyramid } from "../animations/FadeUpPyramid";
 
 export function Header() {
   const navItems = [

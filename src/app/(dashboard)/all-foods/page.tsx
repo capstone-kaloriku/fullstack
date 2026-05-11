@@ -94,10 +94,10 @@ const AllFood = () => {
   }
 
   return (
-    <div className="">
-      <div className="max-w-2xl lg:max-w-5xl mx-auto px-6 w-full">
-        <div className="grid grid-cols-1 gap-6">
-          <div>
+    <div className="min-h-screen">
+      <div className="max-w-2xl lg:max-w-6xl xl:max-w-full mx-auto px-6 py-6 w-full overflow-x-hidden">
+        <div className="flex flex-col gap-8">
+          <div className="w-full">
             <Category
               data={icon}
               activeFilter={activeFilter}
@@ -105,14 +105,14 @@ const AllFood = () => {
             />
           </div>
           {filteredRecently.length > 0 && (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 w-full">
               <h1 className="text-lg font-bold text-primary">Sering Dimakan</h1>
-              <div className="flex flex-col md:grid md:grid-cols-2 items-center w-full gap-6">
+              <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                 <DisplayFood data={filteredRecently} />
               </div>
             </div>
           )}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 w-full border-t pt-6 sm:border-t-0 sm:pt-0">
             <div className="flex items-center justify-between">
               <h1 className="text-lg font-bold text-primary">
                 {activeFilter ? `Hasil Filter` : "Semua Makanan"}
@@ -124,17 +124,19 @@ const AllFood = () => {
             </div>
             {paginatedData.length > 0 ? (
               <>
-                <div className="flex flex-col md:grid md:grid-cols-2 items-center w-full gap-6">
+                <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                   <DisplayFood data={paginatedData} />
                 </div>
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
+                <div className="mt-4 flex justify-center w-full">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground">
+              <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground w-full">
                 <span className="text-4xl">🍽️</span>
                 <p className="text-sm font-medium">
                   Tidak ada makanan dalam kategori ini

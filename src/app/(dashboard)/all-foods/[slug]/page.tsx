@@ -28,13 +28,12 @@ const AddFood = async ({ params }: PageProps) => {
 
   return (
     <div className="h-screen overflow-y-auto">
-      <div className="max-w-xl mx-auto px-6 w-full py-6">
-        <div className="flex flex-col items-center justify-center gap-6">
-
+      <div className="mx-auto w-full max-w-xl px-6 py-6 md:max-w-5xl">
+        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
           {/* Food info card — server rendered */}
           <div className="w-full">
             <Card className="w-full py-6">
-              <CardContent className="flex flex-col justify-center items-center gap-5">
+              <CardContent className="flex flex-col items-center justify-center gap-5">
                 <Image
                   src="/profile.jpg"
                   className="rounded-full"
@@ -55,7 +54,6 @@ const AddFood = async ({ params }: PageProps) => {
 
           {/* Form — client component (handles state + submit) */}
           <FoodLogForm food={{ id: food.id, nama: food.nama, kalori: food.kalori }} />
-
         </div>
       </div>
     </div>

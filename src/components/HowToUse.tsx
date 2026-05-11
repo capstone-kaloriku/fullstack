@@ -44,21 +44,7 @@ export default function HowToUse() {
   return (
     <>
       {/* Section header */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative z-10 mb-4 flex flex-col items-center gap-4 text-center"
-      >
-        <h2 className="text-3xl font-bold tracking-tight text-primary md:text-5xl">
-          Cara Penggunaan
-        </h2>
-        <p className="max-w-lg text-base text-muted-foreground md:text-lg">
-          Empat langkah mudah untuk memulai perjalanan hidup sehatmu bersama{" "}
-          <span className="font-semibold text-primary">KaloriKu</span>
-        </p>
-      </motion.div>
+      
 
       {/* Stepper */}
       <motion.div

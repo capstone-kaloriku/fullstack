@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { createClient } from '@/lib/supabase/server';
-import type { TablesUpdate } from '@/lib/supabase/types';
+import { createClient } from "@/lib/supabase/server";
+import type { TablesUpdate } from "@/lib/supabase/types";
 
 /**
  * Maps a Supabase food_items row to the frontend FoodSummariesProps shape.
@@ -10,16 +10,16 @@ import type { TablesUpdate } from '@/lib/supabase/types';
 function mapFoodItem(item: any) {
   return {
     id: item.food_id as string,
-    nama: (item.name as string) || '',
-    gambar: (item.image_url as string) || '/profile.jpg',
+    nama: (item.name as string) || "",
+    gambar: (item.image_url as string) || "/profile.jpg",
     kalori: (item.calories as number) || 0,
     karbo: Number(item.carbs_gram) || 0,
     protein: Number(item.protein_gram) || 0,
     lemak: Number(item.fat_gram) || 0,
-    kategori: (item.category as string) || '',
+    kategori: (item.category as string) || "",
     porsi: (item.portion as number) || 1,
     takaranSaji: (item.base_portion_gram as number) || 0,
-    slug: (item.slug as string) || '',
+    slug: (item.slug as string) || "",
   };
 }
 
@@ -32,16 +32,16 @@ function mapFoodItem(item: any) {
  */
 export async function getAllFoods(searchQuery?: string) {
   const supabase = await createClient();
-  let query = supabase.from('food_items').select('*').order('name');
+  let query = supabase.from("food_items").select("*").order("name");
 
   if (searchQuery) {
-    query = query.ilike('name', `%${searchQuery}%`);
+    query = query.ilike("name", `%${searchQuery}%`);
   }
 
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error fetching food items:', error.message);
+    console.error("Error fetching food items:", error.message);
     return [];
   }
 
@@ -54,13 +54,13 @@ export async function getAllFoods(searchQuery?: string) {
 export async function getFoodBySlug(slug: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('food_items')
-    .select('*')
-    .eq('slug', slug)
+    .from("food_items")
+    .select("*")
+    .eq("slug", slug)
     .single();
 
   if (error) {
-    console.error('Error fetching food by slug:', error.message);
+    console.error("Error fetching food by slug:", error.message);
     return null;
   }
 
@@ -73,13 +73,13 @@ export async function getFoodBySlug(slug: string) {
 export async function getFoodsByCategory(category: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('food_items')
-    .select('*')
-    .eq('category', category)
-    .order('name');
+    .from("food_items")
+    .select("*")
+    .eq("category", category)
+    .order("name");
 
   if (error) {
-    console.error('Error fetching foods by category:', error.message);
+    console.error("Error fetching foods by category:", error.message);
     return [];
   }
 
@@ -111,14 +111,16 @@ function calculateAge(dateOfBirth: string | null): number {
  */
 export async function getUserProfile() {
   const supabase = await createClient();
-  const { cookies } = await import('next/headers');
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
 
   // 1. Check for manually switched account (cookie)
-  const activeUserId = cookieStore.get('active_user_id')?.value;
+  const activeUserId = cookieStore.get("active_user_id")?.value;
 
   // 2. Try auth user
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
 
   // Priority: cookie > auth > fallback first user
   let userId: string | null = activeUserId || authUser?.id || null;
@@ -126,8 +128,8 @@ export async function getUserProfile() {
   if (!userId) {
     // Fallback: get first user (development mode)
     const { data: firstUser } = await supabase
-      .from('users')
-      .select('user_id')
+      .from("users")
+      .select("user_id")
       .limit(1)
       .single();
     userId = firstUser?.user_id || null;
@@ -139,48 +141,48 @@ export async function getUserProfile() {
 
   // Fetch user data
   const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('*')
-    .eq('user_id', userId)
+    .from("users")
+    .select("*")
+    .eq("user_id", userId)
     .single();
 
   if (userError) {
-    console.error('Error fetching user:', userError.message);
+    console.error("Error fetching user:", userError.message);
     return null;
   }
 
   // Fetch health profile
   const { data: healthData, error: healthError } = await supabase
-    .from('health_profiles')
-    .select('*')
-    .eq('user_id', userId)
-    .order('recorded_at', { ascending: false })
+    .from("health_profiles")
+    .select("*")
+    .eq("user_id", userId)
+    .order("recorded_at", { ascending: false })
     .limit(1)
     .single();
 
   if (healthError) {
-    console.error('Error fetching health profile:', healthError.message);
+    console.error("Error fetching health profile:", healthError.message);
   }
 
   // Calculate age dynamically from date_of_birth
   const usia = calculateAge(healthData?.date_of_birth ?? null);
 
   return {
-    namaUser: userData.name || 'User',
+    namaUser: userData.name || "User",
     email: userData.email,
     usia,
-    tanggalLahir: (healthData?.date_of_birth as string) || '',
-    jenisKelamin: userData.gender || 'Laki-Laki',
+    tanggalLahir: (healthData?.date_of_birth as string) || "",
+    jenisKelamin: userData.gender || "Laki-Laki",
     beratBadan: Number(healthData?.weight_kg) || 0,
     tinggiBadan: Number(healthData?.height_cm) || 0,
-    aktivitasFisik: healthData?.activity_level || 'Ringan',
+    aktivitasFisik: healthData?.activity_level || "Ringan",
     // Calculate daily needs based on BMR (Mifflin-St Jeor)
     kebutuhanHarian: calculateDailyNeeds({
       weight: Number(healthData?.weight_kg) || 70,
       height: Number(healthData?.height_cm) || 170,
       age: usia || 25,
-      gender: userData.gender || 'laki-laki',
-      activityLevel: healthData?.activity_level || 'Ringan',
+      gender: userData.gender || "laki-laki",
+      activityLevel: healthData?.activity_level || "Ringan",
     }),
   };
 }
@@ -199,7 +201,7 @@ function calculateDailyNeeds(params: {
 
   // BMR calculation (Mifflin-St Jeor)
   let bmr: number;
-  if (gender === 'laki-laki') {
+  if (gender === "laki-laki") {
     bmr = 10 * weight + 6.25 * height - 5 * age + 5;
   } else {
     bmr = 10 * weight + 6.25 * height - 5 * age - 161;
@@ -207,11 +209,11 @@ function calculateDailyNeeds(params: {
 
   // Activity multiplier
   const activityMultipliers: Record<string, number> = {
-    'Sangat Ringan': 1.2,
-    'Ringan': 1.375,
-    'Sedang': 1.55,
-    'Berat': 1.725,
-    'Sangat Berat': 1.9,
+    "Sangat Ringan": 1.2,
+    Ringan: 1.375,
+    Sedang: 1.55,
+    Berat: 1.725,
+    "Sangat Berat": 1.9,
   };
 
   const multiplier = activityMultipliers[activityLevel] || 1.375;
@@ -219,9 +221,9 @@ function calculateDailyNeeds(params: {
 
   return {
     kalori: tdee,
-    protein: Math.round(tdee * 0.2 / 4), // 20% of calories, 4 cal/g
-    lemak: Math.round(tdee * 0.25 / 9), // 25% of calories, 9 cal/g
-    karbohidrat: Math.round(tdee * 0.55 / 4), // 55% of calories, 4 cal/g
+    protein: Math.round((tdee * 0.2) / 4), // 20% of calories, 4 cal/g
+    lemak: Math.round((tdee * 0.25) / 9), // 25% of calories, 9 cal/g
+    karbohidrat: Math.round((tdee * 0.55) / 4), // 55% of calories, 4 cal/g
   };
 }
 
@@ -236,41 +238,59 @@ export async function getTodayConsumption() {
   const supabase = await createClient();
 
   // Get user
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
   let userId: string | null = authUser?.id || null;
 
   if (!userId) {
     const { data: firstUser } = await supabase
-      .from('users')
-      .select('user_id')
+      .from("users")
+      .select("user_id")
       .limit(1)
       .single();
     userId = firstUser?.user_id || null;
   }
 
   if (!userId) {
-    return { logs: [], totals: { kalori: 0, protein: 0, lemak: 0, karbohidrat: 0 } };
+    return {
+      logs: [],
+      totals: { kalori: 0, protein: 0, lemak: 0, karbohidrat: 0 },
+    };
   }
 
   // Get today's date range (UTC)
   const today = new Date();
-  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
-  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
+  const startOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  ).toISOString();
+  const endOfDay = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() + 1,
+  ).toISOString();
 
   const { data: logs, error } = await supabase
-    .from('consumption_logs')
-    .select(`
+    .from("consumption_logs")
+    .select(
+      `
       *,
       food_items (*)
-    `)
-    .eq('user_id', userId)
-    .gte('logged_at', startOfDay)
-    .lt('logged_at', endOfDay)
-    .order('logged_at', { ascending: false });
+    `,
+    )
+    .eq("user_id", userId)
+    .gte("logged_at", startOfDay)
+    .lt("logged_at", endOfDay)
+    .order("logged_at", { ascending: false });
 
   if (error) {
-    console.error('Error fetching consumption logs:', error.message);
-    return { logs: [], totals: { kalori: 0, protein: 0, lemak: 0, karbohidrat: 0 } };
+    console.error("Error fetching consumption logs:", error.message);
+    return {
+      logs: [],
+      totals: { kalori: 0, protein: 0, lemak: 0, karbohidrat: 0 },
+    };
   }
 
   // Calculate totals
@@ -281,7 +301,7 @@ export async function getTodayConsumption() {
 
   const mappedLogs = (logs || []).map((log) => {
     const food = log.food_items;
-    const calories = log.total_calories || (food?.calories || 0);
+    const calories = log.total_calories || food?.calories || 0;
     const portion = Number(log.consumed_portion) || 1;
 
     totalKalori += calories;
@@ -291,16 +311,16 @@ export async function getTodayConsumption() {
 
     return {
       id: log.log_id,
-      nama: food?.name || log.raw_input_text || 'Unknown',
-      gambar: food?.image_url || '/profile.jpg',
+      nama: food?.name || log.raw_input_text || "Unknown",
+      gambar: food?.image_url || "/profile.jpg",
       kalori: calories,
       karbo: Number(food?.carbs_gram) || 0,
       protein: Number(food?.protein_gram) || 0,
       lemak: Number(food?.fat_gram) || 0,
-      kategori: log.meal_type || food?.category || '',
+      kategori: log.meal_type || food?.category || "",
       porsi: portion,
       takaranSaji: food?.base_portion_gram || 0,
-      slug: food?.slug || '',
+      slug: food?.slug || "",
     };
   });
 
@@ -328,46 +348,49 @@ export async function logFoodConsumption(data: {
   const supabase = await createClient();
 
   // Get user
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
   let userId: string | null = authUser?.id || null;
 
   if (!userId) {
     const { data: firstUser } = await supabase
-      .from('users')
-      .select('user_id')
+      .from("users")
+      .select("user_id")
       .limit(1)
       .single();
     userId = firstUser?.user_id || null;
   }
 
   if (!userId) {
-    return { success: false, error: 'User tidak ditemukan.' };
+    return { success: false, error: "User tidak ditemukan." };
   }
 
   // If foodId is provided, get the food's calories
   let calories = data.totalCalories || 0;
   if (data.foodId && !data.totalCalories) {
     const { data: food } = await supabase
-      .from('food_items')
-      .select('calories')
-      .eq('food_id', data.foodId)
+      .from("food_items")
+      .select("calories")
+      .eq("food_id", data.foodId)
       .single();
     calories = (food?.calories || 0) * data.portion;
   }
 
-  const { error } = await supabase
-    .from('consumption_logs')
-    .insert({
-      user_id: userId,
-      food_id: data.foodId || null,
-      raw_input_text: data.rawInputText || null,
-      consumed_portion: data.portion,
-      meal_type: data.mealType,
-      total_calories: calories,
-    });
+  const { error } = await supabase.from("consumption_logs").insert({
+    user_id: userId,
+    food_id: data.foodId || null,
+    raw_input_text: data.rawInputText || null,
+    consumed_portion: data.portion,
+    meal_type: data.mealType,
+    total_calories: calories,
+  });
 
   if (error) {
-    return { success: false, error: 'Gagal menyimpan data konsumsi: ' + error.message };
+    return {
+      success: false,
+      error: "Gagal menyimpan data konsumsi: " + error.message,
+    };
   }
 
   return { success: true };
@@ -377,20 +400,25 @@ export async function logFoodConsumption(data: {
  * Fetch consumption history for a date range.
  * Groups logs by date for timeline display.
  */
-export async function getConsumptionHistory(startDate: string, endDate: string) {
+export async function getConsumptionHistory(
+  startDate: string,
+  endDate: string,
+) {
   const supabase = await createClient();
-  const { cookies } = await import('next/headers');
+  const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
 
   // Get user (same priority as getUserProfile: cookie > auth > fallback)
-  const activeUserId = cookieStore.get('active_user_id')?.value;
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const activeUserId = cookieStore.get("active_user_id")?.value;
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
   let userId: string | null = activeUserId || authUser?.id || null;
 
   if (!userId) {
     const { data: firstUser } = await supabase
-      .from('users')
-      .select('user_id')
+      .from("users")
+      .select("user_id")
       .limit(1)
       .single();
     userId = firstUser?.user_id || null;
@@ -402,30 +430,37 @@ export async function getConsumptionHistory(startDate: string, endDate: string) 
 
   // Query logs within the date range
   const { data: logs, error } = await supabase
-    .from('consumption_logs')
-    .select(`
+    .from("consumption_logs")
+    .select(
+      `
       *,
       food_items (*)
-    `)
-    .eq('user_id', userId)
-    .gte('logged_at', startDate)
-    .lt('logged_at', endDate)
-    .order('logged_at', { ascending: false });
+    `,
+    )
+    .eq("user_id", userId)
+    .gte("logged_at", startDate)
+    .lt("logged_at", endDate)
+    .order("logged_at", { ascending: false });
 
   if (error) {
-    console.error('Error fetching consumption history:', error.message);
+    console.error("Error fetching consumption history:", error.message);
     return { days: [] };
   }
 
   // Group logs by date (YYYY-MM-DD)
-  const grouped: Record<string, {
-    date: string;
-    logs: ReturnType<typeof mapConsumptionLog>[];
-    totalKalori: number;
-  }> = {};
+  const grouped: Record<
+    string,
+    {
+      date: string;
+      logs: ReturnType<typeof mapConsumptionLog>[];
+      totalKalori: number;
+    }
+  > = {};
 
   for (const log of logs || []) {
-    const dateKey = new Date(log.logged_at ?? new Date()).toLocaleDateString('sv-SE'); // YYYY-MM-DD format
+    const dateKey = new Date(log.logged_at ?? new Date()).toLocaleDateString(
+      "sv-SE",
+    ); // YYYY-MM-DD format
     if (!grouped[dateKey]) {
       grouped[dateKey] = { date: dateKey, logs: [], totalKalori: 0 };
     }
@@ -451,16 +486,16 @@ export async function getConsumptionHistory(startDate: string, endDate: string) 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapConsumptionLog(log: any) {
   const food = log.food_items;
-  const calories = log.total_calories || (food?.calories || 0);
+  const calories = log.total_calories || food?.calories || 0;
   const portion = Number(log.consumed_portion) || 1;
 
   return {
     id: log.log_id as string,
-    nama: (food?.name || log.raw_input_text || 'Makanan Custom') as string,
-    gambar: (food?.image_url || '/profile.jpg') as string,
+    nama: (food?.name || log.raw_input_text || "Makanan Custom") as string,
+    gambar: (food?.image_url || "/profile.jpg") as string,
     kalori: calories as number,
     porsi: portion,
-    mealType: (log.meal_type || '') as string,
+    mealType: (log.meal_type || "") as string,
     loggedAt: log.logged_at as string,
   };
 }
@@ -472,12 +507,12 @@ export async function deleteConsumptionLog(logId: string) {
   const supabase = await createClient();
 
   const { error } = await supabase
-    .from('consumption_logs')
+    .from("consumption_logs")
     .delete()
-    .eq('log_id', logId);
+    .eq("log_id", logId);
 
   if (error) {
-    return { success: false, error: 'Gagal menghapus log: ' + error.message };
+    return { success: false, error: "Gagal menghapus log: " + error.message };
   }
 
   return { success: true };
@@ -495,42 +530,52 @@ export async function updateAccountSettings(data: {
   const supabase = await createClient();
 
   // Get user
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
   let userId: string | null = authUser?.id || null;
 
   if (!userId) {
     const { data: firstUser } = await supabase
-      .from('users')
-      .select('user_id')
+      .from("users")
+      .select("user_id")
       .limit(1)
       .single();
     userId = firstUser?.user_id || null;
   }
 
   if (!userId) {
-    return { success: false, error: 'User tidak ditemukan.' };
+    return { success: false, error: "User tidak ditemukan." };
   }
 
   // Update public.users (name, gender)
   const { error: updateError } = await supabase
-    .from('users')
+    .from("users")
     .update({
       name: data.name,
       gender: data.gender,
     })
-    .eq('user_id', userId);
+    .eq("user_id", userId);
 
   if (updateError) {
-    return { success: false, error: 'Gagal memperbarui profil: ' + updateError.message };
+    return {
+      success: false,
+      error: "Gagal memperbarui profil: " + updateError.message,
+    };
   }
 
   // Update password in Auth if provided (only works if actually logged in)
   if (data.password && authUser) {
     const { error: authError } = await supabase.auth.updateUser({
-      password: data.password
+      password: data.password,
     });
     if (authError) {
-      return { success: false, error: 'Profil diperbarui, tapi gagal mengubah kata sandi: ' + authError.message };
+      return {
+        success: false,
+        error:
+          "Profil diperbarui, tapi gagal mengubah kata sandi: " +
+          authError.message,
+      };
     }
   }
 
@@ -550,24 +595,26 @@ export async function updateHealthProfile(data: {
   const supabase = await createClient();
 
   // Get user
-  const { data: { user: authUser } } = await supabase.auth.getUser();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
   let userId: string | null = authUser?.id || null;
 
   if (!userId) {
     const { data: firstUser } = await supabase
-      .from('users')
-      .select('user_id')
+      .from("users")
+      .select("user_id")
       .limit(1)
       .single();
     userId = firstUser?.user_id || null;
   }
 
   if (!userId) {
-    return { success: false, error: 'User tidak ditemukan.' };
+    return { success: false, error: "User tidak ditemukan." };
   }
 
   // Build the update payload — only include provided fields
-  const updatePayload: TablesUpdate<'health_profiles'> = {
+  const updatePayload: TablesUpdate<"health_profiles"> = {
     recorded_at: new Date().toISOString(),
   };
 
@@ -589,18 +636,18 @@ export async function updateHealthProfile(data: {
     const age = calculateAge(data.dateOfBirth);
     // Get gender from users table
     const { data: userData } = await supabase
-      .from('users')
-      .select('gender')
-      .eq('user_id', userId)
+      .from("users")
+      .select("gender")
+      .eq("user_id", userId)
       .single();
 
-    const gender = userData?.gender || 'laki-laki';
+    const gender = userData?.gender || "laki-laki";
     const needs = calculateDailyNeeds({
       weight: data.weightKg,
       height: data.heightCm,
       age: age || 25,
       gender,
-      activityLevel: data.activityLevel || 'Ringan',
+      activityLevel: data.activityLevel || "Ringan",
     });
 
     updatePayload.bmr = needs.kalori; // Store TDEE as the main calorie target
@@ -608,13 +655,17 @@ export async function updateHealthProfile(data: {
   }
 
   const { error } = await supabase
-    .from('health_profiles')
+    .from("health_profiles")
     .update(updatePayload)
-    .eq('user_id', userId);
+    .eq("user_id", userId);
 
   if (error) {
-    return { success: false, error: 'Gagal memperbarui profil kesehatan: ' + error.message };
+    return {
+      success: false,
+      error: "Gagal memperbarui profil kesehatan: " + error.message,
+    };
   }
 
   return { success: true };
 }
+

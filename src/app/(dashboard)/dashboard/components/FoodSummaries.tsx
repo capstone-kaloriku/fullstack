@@ -14,7 +14,7 @@ function FoodSummaries({ data }: Props) {
   return (
     <>
       <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
-        {data.map(({ id, nama, gambar, kalori, karbo, protein, lemak, kategori, slug }) => {
+        {data.map(({ id, nama, gambar, kalori, protein, lemak, karbo, kategori, slug }) => {
           return (
             <Card key={id}>
               <div className="flex flex-row items-center">
