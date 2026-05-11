@@ -128,7 +128,7 @@ const Dashboard = async () => {
         </div>
 
         {/* Ringkasan Makanan Hari Ini */}
-        <div className="flex flex-col mt-8 gap-6">
+        <div className="flex flex-col mt-0 gap-6">
           <div className="flex items-center justify-between font-semibold text-base md:text-xl">
             <h2>Ringkasan Makanan Hari Ini</h2>
             <Link
