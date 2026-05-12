@@ -78,7 +78,7 @@ const Dashboard = async () => {
               <div className="text-sm text-muted-foreground">
                 <p>Kamu sudah memenuhi {remainingPercentage.toFixed(0)}% target harianmu. Pertahankan momentum energinya!</p>
               </div>
-              <Button>
+              <Button nativeButton={false} render={<Link href="/all-foods" />}>
                 <Plus /> Tambah Makan
               </Button>
             </CardHeader>

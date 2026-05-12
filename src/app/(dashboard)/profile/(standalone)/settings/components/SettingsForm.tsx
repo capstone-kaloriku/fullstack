@@ -106,168 +106,170 @@ export default function SettingsForm({ initialData }: SettingsFormProps) {
         </div>
       )}
 
-      <FieldGroup>
-        {/* ─── Pengaturan Akun ─── */}
-        <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <InputGroup className="py-6 bg-muted/50">
-            <InputGroupInput
-              id="email"
-              type="email"
-              value={initialData.email}
-              disabled
-              className="p-6 cursor-not-allowed"
-            />
-          </InputGroup>
-          <span className="text-xs text-muted-foreground mt-1">Email tidak dapat diubah.</span>
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="name">Nama Lengkap</FieldLabel>
-          <InputGroup className="py-6">
-            <InputGroupInput
-              id="name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Masukkan nama lengkap"
-              className="p-6"
-              required
-            />
-          </InputGroup>
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="gender">Jenis Kelamin</FieldLabel>
-          <InputGroup className="py-6 px-4">
-            <select
-              id="gender"
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className="w-full bg-transparent outline-none focus:ring-0 text-sm py-2"
-              required
-            >
-              <option value="laki-laki">Laki-laki</option>
-              <option value="perempuan">Perempuan</option>
-            </select>
-          </InputGroup>
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="password">Kata Sandi Baru (Opsional)</FieldLabel>
-          <InputGroup className="py-6">
-            <InputGroupInput
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Kosongkan jika tidak ingin mengubah"
-              className="p-6"
-            />
-          </InputGroup>
-        </Field>
-
-        {/* ─── Separator ─── */}
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-border" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
+        <FieldGroup className="space-y-4">
+          <div className="mb-2">
+            <h3 className="text-lg font-semibold tracking-tight text-foreground">Pengaturan Akun</h3>
+            <p className="text-sm text-muted-foreground">Kelola informasi dasar akun Anda.</p>
           </div>
-          <div className="relative flex justify-center">
-            <span className="bg-background px-4 text-sm font-semibold text-muted-foreground">
-              Profil Kesehatan
+
+          <Field>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <InputGroup className="py-6 bg-muted/50">
+              <InputGroupInput
+                id="email"
+                type="email"
+                value={initialData.email}
+                disabled
+                className="p-6 cursor-not-allowed"
+              />
+            </InputGroup>
+            <span className="text-xs text-muted-foreground mt-1">Email tidak dapat diubah.</span>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="name">Nama Lengkap</FieldLabel>
+            <InputGroup className="py-6">
+              <InputGroupInput
+                id="name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Masukkan nama lengkap"
+                className="p-6"
+                required
+              />
+            </InputGroup>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="gender">Jenis Kelamin</FieldLabel>
+            <InputGroup className="py-6 px-4">
+              <select
+                id="gender"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="w-full bg-transparent outline-none focus:ring-0 text-sm py-2"
+                required
+              >
+                <option value="laki-laki">Laki-laki</option>
+                <option value="perempuan">Perempuan</option>
+              </select>
+            </InputGroup>
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="password">Kata Sandi Baru (Opsional)</FieldLabel>
+            <InputGroup className="py-6">
+              <InputGroupInput
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Kosongkan jika tidak ingin mengubah"
+                className="p-6"
+              />
+            </InputGroup>
+          </Field>
+        </FieldGroup>
+
+        <FieldGroup className="space-y-4">
+          <div className="mb-2">
+            <h3 className="text-lg font-semibold tracking-tight text-foreground">Profil Kesehatan</h3>
+            <p className="text-sm text-muted-foreground">Perbarui data kesehatan untuk hasil yang lebih akurat.</p>
+          </div>
+
+          <Field>
+            <FieldLabel htmlFor="dateOfBirth">Tanggal Lahir</FieldLabel>
+            <InputGroup className="py-6">
+              <InputGroupInput
+                id="dateOfBirth"
+                name="dateOfBirth"
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                className="p-6"
+              />
+            </InputGroup>
+            <span className="text-xs text-muted-foreground mt-1">
+              Usia dihitung otomatis dari tanggal lahir.
             </span>
+          </Field>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Field>
+              <FieldLabel htmlFor="weightKg">Berat Badan (KG)</FieldLabel>
+              <InputGroup className="py-6">
+                <InputGroupInput
+                  id="weightKg"
+                  name="weightKg"
+                  type="number"
+                  value={formData.weightKg}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className="p-6"
+                  min={20}
+                  max={300}
+                  step={0.1}
+                />
+              </InputGroup>
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="heightCm">Tinggi Badan (CM)</FieldLabel>
+              <InputGroup className="py-6">
+                <InputGroupInput
+                  id="heightCm"
+                  name="heightCm"
+                  type="number"
+                  value={formData.heightCm}
+                  onChange={handleChange}
+                  placeholder="0"
+                  className="p-6"
+                  min={50}
+                  max={250}
+                  step={0.1}
+                />
+              </InputGroup>
+            </Field>
           </div>
-        </div>
-
-        {/* ─── Profil Kesehatan ─── */}
-        <Field>
-          <FieldLabel htmlFor="dateOfBirth">Tanggal Lahir</FieldLabel>
-          <InputGroup className="py-6">
-            <InputGroupInput
-              id="dateOfBirth"
-              name="dateOfBirth"
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="p-6"
-            />
-          </InputGroup>
-          <span className="text-xs text-muted-foreground mt-1">
-            Usia dihitung otomatis dari tanggal lahir.
-          </span>
-        </Field>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Field>
-            <FieldLabel htmlFor="weightKg">Berat Badan (KG)</FieldLabel>
-            <InputGroup className="py-6">
-              <InputGroupInput
-                id="weightKg"
-                name="weightKg"
-                type="number"
-                value={formData.weightKg}
-                onChange={handleChange}
-                placeholder="0"
-                className="p-6"
-                min={20}
-                max={300}
-                step={0.1}
-              />
-            </InputGroup>
-          </Field>
 
           <Field>
-            <FieldLabel htmlFor="heightCm">Tinggi Badan (CM)</FieldLabel>
-            <InputGroup className="py-6">
-              <InputGroupInput
-                id="heightCm"
-                name="heightCm"
-                type="number"
-                value={formData.heightCm}
+            <FieldLabel htmlFor="activityLevel">Tingkat Aktivitas</FieldLabel>
+            <InputGroup className="py-6 px-4">
+              <select
+                id="activityLevel"
+                name="activityLevel"
+                value={formData.activityLevel}
                 onChange={handleChange}
-                placeholder="0"
-                className="p-6"
-                min={50}
-                max={250}
-                step={0.1}
-              />
+                className="w-full bg-transparent outline-none focus:ring-0 text-sm py-2"
+              >
+                {ACTIVITY_LEVELS.map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
+                ))}
+              </select>
             </InputGroup>
           </Field>
+        </FieldGroup>
+
+        <div className="lg:col-span-2 pt-6">
+          <Button type="submit" variant="default" className="text-sm md:text-base w-full md:w-auto md:min-w-[200px] md:float-right py-6" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 size={16} className="animate-spin mr-2" />
+                Menyimpan...
+              </>
+            ) : (
+              "Simpan Perubahan"
+            )}
+          </Button>
         </div>
-
-        <Field>
-          <FieldLabel htmlFor="activityLevel">Tingkat Aktivitas</FieldLabel>
-          <InputGroup className="py-6 px-4">
-            <select
-              id="activityLevel"
-              name="activityLevel"
-              value={formData.activityLevel}
-              onChange={handleChange}
-              className="w-full bg-transparent outline-none focus:ring-0 text-sm py-2"
-            >
-              {ACTIVITY_LEVELS.map((level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              ))}
-            </select>
-          </InputGroup>
-        </Field>
-
-        <Button type="submit" variant="default" className="text-sm md:text-base w-full mt-4 py-6" disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 size={16} className="animate-spin mr-2" />
-              Menyimpan...
-            </>
-          ) : (
-            "Simpan Perubahan"
-          )}
-        </Button>
-      </FieldGroup>
+      </div>
     </form>
   );
 }
