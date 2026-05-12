@@ -27,7 +27,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { loginUser } from '../actions';
+import { loginUser, loginWithGoogle } from '../actions';
 
 const formSchema = z.object({
   email: z.email('Format email tidak valid'),
@@ -43,6 +43,7 @@ function LoginInput() {
   const [isLoading, setIsLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Show error from auth callback if token exchange failed
   useEffect(() => {
@@ -67,6 +68,29 @@ function LoginInput() {
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    setServerError(null);
+
+    try {
+      const result = await loginWithGoogle();
+
+      if (result.error) {
+        setServerError(result.error);
+        return;
+      }
+
+      if (result.url) {
+        window.location.href = result.url;
+        return; // keep loading state while redirecting
+      }
+    } catch {
+      setServerError('Gagal login dengan Google. Coba lagi nanti.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   const onSubmit = async (values: FormValues) => {
@@ -180,10 +204,25 @@ function LoginInput() {
             ATAU MASUK DENGAN
           </FieldSeparator>
 
-          {/* Google login — belum aktif, placeholder */}
-          <Button variant="outline" className="w-full py-6" type="button">
-            <FaGoogle size={20} />
-            Google
+          {/* Google login */}
+          <Button
+            variant="outline"
+            className="w-full py-6"
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isGoogleLoading || isLoading}
+          >
+            {isGoogleLoading ? (
+              <>
+                <Loader2 size={20} className="animate-spin mr-2" />
+                Menghubungkan...
+              </>
+            ) : (
+              <>
+                <FaGoogle size={20} />
+                Google
+              </>
+            )}
           </Button>
 
           <span className="text-sm md:text-base text-muted-foreground text-center my-4">

@@ -158,7 +158,7 @@ export async function getUserProfile() {
     .eq("user_id", userId)
     .order("recorded_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (healthError) {
     console.error("Error fetching health profile:", healthError.message);
@@ -656,8 +656,10 @@ export async function updateHealthProfile(data: {
 
   const { error } = await supabase
     .from("health_profiles")
-    .update(updatePayload)
-    .eq("user_id", userId);
+    .upsert(
+      { ...updatePayload, user_id: userId },
+      { onConflict: "user_id" },
+    );
 
   if (error) {
     return {
