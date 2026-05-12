@@ -73,17 +73,29 @@ function Footer() {
                   <ul className="mt-4 space-y-3">
                     {section.links.map((link) => (
                       <li key={link.name}>
-                        <Link
-                          to={link.href}
-                          smooth={true}
-                          duration={500}
-                          className="group/link relative inline-flex text-sm text-white/45 transition-colors duration-300 hover:text-white/90 cursor-pointer"
-                        >
-                          <span className="relative">
-                            {link.name}
-                            <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#ff6b00]/50 transition-all duration-300 group-hover/link:w-full" />
-                          </span>
-                        </Link>
+                        {link.href.startsWith("/") ? (
+                          <a
+                            href={link.href}
+                            className="group/link relative inline-flex text-sm text-white/45 transition-colors duration-300 hover:text-white/90 cursor-pointer"
+                          >
+                            <span className="relative">
+                              {link.name}
+                              <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#ff6b00]/50 transition-all duration-300 group-hover/link:w-full" />
+                            </span>
+                          </a>
+                        ) : (
+                          <Link
+                            to={link.href}
+                            smooth={true}
+                            duration={500}
+                            className="group/link relative inline-flex text-sm text-white/45 transition-colors duration-300 hover:text-white/90 cursor-pointer"
+                          >
+                            <span className="relative">
+                              {link.name}
+                              <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#ff6b00]/50 transition-all duration-300 group-hover/link:w-full" />
+                            </span>
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>

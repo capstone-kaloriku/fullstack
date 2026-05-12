@@ -40,8 +40,19 @@ export async function updateSession(request: NextRequest) {
 
   // === SATPAM PROTOCOL — Route Protection ===
   // Daftar route publik (bisa diakses tanpa login)
-  const publicPaths = ["/login", "/register", "/auth", "/forgot-password", "/reset-password"];
-  const isPublicPath = publicPaths.some((path) => request.nextUrl.pathname.startsWith(path));
+  const publicPaths = [
+    "/",
+    "/login",
+    "/register",
+    "/auth",
+    "/forgot-password",
+    "/reset-password",
+  ];
+  const isPublicPath = publicPaths.some((path) =>
+    path === "/"
+      ? request.nextUrl.pathname === "/"
+      : request.nextUrl.pathname.startsWith(path),
+  );
 
   if (!user && !isPublicPath) {
     // 🚫 User belum login + akses route private → tendang ke /login
@@ -50,7 +61,11 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/register"))) {
+  if (
+    user &&
+    (request.nextUrl.pathname.startsWith("/login") ||
+      request.nextUrl.pathname.startsWith("/register"))
+  ) {
     // 🚫 User sudah login + akses /login atau /register → redirect ke /dashboard
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";

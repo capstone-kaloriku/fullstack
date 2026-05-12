@@ -12,24 +12,32 @@ const people = [
   {
     id: 1,
     name: "Fajrin Widianto",
+    social: "@fajrvi",
+    href: "https://www.instagram.com/fajrvi/",
     designation: "Backend Lead",
     image: "/developer/fajrin.jpeg",
   },
   {
     id: 2,
     name: "Muhammad Kevin Alvarel",
+    social: "@kevinalvrl_",
+    href: "https://www.instagram.com/kevinalvrl_/",
     designation: "Frontend Lead",
     image: "/developer/kevinn.jpg",
   },
   {
     id: 3,
-    name: "Nabila Carrissa",
+    name: "Nabila Carrissa Dewi",
+    social: "@nabilacarrissa",
+    href: "https://www.instagram.com/nabilacarrissa/",
     designation: "Data Scientist",
     image: "/developer/nabila.jpg",
   },
   {
     id: 4,
     name: "Shulha Diyana",
+    social: "@rchldrgn",
+    href: "https://www.instagram.com/rchldrgn",
     designation: "Data Scientist",
     image:
       "/developer/nana.jpeg",
@@ -37,20 +45,25 @@ const people = [
   {
     id: 5,
     name: "Muhammad Sausan Syafiq",
+    social: "@mhmd_s_syafiq",
+    href: "https://www.instagram.com/mhmd_s_syafiq/",
     designation: "AI Engineer",
     image: "/developer/syafiq.jpeg",
   },
   {
     id: 6,
     name: "Ananda Safrida",
+    social: "@nnda.fr",
+    href: "https://www.instagram.com/nnda.fr/",
     designation: "AI Engineer",
     image: "/developer/nanda.jpeg",
   },
 ];
 
 const Hero = () => {
+
   return (
-    <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-8xl">
+    <div className="relative flex min-h-screen w-full px-6 mx-auto flex-col items-start justify-start overflow-hidden max-w-full">
       <BackgroundRippleEffect />
       <section className="mt-60 md:mt-72 w-full">
         <HeroSection />

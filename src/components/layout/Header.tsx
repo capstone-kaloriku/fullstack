@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import {
   Navbar,
   NavBody,
@@ -16,6 +15,7 @@ import { useState } from "react";
 import { FadeUpPyramid } from "../animations/FadeUpPyramid";
 
 export function Header() {
+
   const navItems = [
     {
       name: "Tentang",

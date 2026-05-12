@@ -16,6 +16,8 @@ export const Tooltip = ({
   items: {
     id: number;
     name: string;
+    social: string;
+    href: string;
     designation: string;
     image: string;
   }[];
@@ -78,6 +80,9 @@ export const Tooltip = ({
               >
                 <div className="absolute inset-x-10 -bottom-px z-30 h-px w-[20%] bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
                 <div className="absolute -bottom-px left-10 z-30 h-px w-[40%] bg-gradient-to-r from-transparent via-sky-500 to-transparent" />
+                <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-base text-white">
+                  {item.social}
+                </a>
                 <div className="relative z-30 text-base font-bold text-white">
                   {item.name}
                 </div>

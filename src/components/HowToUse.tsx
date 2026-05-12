@@ -44,7 +44,7 @@ export default function HowToUse() {
   return (
     <>
       {/* Section header */}
-      
+
 
       {/* Stepper */}
       <motion.div
@@ -52,7 +52,7 @@ export default function HowToUse() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-        className="relative z-10 mt-8 w-full max-w-6xl px-5"
+        className="relative z-10 mt-8 w-full max-w-7xl px-5"
       >
         <Stepper
           initialStep={1}
