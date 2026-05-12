@@ -60,6 +60,20 @@ export async function GET(request: Request) {
             name,
             email: user.email!,
           });
+
+          // New user — redirect to onboarding to collect health data
+          next = '/onboarding';
+        } else {
+          // Existing user — check if they have a health profile
+          const { data: healthProfile } = await supabase
+            .from('health_profiles')
+            .select('profile_id')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (!healthProfile) {
+            next = '/onboarding';
+          }
         }
       }
 

@@ -114,7 +114,7 @@ function LoginInput() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form method="POST" action="" onSubmit={handleSubmit(onSubmit)} noValidate>
       <FieldSet>
         <FieldGroup>
           {/* Server error banner */}

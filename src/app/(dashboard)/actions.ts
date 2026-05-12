@@ -111,29 +111,12 @@ function calculateAge(dateOfBirth: string | null): number {
  */
 export async function getUserProfile() {
   const supabase = await createClient();
-  const { cookies } = await import("next/headers");
-  const cookieStore = await cookies();
 
-  // 1. Check for manually switched account (cookie)
-  const activeUserId = cookieStore.get("active_user_id")?.value;
-
-  // 2. Try auth user
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
 
-  // Priority: cookie > auth > fallback first user
-  let userId: string | null = activeUserId || authUser?.id || null;
-
-  if (!userId) {
-    // Fallback: get first user (development mode)
-    const { data: firstUser } = await supabase
-      .from("users")
-      .select("user_id")
-      .limit(1)
-      .single();
-    userId = firstUser?.user_id || null;
-  }
+  const userId = authUser?.id ?? null;
 
   if (!userId) {
     return null;
@@ -237,20 +220,10 @@ function calculateDailyNeeds(params: {
 export async function getTodayConsumption() {
   const supabase = await createClient();
 
-  // Get user
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  let userId: string | null = authUser?.id || null;
-
-  if (!userId) {
-    const { data: firstUser } = await supabase
-      .from("users")
-      .select("user_id")
-      .limit(1)
-      .single();
-    userId = firstUser?.user_id || null;
-  }
+  const userId = authUser?.id ?? null;
 
   if (!userId) {
     return {
@@ -347,20 +320,10 @@ export async function logFoodConsumption(data: {
 }) {
   const supabase = await createClient();
 
-  // Get user
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  let userId: string | null = authUser?.id || null;
-
-  if (!userId) {
-    const { data: firstUser } = await supabase
-      .from("users")
-      .select("user_id")
-      .limit(1)
-      .single();
-    userId = firstUser?.user_id || null;
-  }
+  const userId = authUser?.id ?? null;
 
   if (!userId) {
     return { success: false, error: "User tidak ditemukan." };
@@ -405,24 +368,11 @@ export async function getConsumptionHistory(
   endDate: string,
 ) {
   const supabase = await createClient();
-  const { cookies } = await import("next/headers");
-  const cookieStore = await cookies();
 
-  // Get user (same priority as getUserProfile: cookie > auth > fallback)
-  const activeUserId = cookieStore.get("active_user_id")?.value;
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  let userId: string | null = activeUserId || authUser?.id || null;
-
-  if (!userId) {
-    const { data: firstUser } = await supabase
-      .from("users")
-      .select("user_id")
-      .limit(1)
-      .single();
-    userId = firstUser?.user_id || null;
-  }
+  const userId = authUser?.id ?? null;
 
   if (!userId) {
     return { days: [] };
@@ -529,20 +479,10 @@ export async function updateAccountSettings(data: {
 }) {
   const supabase = await createClient();
 
-  // Get user
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  let userId: string | null = authUser?.id || null;
-
-  if (!userId) {
-    const { data: firstUser } = await supabase
-      .from("users")
-      .select("user_id")
-      .limit(1)
-      .single();
-    userId = firstUser?.user_id || null;
-  }
+  const userId = authUser?.id ?? null;
 
   if (!userId) {
     return { success: false, error: "User tidak ditemukan." };
@@ -594,20 +534,10 @@ export async function updateHealthProfile(data: {
 }) {
   const supabase = await createClient();
 
-  // Get user
   const {
     data: { user: authUser },
   } = await supabase.auth.getUser();
-  let userId: string | null = authUser?.id || null;
-
-  if (!userId) {
-    const { data: firstUser } = await supabase
-      .from("users")
-      .select("user_id")
-      .limit(1)
-      .single();
-    userId = firstUser?.user_id || null;
-  }
+  const userId = authUser?.id ?? null;
 
   if (!userId) {
     return { success: false, error: "User tidak ditemukan." };
