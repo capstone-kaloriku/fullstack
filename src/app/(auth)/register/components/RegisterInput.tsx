@@ -119,8 +119,8 @@ function RegisterInput() {
         return;
       }
 
-      // Registration successful — redirect to login
-      router.push('/login');
+      // Registration successful — redirect to dashboard (no email confirmation needed)
+      router.push('/dashboard');
     } catch {
       setServerError('Terjadi kesalahan jaringan. Coba lagi.');
     } finally {
