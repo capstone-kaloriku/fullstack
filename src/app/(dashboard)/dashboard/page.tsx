@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import CircleProgressBar from "./components/CircleProgressBar";
 import ProgressBarDetail from "./components/ProgressBarDetail";
-import ProgressBarPersentage from "./components/ProgressBarPersentage";
 
 import Link from "next/link";
 import FoodSummaries from "./components/FoodSummaries";
@@ -62,31 +61,31 @@ const Dashboard = async () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 items-center justify-center gap-6 px-12 mx-auto overflow-x-hidden w-full max-w-2xl md:max-w-7xl lg:max-w-full">
+      <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl xl:max-w-full">
         {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
-        <div className="flex flex-col lg:grid lg:grid-cols-4 items-center md:items-stretch justify-center lg:justify-around mt-6 gap-8 lg:gap-20">
-          {/* Circle Progress Sudah Responsive Wok */}
-          <Card className="flex flex-row justify-center w-full h-full md:col-span-3">
-            <CardHeader className="hidden md:flex flex-col items-start justify-center w-full space-y-5">
+        <div className="flex flex-col lg:grid lg:grid-cols-4 items-center md:items-stretch justify-center gap-6 lg:gap-8 mt-6">
+          {/* Circle Progress */}
+          <Card className="flex flex-col md:flex-row justify-center w-full h-full lg:col-span-3">
+            <CardHeader className="hidden md:flex flex-col items-start justify-center w-full space-y-4 md:space-y-5 p-6">
               <div>
                 <h2 className="text-lg md:text-xl font-semibold text-primary">Statistik Harian</h2>
                 <p className="text-muted-foreground">Sisa Kalori Hari ini</p>
               </div>
               <div className="text-xl font-bold">
-                <span className="text-4xl">{remainingKcal}</span> kcal
+                <span className="text-3xl md:text-4xl">{remainingKcal}</span> kcal
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground max-w-md">
                 <p>Kamu sudah memenuhi {remainingPercentage.toFixed(0)}% target harianmu. Pertahankan momentum energinya!</p>
               </div>
               <Button nativeButton={false} render={<Link href="/all-foods" />}>
-                <Plus /> Tambah Makan
+                <Plus className="mr-2 h-4 w-4" /> Tambah Makan
               </Button>
             </CardHeader>
-            <CardContent className="flex flex-row items-center justify-center">
+            <CardContent className="flex flex-row items-center justify-center p-6">
               <CircleProgressBar
                 value={currentKcal}
                 maxValue={maxKcal}
-                className="w-58 h-58 lg:w-48 lg:h-w-48 xl:w-72 xl:h-72"
+                className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64"
               >
                 <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
               </CircleProgressBar>
@@ -100,7 +99,7 @@ const Dashboard = async () => {
 
         </div>
         {/* Daily Nutrition Progress */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-between w-full lg:w-full mx-auto mt-0 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 w-full mt-4">
           {daily
             .filter((_, index) => index !== 0)
             .map((item, index) => (
@@ -120,30 +119,30 @@ const Dashboard = async () => {
                   <CircleProgressBar
                     value={item.value}
                     maxValue={item.maxValue}
-                    className="relative h-12 w-12 shrink-0 mx-0 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
+                    className="relative shrink-0 h-12 w-12 sm:h-14 sm:w-14"
                   />
                 </CardContent>
               </Card>
             ))}
         </div>
 
+        {/* Reminder Mobile Mode */}
+        <div className="w-full lg:hidden mt-2">
+          <Reminder />
+        </div>
+
         {/* Ringkasan Makanan Hari Ini */}
-        <div className="flex flex-col mt-0 gap-6">
+        <div className="flex flex-col gap-4 mt-6 mb-10 md:mb-16">
           <div className="flex items-center justify-between font-semibold text-base md:text-xl">
             <h2>Ringkasan Makanan Hari Ini</h2>
             <Link
               href="/logs"
-              className="text-secondary-foreground text-xs md:text-sm font-bold"
+              className="text-secondary-foreground text-sm font-bold hover:underline"
             >
               Lihat Semua
             </Link>
           </div>
           <FoodSummaries data={foods} />
-        </div>
-
-        {/* Reminder Mobile Mode */}
-        <div className="w-full mt-8 mb-8 md:hidden">
-          <Reminder />
         </div>
       </div>
     </>

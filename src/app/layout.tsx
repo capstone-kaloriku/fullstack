@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Be_Vietnam_Pro, Inter } from "next/font/google";
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -42,6 +43,7 @@ export default function RootLayout({
     >
       <body className={`min-h-full flex flex-col`}>
         {children}
+        <Toaster />
       </body>
     </html>
   );

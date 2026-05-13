@@ -26,6 +26,9 @@ const Reminder = () => {
             </h3>
             <Progress value={33} />
             <p className="text-lg">Tinggal 2 gelas lagi untuk mencapai hidrasimu hari ini</p>
+            <Button className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:text-secondary/80">
+              Catat 250ml
+            </Button>
           </div>
           <div className="flex flex-col md:hidden gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-6 min-w-0">

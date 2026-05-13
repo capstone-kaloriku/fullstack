@@ -11,7 +11,7 @@ import {
 
 const buildStylesWithCustomColors = buildStyles({
   pathColor: "#ff6b00",
-  trailColor: "#f8f9fa",
+  trailColor: "#e2e8f0",
 });
 
 interface CircleProps {
