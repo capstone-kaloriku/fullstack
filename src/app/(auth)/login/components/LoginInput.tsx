@@ -28,6 +28,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { loginUser, loginWithGoogle } from '../actions';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   email: z.email('Format email tidak valid'),
@@ -106,8 +107,10 @@ function LoginInput() {
       }
 
       router.push('/dashboard');
+      toast.success('Berhasil masuk!');
     } catch {
       setServerError('Terjadi kesalahan. Coba lagi nanti.');
+      toast.error('Gagal masuk. Coba lagi nanti.');
     } finally {
       setIsLoading(false);
     }

@@ -33,6 +33,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import FormField from './FormField';
 import PasswordField from './PasswordField';
 import { registerUser } from '../actions';
+import { toast } from 'sonner';
 
 // ============================================================
 // Helpers
@@ -120,9 +121,11 @@ function RegisterInput() {
       }
 
       // Registration successful — redirect to dashboard (no email confirmation needed)
+      toast.success('Pendaftaran berhasil! Selamat datang di KaloriKU!');
       router.push('/dashboard');
     } catch {
       setServerError('Terjadi kesalahan jaringan. Coba lagi.');
+      toast.error('Gagal mendaftar. Periksa koneksi Anda dan coba lagi.');
     } finally {
       setIsLoading(false);
     }
