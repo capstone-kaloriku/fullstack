@@ -10,6 +10,15 @@ export interface FoodSummariesProps {
   slug: string;
 }
 
+export interface FoodLogEntry {
+  data: {
+    id: number;
+    label: string;
+    jumlah: number;
+    jenisTakaran: string;
+  }[];
+}
+
 export interface persentageProps {
   value: number;
   maxValue: number;

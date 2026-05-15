@@ -1,15 +1,21 @@
 import { PageProps } from "@/types";
 import Image from "next/image";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { FaBowlFood } from "react-icons/fa6";
-
 import { getFoodBySlug } from "../../actions";
 import FoodLogForm from "./components/FoodLogForm";
+import TagSelectFood from "./components/ui/TagSelectFood";
+import ListSelectedFood from "./components/ui/ListSelectedFood";
 
-// ============================================================
-// Page — Server component that fetches food data by slug
-// ============================================================
+
+// Dummy data untuk pecahan lauk, nanti akan diganti dengan data dari DB
+const laukDummy = [
+  { id: 1, label: "Ayam Goreng", jumlah: 1, jenisTakaran: "Potong" },
+  { id: 2, label: "Kerupuk", jumlah: 7, jenisTakaran: "Buah" },
+  { id: 3, label: "Sambal", jumlah: 2, jenisTakaran: "Sendok" },
+  { id: 4, label: "Tahu Goreng", jumlah: 1, jenisTakaran: "Potong" },
+]
 
 const AddFood = async ({ params }: PageProps) => {
   const { slug } = await params;
@@ -27,20 +33,21 @@ const AddFood = async ({ params }: PageProps) => {
   }
 
   return (
-    <div className="h-screen overflow-y-auto">
-      <div className="mx-auto w-full max-w-xl px-6 py-6 md:max-w-5xl">
-        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
-          {/* Food info card — server rendered */}
-          <div className="w-full">
+    <main className="min-h-screen w-full pb-12">
+      <div className="mx-auto w-full max-w-xl px-4 py-8 md:max-w-6xl md:px-8 lg:max-w-7xl">
+        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="w-full flex flex-col items-start gap-6">
+            {/* Food Image */}
             <Card className="w-full py-6">
               <CardContent className="flex flex-col items-center justify-center gap-5">
-                <Image
-                  src="/profile.jpg"
-                  className="rounded-full"
-                  alt="gambar"
-                  width={100}
-                  height={100}
-                />
+                <div className="relative w-full aspect-video sm:aspect-[4/3] md:aspect-video overflow-hidden rounded-xl">
+                  <Image
+                    src="/profile.jpg"
+                    className="object-cover"
+                    alt="gambar"
+                    fill
+                  />
+                </div>
                 <div className="flex flex-col items-center justify-center gap-2">
                   <h2 className="text-xl font-bold">{food.nama}</h2>
                   <span className="bg-muted-foreground/20 text-secondary-foreground px-2 py-1.5 rounded-full flex items-center gap-2">
@@ -51,12 +58,25 @@ const AddFood = async ({ params }: PageProps) => {
               </CardContent>
             </Card>
           </div>
-
+          <div>
+            <Card>
+              <CardHeader className="flex flex-col items-start gap-2">
+                <h2 className="text-xl font-bold">Detail Lauk</h2>
+                <p className="text-muted-foreground">Ada tambahan dari lauk kamu?</p>
+              </CardHeader>
+              <CardContent className="flex flex-col w-full">
+                <ListSelectedFood data={laukDummy} />
+                <TagSelectFood data={laukDummy} />
+              </CardContent>
+            </Card>
+          </div>
           {/* Form — client component (handles state + submit) */}
-          <FoodLogForm food={{ id: food.id, nama: food.nama, kalori: food.kalori }} />
+          <div className="w-full">
+            <FoodLogForm food={{ id: food.id, nama: food.nama, kalori: food.kalori }} />
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
