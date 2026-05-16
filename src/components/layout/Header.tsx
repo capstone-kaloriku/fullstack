@@ -16,6 +16,8 @@ import { FadeUpPyramid } from "../animations/FadeUpPyramid";
 
 export function Header() {
 
+
+
   const navItems = [
     {
       name: "Tentang",

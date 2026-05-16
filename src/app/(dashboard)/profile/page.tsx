@@ -34,7 +34,24 @@ const Profile = async () => {
   const usia = data?.usia || 0;
   const jenisKelamin = data?.jenisKelamin || "Laki-Laki";
   const beratBadan = data?.beratBadan || 0;
+  const tinggiBadan = data?.tinggiBadan || 0;
   const aktivitasFisik = data?.aktivitasFisik || "Ringan";
+
+  let bmi = 0;
+  let bmiStatus = "-";
+  if (beratBadan > 0 && tinggiBadan > 0) {
+    const tinggiM = tinggiBadan / 100;
+    bmi = Number((beratBadan / (tinggiM * tinggiM)).toFixed(1));
+    if (bmi < 18.5) {
+      bmiStatus = "Kurus";
+    } else if (bmi >= 18.5 && bmi <= 24.9) {
+      bmiStatus = "Normal";
+    } else if (bmi >= 25 && bmi <= 29.9) {
+      bmiStatus = "Gemuk (Overweight)";
+    } else {
+      bmiStatus = "Obesitas";
+    }
+  }
 
   const targetBeratBadan = beratBadan > 0 ? beratBadan - 10 : 0;
 
@@ -52,11 +69,22 @@ const Profile = async () => {
               {usia} Tahun, {jenisKelamin}
             </span>
           </div>
-          <div className="flex">
-            <Card className="flex items-center justify-center bg-primary text-secondary">
-              <CardContent className="flex flex-col items-center">
-                Aktifitas
-                <span className="font-extrabold text-lg">
+          <div className="grid grid-cols-2 gap-4">
+            <Card className="flex items-center justify-center bg-secondary-foreground text-secondary text-center p-2">
+              <CardContent className="flex flex-col items-center justify-center p-2">
+                <span className="text-sm">BMI</span>
+                <span className="font-extrabold text-xl">
+                  {bmi > 0 ? bmi : "-"}
+                </span>
+                <span className="text-xs text-secondary/80 mt-1">
+                  {bmiStatus}
+                </span>
+              </CardContent>
+            </Card>
+            <Card className="flex items-center justify-center bg-primary text-secondary text-center p-2">
+              <CardContent className="flex flex-col items-center justify-center p-2">
+                <span className="text-sm">Aktivitas</span>
+                <span className="font-extrabold text-base mt-1">
                   {aktivitasFisik}
                 </span>
               </CardContent>

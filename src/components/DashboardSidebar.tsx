@@ -100,7 +100,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 export const Logo = () => {
   return (
     <a
-      href="#"
+      href="/dashboard"
       className="relative z-20 flex items-center py-1 text-sm font-normal text-primary"
     >
       <Image src="/product-logo.png" alt="Logo" width={40} height={40} />
