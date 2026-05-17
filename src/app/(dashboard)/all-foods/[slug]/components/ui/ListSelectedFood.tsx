@@ -11,8 +11,8 @@ function ListSelectedFood({ data }: FoodLogEntry) {
               <Image src="/profile.jpg" alt="Selected Food" width={50} height={50} />
             </div>
             <div className="flex flex-col items-start justify-center">
-              <h3 className="text-primary">{item.label}</h3>
-              <p className="text-muted-foreground">{item.jumlah} {item.jenisTakaran}</p>
+              <h3 className="text-primary font-bold text-sm md:text-base lg:text-lg">{item.label}</h3>
+              <p className="text-muted-foreground text-sm md:text-base lg:text-lg">{item.jumlah} {item.jenisTakaran}</p>
             </div>
           </section>
         </div>

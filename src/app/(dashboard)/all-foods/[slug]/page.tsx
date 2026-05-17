@@ -34,7 +34,7 @@ const AddFood = async ({ params }: PageProps) => {
 
   return (
     <main className="min-h-screen w-full pb-12">
-      <div className="mx-auto w-full max-w-xl px-4 py-8 md:max-w-6xl md:px-8 lg:max-w-7xl">
+      <div className="mx-auto w-full max-w-xl px-4 py-8 md:max-w-6xl md:px-8 lg:max-w-7xl xl:max-w-full">
         <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:grid-cols-3">
           <div className="w-full flex flex-col items-start gap-6">
             {/* Food Image */}

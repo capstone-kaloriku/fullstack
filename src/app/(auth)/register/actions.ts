@@ -10,6 +10,7 @@ interface RegisterData {
   birthday: Date;
   weight: number;
   height: number;
+  activityLevel: string;
 }
 
 interface RegisterResult {
@@ -67,6 +68,7 @@ export async function registerUser(data: RegisterData): Promise<RegisterResult> 
       weight_kg: data.weight,
       height_cm: data.height,
       date_of_birth: data.birthday.toISOString().split('T')[0],
+      activity_level: data.activityLevel,
     });
 
   if (profileError) {

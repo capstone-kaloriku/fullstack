@@ -24,6 +24,9 @@ import {
   FieldSet,
 } from '@/components/ui/field';
 import {
+  InputGroup,
+} from '@/components/ui/input-group';
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -34,6 +37,18 @@ import FormField from './FormField';
 import PasswordField from './PasswordField';
 import { registerUser } from '../actions';
 import { toast } from 'sonner';
+
+// ============================================================
+// Constants
+// ============================================================
+
+const ACTIVITY_LEVELS = [
+  'Sangat Ringan',
+  'Ringan',
+  'Sedang',
+  'Berat',
+  'Sangat Berat',
+];
 
 // ============================================================
 // Helpers
@@ -54,6 +69,7 @@ const formSchema = z
     }),
     weight: z.coerce.number<number>().min(1, 'Berat badan harus diisi'),
     height: z.coerce.number<number>().min(1, 'Tinggi badan harus diisi'),
+    activityLevel: z.string().min(1, 'Tingkat aktivitas harus dipilih'),
     birthday: z
       .date({ message: 'Tanggal lahir harus dipilih' })
       .refine((date) => date <= new Date(), 'Tanggal lahir tidak boleh di masa depan')
@@ -89,6 +105,7 @@ function RegisterInput() {
       gender: 'laki-laki',
       weight: '',
       height: '',
+      activityLevel: 'Ringan',
       birthday: undefined,
       username: '',
       email: '',
@@ -113,6 +130,7 @@ function RegisterInput() {
         birthday: data.birthday,
         weight: data.weight,
         height: data.height,
+        activityLevel: data.activityLevel,
       });
 
       if (!result.success) {
@@ -267,6 +285,37 @@ function RegisterInput() {
             />
           </div>
 
+          {/* Tingkat Aktivitas */}
+          <Controller
+            name="activityLevel"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel htmlFor="activityLevel">Tingkat Aktivitas</FieldLabel>
+                <InputGroup className="rounded-full px-4 py-6">
+                  <select
+                    id="activityLevel"
+                    value={field.value}
+                    onChange={field.onChange}
+                    className="w-full bg-transparent outline-none focus:ring-0 text-sm"
+                  >
+                    {ACTIVITY_LEVELS.map((level) => (
+                      <option key={level} value={level}>
+                        {level}
+                      </option>
+                    ))}
+                  </select>
+                </InputGroup>
+                <FieldDescription>
+                  Pilih tingkat aktivitas fisik harian Anda
+                </FieldDescription>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
           {/* Nama Pengguna */}
           <FormField
             name="username"
@@ -277,6 +326,8 @@ function RegisterInput() {
             placeholder="Nama Pengguna"
             icon={<User size={20} />}
           />
+
+
 
           {/* Email */}
           <FormField
