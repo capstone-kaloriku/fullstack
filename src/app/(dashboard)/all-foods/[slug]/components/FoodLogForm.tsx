@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -47,6 +47,17 @@ function FoodLogForm({ food }: FoodLogFormProps) {
   const [portion, setPortion] = useState<number>(1);
   const [mealType, setMealType] = useState<string>('');
   const [time, setTime] = useState<string>('');
+
+  useEffect(() => {
+    // Avoid synchronous state updates during initial render/effect phase
+    const timer = setTimeout(() => {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      setTime(`${hours}:${minutes}`);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Submission state
   const [isLoading, setIsLoading] = useState(false);
