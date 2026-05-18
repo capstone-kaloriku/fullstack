@@ -82,6 +82,13 @@ function FoodLogForm({ food }: FoodLogFormProps) {
     setError(null);
     setIsLoading(true);
 
+    // Refresh displayed submit time to reflect the actual click moment.
+    // Note: this is display-only — the database records `logged_at` via `now()`.
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    setTime(`${hours}:${minutes}`);
+
     // Call server action directly (not inside startTransition)
     const result = await logFoodConsumption({
       foodId: food.id,
@@ -109,12 +116,12 @@ function FoodLogForm({ food }: FoodLogFormProps) {
         </div>
       )}
 
-      {/* Jam Makan */}
+      {/* Jam Submit */}
       <div className="w-full">
         <Card className="w-full py-6">
           <CardHeader className="flex items-center gap-5">
             <FaClock size={18} className="text-primary" />
-            <CardTitle className="text-lg font-bold">Jam Makan</CardTitle>
+            <CardTitle className="text-lg font-bold">Jam Submit</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col justify-center items-start gap-5">
             <div className="flex items-center justify-center gap-2 w-full">
@@ -122,9 +129,9 @@ function FoodLogForm({ food }: FoodLogFormProps) {
                 <InputGroupInput
                   type="time"
                   className="placeholder:text-primary/50 w-full"
-                  placeholder="Jam berapa kamu makan? ..."
+                  placeholder="Waktu submit otomatis"
                   value={time}
-                  onChange={(e) => setTime(e.target.value)}
+                  readOnly
                 />
               </InputGroup>
             </div>
