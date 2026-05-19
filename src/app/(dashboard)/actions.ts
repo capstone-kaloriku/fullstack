@@ -150,6 +150,21 @@ export async function getUserProfile() {
   // Calculate age dynamically from date_of_birth
   const usia = calculateAge(healthData?.date_of_birth ?? null);
 
+  const kebutuhanHarian = calculateDailyNeeds({
+    weight: Number(healthData?.weight_kg) || 70,
+    height: Number(healthData?.height_cm) || 170,
+    age: usia || 25,
+    gender: userData.gender || "laki-laki",
+    activityLevel: healthData?.activity_level || "Ringan",
+  });
+
+  // Target kalori: gunakan custom target jika ada, fallback ke TDEE
+  const targetKalori = healthData?.target_calories
+    ? Number(healthData.target_calories)
+    : kebutuhanHarian.kalori;
+
+  const goalType = (healthData?.goal_type as 'turun' | 'bertahan' | 'naik') || 'bertahan';
+
   return {
     namaUser: userData.name || "User",
     email: userData.email,
@@ -159,14 +174,9 @@ export async function getUserProfile() {
     beratBadan: Number(healthData?.weight_kg) || 0,
     tinggiBadan: Number(healthData?.height_cm) || 0,
     aktivitasFisik: healthData?.activity_level || "Ringan",
-    // Calculate daily needs based on BMR (Mifflin-St Jeor)
-    kebutuhanHarian: calculateDailyNeeds({
-      weight: Number(healthData?.weight_kg) || 70,
-      height: Number(healthData?.height_cm) || 170,
-      age: usia || 25,
-      gender: userData.gender || "laki-laki",
-      activityLevel: healthData?.activity_level || "Ringan",
-    }),
+    kebutuhanHarian,
+    targetKalori,
+    goalType,
   };
 }
 
@@ -463,6 +473,46 @@ export async function deleteConsumptionLog(logId: string) {
 
   if (error) {
     return { success: false, error: "Gagal menghapus log: " + error.message };
+  }
+
+  return { success: true };
+}
+
+// ============================================================
+// TARGET CALORIES
+// ============================================================
+
+/**
+ * Save the user's custom calorie target and goal type.
+ */
+export async function saveTargetCalories(data: {
+  targetCalories: number;
+  goalType: 'turun' | 'bertahan' | 'naik';
+}) {
+  const supabase = await createClient();
+
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+  const userId = authUser?.id ?? null;
+
+  if (!userId) {
+    return { success: false, error: "User tidak ditemukan." };
+  }
+
+  const { error } = await supabase
+    .from("health_profiles")
+    .update({
+      target_calories: data.targetCalories,
+      goal_type: data.goalType,
+    })
+    .eq("user_id", userId);
+
+  if (error) {
+    return {
+      success: false,
+      error: "Gagal menyimpan target kalori: " + error.message,
+    };
   }
 
   return { success: true };

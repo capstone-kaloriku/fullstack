@@ -4,10 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VscSettings } from "react-icons/vsc";
 import { Slider } from "@/components/ui/slider";
 import { SliderControlProps } from "@/types";
-import { useState } from "react";
 
-const TargetSlider = ({ data }: SliderControlProps) => {
-  const [calories, setCalories] = useState(data.defaultCalories);
+const TargetSlider = ({ data, value, onChange }: SliderControlProps) => {
+  const calories = value ?? data.defaultCalories;
+
+  function handleChange(val: number | readonly number[]) {
+    const newVal = Array.isArray(val) ? val[0] : val;
+    onChange?.(newVal);
+  }
 
   return (
     <>
@@ -37,10 +41,7 @@ const TargetSlider = ({ data }: SliderControlProps) => {
           <div className="flex flex-col gap-4">
             <Slider
               value={[calories]}
-              onValueChange={(val) => {
-                const newVal = Array.isArray(val) ? val[0] : val;
-                setCalories(newVal);
-              }}
+              onValueChange={handleChange}
               min={data.min}
               max={data.max}
               step={data.step}

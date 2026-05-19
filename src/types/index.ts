@@ -61,6 +61,8 @@ export interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+export type GoalType = 'turun' | 'bertahan' | 'naik';
+
 export interface SliderControlProps {
   data: {
     min: number;
@@ -68,6 +70,8 @@ export interface SliderControlProps {
     step: number;
     defaultCalories: number;
   };
+  value?: number;
+  onChange?: (value: number) => void;
 }
 
 export interface Message {

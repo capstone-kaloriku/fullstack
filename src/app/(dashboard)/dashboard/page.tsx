@@ -37,9 +37,12 @@ const Dashboard = async () => {
     karbohidrat: 370,
   };
 
+  // Gunakan targetKalori (custom target user) jika ada, fallback ke TDEE
+  const targetKalori = userProfile?.targetKalori ?? kebutuhanHarian.kalori;
+
   const konsumsiSaatIni = todayConsumption.totals;
 
-  const maxKcal = kebutuhanHarian.kalori;
+  const maxKcal = targetKalori;
   const currentKcal = konsumsiSaatIni.kalori;
   const remainingKcal = maxKcal - currentKcal;
   const remainingPercentage = calculatePercentage({ value: currentKcal, maxValue: maxKcal });

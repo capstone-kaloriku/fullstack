@@ -142,9 +142,11 @@ export type Database = {
           activity_level: string | null
           bmr: number | null
           date_of_birth: string | null
+          goal_type: string | null
           height_cm: number | null
           profile_id: string
           recorded_at: string | null
+          target_calories: number | null
           tdee: number | null
           user_id: string | null
           weight_kg: number | null
@@ -153,9 +155,11 @@ export type Database = {
           activity_level?: string | null
           bmr?: number | null
           date_of_birth?: string | null
+          goal_type?: string | null
           height_cm?: number | null
           profile_id?: string
           recorded_at?: string | null
+          target_calories?: number | null
           tdee?: number | null
           user_id?: string | null
           weight_kg?: number | null
@@ -164,9 +168,11 @@ export type Database = {
           activity_level?: string | null
           bmr?: number | null
           date_of_birth?: string | null
+          goal_type?: string | null
           height_cm?: number | null
           profile_id?: string
           recorded_at?: string | null
+          target_calories?: number | null
           tdee?: number | null
           user_id?: string | null
           weight_kg?: number | null
