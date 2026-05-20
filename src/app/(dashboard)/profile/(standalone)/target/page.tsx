@@ -127,7 +127,26 @@ const Target = () => {
                   value={[goalType]}
                   onValueChange={(values) => {
                     const selected = values[0] as GoalType | undefined;
-                    if (selected) setGoalType(selected);
+                    if (selected && selected !== goalType) {
+                      let adjustment = 0;
+
+                      // Revert previous goal effect
+                      if (goalType === "naik") adjustment -= 1000;
+                      if (goalType === "turun") adjustment += 1000;
+
+                      // Apply new goal effect
+                      if (selected === "naik") adjustment += 1000;
+                      if (selected === "turun") adjustment -= 1000;
+
+                      let newCalories = calories + adjustment;
+
+                      // Clamp the value
+                      if (newCalories < CALORIES_SLIDER_CONFIG.min) newCalories = CALORIES_SLIDER_CONFIG.min;
+                      if (newCalories > CALORIES_SLIDER_CONFIG.max) newCalories = CALORIES_SLIDER_CONFIG.max;
+
+                      setCalories(newCalories);
+                      setGoalType(selected);
+                    }
                   }}
                   className="flex rounded-2xl items-center justify-center mx-auto w-full"
                   spacing={2}
@@ -162,7 +181,7 @@ const Target = () => {
                 "Simpan Target"
               )}
             </Button>
-          </div>  
+          </div>
         </div>
       </div>
     </main>
