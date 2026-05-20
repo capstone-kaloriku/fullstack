@@ -5,15 +5,6 @@ import { ChatArea } from "./components/ChatArea";
 import { InputPrompt } from "./components/InputPrompt";
 import type { Message } from "@/types/index";
 
-const AI_RESPONSES = [
-  "Nasi goreng biasa mengandung sekitar 500-700 kalori per porsi, tergantung bahan dan minyak yang digunakan. Jika ditambahkan telur dan ayam, bisa mencapai 800+ kalori.",
-  "Untuk diet sehat, usahakan konsumsi makanan dengan komposisi: 45-65% karbohidrat, 20-35% lemak, dan 10-35% protein. Jangan lupa perbanyak serat dari sayuran dan buah-buahan! 🥗",
-  "Kebutuhan kalori harian rata-rata orang dewasa adalah 2.000-2.500 kkal. Namun ini bervariasi tergantung usia, jenis kelamin, tinggi badan, berat badan, dan tingkat aktivitas fisik.",
-  "Air putih sangat penting! Disarankan minum 8 gelas (sekitar 2 liter) per hari. Minum air sebelum makan juga bisa membantu mengontrol porsi makan. 💧",
-  "Protein hewani (daging, ikan, telur) dan nabati (tahu, tempe, kacang-kacangan) sama pentingnya. Variasikan sumber protein untuk mendapatkan asam amino yang lengkap.",
-  "Camilan sehat yang rendah kalori: apel (95 kkal), yogurt rendah lemak (100 kkal), almond 10 butir (70 kkal), atau wortel mentah (25 kkal per batang). 🍎",
-];
-
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -22,7 +13,7 @@ export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = useCallback((content: string) => {
+  const handleSend = useCallback(async (content: string) => {
     const userMessage: Message = {
       id: generateId(),
       role: "user",
@@ -33,18 +24,37 @@ export default function AIPage() {
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Simulate AI response with a realistic delay
-    const delay = 1000 + Math.random() * 1500;
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: content }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Terjadi kesalahan pada server");
+      }
+
       const aiMessage: Message = {
         id: generateId(),
         role: "ai",
-        content: AI_RESPONSES[Math.floor(Math.random() * AI_RESPONSES.length)],
+        content: data.response,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, aiMessage]);
+    } catch (error: any) {
+      const errorMessage: Message = {
+        id: generateId(),
+        role: "ai",
+        content: `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, delay);
+    }
   }, []);
 
   return (
