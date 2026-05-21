@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import { Header } from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import SmoothScrollWrapper from "@/components/SmoothScrollWrapper";
 
 export const metadata: Metadata = {
   title: "KaloriKU",
@@ -15,9 +16,11 @@ export default function LandingPageLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <section className={`min-h-full flex flex-col`}>
+    <section className={`min-h-full flex flex-col scroll-smooth`}>
       <Header />
-      {children}
+      <SmoothScrollWrapper>
+        {children}
+      </SmoothScrollWrapper>
       <Footer />
     </section>
   );

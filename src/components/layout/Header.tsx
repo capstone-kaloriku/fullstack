@@ -33,7 +33,7 @@ export function Header() {
     },
     {
       name: "Profile",
-      link: "Profile",
+      link: "profile",
     },
   ];
 

@@ -200,3 +200,38 @@
     letter-spacing: var(--tracking-normal);
   }
 }
+
+/* ── Parallax & decorative ambient animations ── */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(1deg); }
+  66% { transform: translateY(4px) rotate(-0.5deg); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.05); }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 8s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 6s ease-in-out infinite;
+}
+
+/* Stagger delays for multiple decorative elements */
+.animate-delay-1 { animation-delay: 0s; }
+.animate-delay-2 { animation-delay: 2s; }
+.animate-delay-3 { animation-delay: 4s; }
+.animate-delay-4 { animation-delay: 6s; }

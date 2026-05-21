@@ -20,7 +20,7 @@ const setting = [
   {
     id: 2,
     title: "Target Kalori",
-    description: "2000 kcal / hari",
+    description: "Atur kalori harianmu sesuai kebutuhan",
     icon: <IoFastFood />,
     url: "/profile/target",
   },
