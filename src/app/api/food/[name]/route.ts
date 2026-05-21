@@ -9,17 +9,19 @@ interface FoodDetailResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }, // 1. Ubah tipe menjadi Promise
 ) {
   try {
+    const resolvedParams = await params; // 2. Await params sebelum digunakan
+
     const data = await fetchIndoBERT<FoodDetailResponse>(
-      `/api/food/${encodeURIComponent(params.name)}`
+      `/api/food/${encodeURIComponent(resolvedParams.name)}`, // 3. Gunakan params yang sudah di-resolve
     );
 
     if (!data.found) {
       return NextResponse.json(
         { error: "Makanan tidak ditemukan" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 

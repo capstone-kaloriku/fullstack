@@ -10,7 +10,7 @@ export default function Register() {
         </h1>
         <span className="font-mono text-sm text-muted-foreground">
           Daftar untuk memulai perjalanan menuju versi terbaik dari diri Anda
-          hari ini.
+          saat ini.
         </span>
       </div>
 
