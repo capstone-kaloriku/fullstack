@@ -23,10 +23,10 @@ export default function ParallaxAbout() {
 }
 
 const images = [
-  "https://assets.aceternity.com/components/hero-section-with-mesh-gradient.webp",
-  "https://assets.aceternity.com/components/3d-globe.webp",
-  "https://assets.aceternity.com/components/keyboard-2.webp",
-  "https://assets.aceternity.com/components/hero-1.webp",
-  "https://assets.aceternity.com/components/hero-2.webp",
-  "https://assets.aceternity.com/components/hero-3.webp",
+  "/parallax/login.png",
+  "/parallax/dashboard.png",
+  "/parallax/allfoods.png",
+  "parallax/logs.png",
+  "/parallax/inputfood.png",
+  "/parallax/chatbot.png"
 ];

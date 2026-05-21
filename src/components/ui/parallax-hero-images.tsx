@@ -12,14 +12,14 @@ import { cn } from "@/lib/utils";
 type ImagePosition = {
   src: string;
   position:
-    | "top-left"
-    | "top-right"
-    | "mid-left"
-    | "mid-right"
-    | "bottom-left"
-    | "bottom-right"
-    | "far-left"
-    | "far-right";
+  | "top-left"
+  | "top-right"
+  | "mid-left"
+  | "mid-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "far-left"
+  | "far-right";
   depth: number;
   delay: number;
 };
@@ -179,7 +179,7 @@ const ParallaxImage = memo(function ParallaxImage({
         loading="lazy"
         decoding="async"
         className={cn(
-          "aspect-4/3 h-20 w-32 rounded-lg object-cover shadow-sm ring-1 ring-black/10 sm:h-40 sm:w-56 md:h-52 md:w-80 dark:ring-white/10",
+          "aspect-4/3 h-20 w-32 rounded-lg object-fit shadow-sm ring-1 ring-black/10 sm:h-40 sm:w-56 md:h-52 md:w-80 dark:ring-white/10",
           imageClassName,
         )}
       />

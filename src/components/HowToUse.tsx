@@ -43,7 +43,6 @@ const steps = [
 export default function HowToUse() {
   return (
     <>
-      {/* Section header */}
 
 
       {/* Stepper */}
