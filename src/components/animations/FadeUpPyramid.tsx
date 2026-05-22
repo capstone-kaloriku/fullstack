@@ -41,31 +41,41 @@ export function FadeUpPyramid({
       const el = containerRef.current;
       if (!el) return;
 
-      // Set initial state immediately using GSAP (avoids FOUC)
+      // Use autoAlpha instead of opacity — it toggles visibility:hidden when 0
+      // so the element doesn't block interactions and the browser can skip painting it.
+      // Also avoids the "transparent h2" problem because autoAlpha restores
+      // visibility:visible as soon as the value rises above 0.
       gsap.set(el, {
-        opacity: 0,
+        autoAlpha: 0,
         x,
         y,
         scale: 0.95,
-        willChange: "transform, opacity",
       });
 
       gsap.to(el, {
-        opacity: 1,
+        autoAlpha: 1,
         x: 0,
         y: 0,
         scale: 1,
         duration: 0.8,
         delay,
-        ease: "power4.out", // close match to cubic-bezier(0.22, 1, 0.2, 1)
+        ease: "power4.out",
+        // force3D keeps the element on its own compositor layer during animation
+        // and releases it when done (force3D:"auto" is GSAP's default).
+        force3D: true,
         scrollTrigger: {
           trigger: el,
-          start: "top bottom-=50px", // matches viewport margin: "-50px"
-          once: true, // matches viewport: { once: true }
+          start: "top bottom-=50px",
+          once: true,
+          // Ensures ScrollTrigger evaluates immediately on creation,
+          // so elements already in the viewport (like the Hero h2) fire
+          // without needing a scroll event.
+          invalidateOnRefresh: true,
         },
         onComplete() {
-          // Clean up will-change after animation settles to free GPU memory
-          gsap.set(el, { willChange: "auto" });
+          // Release the compositor layer now that the animation is done
+          // to free GPU memory — especially important on mobile.
+          gsap.set(el, { clearProps: "willChange,force3D" });
         },
       });
     },
@@ -73,7 +83,7 @@ export function FadeUpPyramid({
   );
 
   return (
-    <div ref={containerRef} className={className}>
+    <div ref={containerRef} className={className} style={{ visibility: "hidden" }}>
       {children}
     </div>
   );

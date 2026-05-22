@@ -66,7 +66,7 @@ const Hero = () => {
     <div className="relative flex min-h-screen w-full  mx-auto flex-col items-start justify-start overflow-hidden max-w-full">
       <BackgroundRippleEffect />
 
-      <section className="mt-60 md:mt-72 w-full">
+      <section className="mt-60 md:mt-72 w-full ">
         <HeroSection />
       </section>
 
