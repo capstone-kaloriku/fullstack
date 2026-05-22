@@ -8,6 +8,7 @@ import {
   MotionValue,
 } from "motion/react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 type ImagePosition = {
   src: string;
@@ -173,9 +174,11 @@ const ParallaxImage = memo(function ParallaxImage({
         ease: [0.25, 0.1, 0.25, 1],
       }}
     >
-      <img
+      <Image
         src={src}
-        alt=""
+        height={320}
+        width={480}
+        alt="image"
         loading="lazy"
         decoding="async"
         className={cn(

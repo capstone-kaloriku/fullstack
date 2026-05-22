@@ -22,6 +22,7 @@ function TabletScrollReveal() {
         >
           <Image
             src={`/dashboard.png`}
+            loading='lazy'
             alt="hero"
             height={720}
             width={1400}

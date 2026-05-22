@@ -26,7 +26,7 @@ const images = [
   "/parallax/login.png",
   "/parallax/dashboard.png",
   "/parallax/allfoods.png",
-  "parallax/logs.png",
+  "/parallax/logs.png",
   "/parallax/inputfood.png",
   "/parallax/chatbot.png"
 ];
