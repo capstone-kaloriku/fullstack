@@ -13,49 +13,107 @@ export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = useCallback(async (content: string) => {
-    const userMessage: Message = {
-      id: generateId(),
-      role: "user",
-      content,
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
+  // Helper: panggil API dengan optional image (base64 data URL)
+  const fetchAiResponse = useCallback(
+    async (userContent: string, image?: string) => {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: content }),
+        body: JSON.stringify({ message: userContent, image }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         throw new Error(data.error || "Terjadi kesalahan pada server");
       }
+      return data.response as string;
+    },
+    []
+  );
 
-      const aiMessage: Message = {
+  const handleSend = useCallback(
+    async (content: string, image?: string) => {
+      const userMessage: Message = {
         id: generateId(),
-        role: "ai",
-        content: data.response,
+        role: "user",
+        content,
         timestamp: new Date(),
+        image, // simpan gambar di message agar bisa ditampilkan di bubble
       };
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (error: any) {
-      const errorMessage: Message = {
-        id: generateId(),
-        role: "ai",
-        content: `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+
+      setMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      try {
+        const aiContent = await fetchAiResponse(content, image);
+        const aiMessage: Message = {
+          id: generateId(),
+          role: "ai",
+          content: aiContent,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+      } catch (error: any) {
+        const errorMessage: Message = {
+          id: generateId(),
+          role: "ai",
+          content: `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [fetchAiResponse]
+  );
+
+  // Regenerasi: hapus AI message terakhir, kirim ulang user message terakhir ke API
+  // (termasuk gambar kalau ada)
+  const handleRegenerate = useCallback(
+    async (aiMessageId: string) => {
+      const aiIndex = messages.findIndex((m) => m.id === aiMessageId);
+      if (aiIndex === -1) return;
+
+      // Cari user message terakhir sebelum AI message ini
+      let lastUserContent: string | null = null;
+      let lastUserImage: string | undefined;
+      for (let i = aiIndex - 1; i >= 0; i--) {
+        if (messages[i].role === "user") {
+          lastUserContent = messages[i].content;
+          lastUserImage = messages[i].image;
+          break;
+        }
+      }
+      if (!lastUserContent) return;
+
+      // Hapus AI message lama
+      setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
+      setIsLoading(true);
+
+      try {
+        const aiContent = await fetchAiResponse(lastUserContent, lastUserImage);
+        const aiMessage: Message = {
+          id: generateId(),
+          role: "ai",
+          content: aiContent,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, aiMessage]);
+      } catch (error: any) {
+        const errorMessage: Message = {
+          id: generateId(),
+          role: "ai",
+          content: `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [messages, fetchAiResponse]
+  );
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] w-full mx-auto max-w-2xl lg:max-w-3xl xl:max-w-4xl overflow-x-hidden mt-6">
@@ -71,7 +129,11 @@ export default function AIPage() {
       </div>
 
       {/* Chat Area */}
-      <ChatArea messages={messages} isLoading={isLoading} />
+      <ChatArea
+        messages={messages}
+        isLoading={isLoading}
+        onRegenerate={handleRegenerate}
+      />
 
       {/* Input Prompt — pinned to bottom */}
       <div className="sticky bottom-0 w-full px-4 pb-4 pt-2">

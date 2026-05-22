@@ -79,4 +79,6 @@ export interface Message {
   role: "user" | "ai";
   content: string;
   timestamp: Date;
+  // URL data (base64) gambar yang dilampirkan user — opsional
+  image?: string;
 }

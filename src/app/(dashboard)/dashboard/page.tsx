@@ -10,6 +10,7 @@ import { persentageProps } from "@/types";
 
 import Reminder from "./components/Reminder";
 import { getUserProfile, getTodayConsumption, getAllFoods } from "../actions";
+import { calculateMacrosFromCalories } from "@/lib/nutrition";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
@@ -40,6 +41,11 @@ const Dashboard = async () => {
   // Gunakan targetKalori (custom target user) jika ada, fallback ke TDEE
   const targetKalori = userProfile?.targetKalori ?? kebutuhanHarian.kalori;
 
+  // Target makronutrien dihitung dari targetKalori (bukan dari TDEE).
+  // Ini memastikan progress bar protein/lemak/karbo konsisten dengan target kalori user.
+  // Contoh: user set target 1.500 kkal (defisit), makro ikut 1.500 kkal — bukan TDEE 2.500 kkal.
+  const targetMakro = calculateMacrosFromCalories(targetKalori);
+
   const konsumsiSaatIni = todayConsumption.totals;
 
   const maxKcal = targetKalori;
@@ -50,10 +56,12 @@ const Dashboard = async () => {
   const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
     name: key,
     value: value,
-    maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
+    // Pakai targetMakro (dari targetKalori) bukan kebutuhanHarian (dari TDEE)
+    // agar progress bar makro konsisten dengan target kalori yang user pilih
+    maxValue: targetMakro[key as keyof typeof targetMakro],
     percentage: calculatePercentage({
       value,
-      maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
+      maxValue: targetMakro[key as keyof typeof targetMakro],
     }),
   }));
 

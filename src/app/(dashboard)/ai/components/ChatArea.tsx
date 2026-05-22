@@ -9,9 +9,10 @@ import type { Message } from "@/types/index";
 interface ChatAreaProps {
   messages: Message[];
   isLoading: boolean;
+  onRegenerate?: (messageId: string) => void;
 }
 
-export function ChatArea({ messages, isLoading }: ChatAreaProps) {
+export function ChatArea({ messages, isLoading, onRegenerate }: ChatAreaProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,11 +23,26 @@ export function ChatArea({ messages, isLoading }: ChatAreaProps) {
     return <EmptyState />;
   }
 
+  // Index pesan AI terakhir — hanya yang ini yang bisa di-regenerate
+  const lastAiIndex = (() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "ai") return i;
+    }
+    return -1;
+  })();
+
   return (
     <ScrollArea className="flex-1 w-full">
       <div className="flex flex-col gap-4 px-1 py-4">
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
+        {messages.map((message, index) => (
+          <ChatMessage
+            key={message.id}
+            message={message}
+            onRegenerate={onRegenerate}
+            canRegenerate={
+              !isLoading && index === lastAiIndex && message.role === "ai"
+            }
+          />
         ))}
 
         {/* Typing indicator */}
