@@ -107,7 +107,7 @@ function LoginInput() {
       }
 
       router.push('/dashboard');
-      toast.success('Berhasil masuk!');
+      toast.success('Berhasil masuk!', { description: 'Selamat datang kembali!' });
     } catch {
       setServerError('Terjadi kesalahan. Coba lagi nanti.');
       toast.error('Gagal masuk. Coba lagi nanti.');

@@ -74,7 +74,7 @@ const Hero = () => {
         <TabletScrollReveal />
       </section>
 
-      <div className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-full items-center px-6 lg:px-12">
+      <div className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center px-6 lg:px-12">
         <ParallaxAbout />
       </div>
 

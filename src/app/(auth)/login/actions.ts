@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { createClient } from '@/lib/supabase/server';
-import { headers } from 'next/headers';
+import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 
 // ============================================================
 // Types
@@ -39,14 +39,20 @@ export async function loginUser(
 
   if (error) {
     // Map common errors to user-friendly messages
-    if (error.message.includes('Invalid login credentials')) {
-      return { success: false, error: 'Email atau kata sandi salah.' };
+    if (error.message.includes("Invalid login credentials")) {
+      return { success: false, error: "Email atau kata sandi salah." };
     }
-    if (error.message.includes('Email not confirmed')) {
-      return { success: false, error: 'Email belum dikonfirmasi. Cek inbox kamu.' };
+    if (error.message.includes("Email not confirmed")) {
+      return {
+        success: false,
+        error: "Email belum dikonfirmasi. Cek inbox kamu.",
+      };
     }
     if (error.status === 429) {
-      return { success: false, error: 'Terlalu banyak percobaan. Coba lagi nanti.' };
+      return {
+        success: false,
+        error: "Terlalu banyak percobaan. Coba lagi nanti.",
+      };
     }
 
     return { success: false, error: error.message };
@@ -67,10 +73,11 @@ export async function loginUser(
  */
 export async function loginWithGoogle(): Promise<OAuthResult> {
   const supabase = await createClient();
-  const origin = (await headers()).get('origin') ?? 'http://localhost:3000';
+  const origin =
+    (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_APP_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider: "google",
     options: {
       redirectTo: `${origin}/auth/callback`,
     },
