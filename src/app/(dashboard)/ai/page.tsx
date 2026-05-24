@@ -9,17 +9,32 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+// Konversi Message[] dari state ke format history yang diterima API.
+// Kirim seluruh percakapan apa adanya (tanpa batas jumlah pesan).
+function buildHistory(messages: Message[]) {
+  return messages
+    .filter((m) => m.content && m.content.trim().length > 0)
+    .map((m) => ({
+      role: m.role === "ai" ? ("assistant" as const) : ("user" as const),
+      content: m.content,
+    }));
+}
+
 export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Helper: panggil API dengan optional image (base64 data URL)
+  // Helper: panggil API dengan optional image + history
   const fetchAiResponse = useCallback(
-    async (userContent: string, image?: string) => {
+    async (
+      userContent: string,
+      image: string | undefined,
+      history: ReturnType<typeof buildHistory>
+    ) => {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userContent, image }),
+        body: JSON.stringify({ message: userContent, image, history }),
       });
 
       const data = await res.json();
@@ -38,14 +53,15 @@ export default function AIPage() {
         role: "user",
         content,
         timestamp: new Date(),
-        image, // simpan gambar di message agar bisa ditampilkan di bubble
+        image,
       };
 
+      const historySnapshot = buildHistory(messages);
       setMessages((prev) => [...prev, userMessage]);
       setIsLoading(true);
 
       try {
-        const aiContent = await fetchAiResponse(content, image);
+        const aiContent = await fetchAiResponse(content, image, historySnapshot);
         const aiMessage: Message = {
           id: generateId(),
           role: "ai",
@@ -65,34 +81,36 @@ export default function AIPage() {
         setIsLoading(false);
       }
     },
-    [fetchAiResponse]
+    [messages, fetchAiResponse]
   );
 
-  // Regenerasi: hapus AI message terakhir, kirim ulang user message terakhir ke API
-  // (termasuk gambar kalau ada)
   const handleRegenerate = useCallback(
     async (aiMessageId: string) => {
       const aiIndex = messages.findIndex((m) => m.id === aiMessageId);
       if (aiIndex === -1) return;
 
-      // Cari user message terakhir sebelum AI message ini
-      let lastUserContent: string | null = null;
-      let lastUserImage: string | undefined;
+      let lastUserIndex = -1;
       for (let i = aiIndex - 1; i >= 0; i--) {
         if (messages[i].role === "user") {
-          lastUserContent = messages[i].content;
-          lastUserImage = messages[i].image;
+          lastUserIndex = i;
           break;
         }
       }
-      if (!lastUserContent) return;
+      if (lastUserIndex === -1) return;
 
-      // Hapus AI message lama
+      const lastUserContent = messages[lastUserIndex].content;
+      const lastUserImage = messages[lastUserIndex].image;
+      const historySnapshot = buildHistory(messages.slice(0, lastUserIndex));
+
       setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
       setIsLoading(true);
 
       try {
-        const aiContent = await fetchAiResponse(lastUserContent, lastUserImage);
+        const aiContent = await fetchAiResponse(
+          lastUserContent,
+          lastUserImage,
+          historySnapshot
+        );
         const aiMessage: Message = {
           id: generateId(),
           role: "ai",
