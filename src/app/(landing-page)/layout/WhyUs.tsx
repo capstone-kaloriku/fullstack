@@ -2,7 +2,7 @@ import MagicBento from '@/components/MagicBento'
 
 function WhyUs() {
   return (
-    <>
+    <div className="w-full" id="why-us">
       <MagicBento
 
         textAutoHide={true}
@@ -17,7 +17,7 @@ function WhyUs() {
         glowColor="255, 107, 0"
         disableAnimations={false}
       />
-    </>
+    </div>
   )
 }
 

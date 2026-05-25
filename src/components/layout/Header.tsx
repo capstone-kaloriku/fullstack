@@ -10,7 +10,7 @@ import {
   MobileNavMenu,
   NavbarButton,
 } from "@/components/layout/resizable-navbar";
-import Link from "next/link";
+import { Link } from "react-scroll";
 import { useState } from "react";
 import { FadeUpPyramid } from "../animations/FadeUpPyramid";
 
@@ -86,9 +86,12 @@ export function Header() {
             {navItems.map((item, idx) => (
               <Link
                 key={`mobile-link-${idx}`}
-                href={item.link}
+                to={item.link}
+                smooth={true}
+                offset={-80}
+                duration={500}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-neutral-600 dark:text-neutral-300"
+                className="relative text-neutral-600 dark:text-neutral-300 cursor-pointer"
               >
                 <span className="block">{item.name}</span>
               </Link>

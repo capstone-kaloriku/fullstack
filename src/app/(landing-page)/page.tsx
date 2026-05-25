@@ -66,7 +66,7 @@ const Hero = () => {
     <div className="relative flex min-h-screen w-full  mx-auto flex-col items-start justify-start overflow-hidden max-w-full">
       <BackgroundRippleEffect />
 
-      <section className="mt-60 md:mt-72 w-full">
+      <section id="home" className="mt-60 md:mt-72 w-full">
         <HeroSection />
       </section>
 
@@ -78,10 +78,10 @@ const Hero = () => {
         <ParallaxAbout />
       </div>
 
-      <div className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center px-6 lg:px-12 z-3">
+      <section  className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center px-6 lg:px-12 z-3">
         <h2 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h2>
         <WhyUs />
-      </div>
+      </section>
 
       <div className="relative flex w-full flex-col items-center justify-center py-24 md:py-36 px-6 lg:px-12">
         <div className="relative z-10 mb-4 flex flex-col items-center gap-4 text-center">
@@ -97,7 +97,7 @@ const Hero = () => {
       </div>
 
 
-      <div className="flex flex-col mx-auto max-w-6xl w-full text-center items-center py-24 md:py-36 z-3 gap-6 px-6">
+      <div id="profile" className="flex flex-col mx-auto max-w-6xl w-full text-center items-center py-24 md:py-36 z-3 gap-6 px-6">
         <div className="space-y-6">
           <h2 className="text-4xl font-bold text-primary">Support Us</h2>
           <p className="max-w-xl text-base text-muted-foreground md:text-lg">
