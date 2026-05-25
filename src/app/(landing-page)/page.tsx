@@ -74,11 +74,11 @@ const Hero = () => {
         <TabletScrollReveal />
       </section>
 
-      <div className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-full items-center px-6 lg:px-12">
+      <div className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-7xl items-center px-6 lg:px-12">
         <ParallaxAbout />
       </div>
 
-      <section  className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center px-6 lg:px-12 z-3">
+      <section className="flex flex-col overflow-hidden mx-auto py-60 w-full max-w-6xl items-center px-6 lg:px-12 z-3">
         <h2 className="text-4xl font-bold text-primary">Kenapa Kaloriku?</h2>
         <WhyUs />
       </section>
