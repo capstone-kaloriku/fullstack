@@ -82,3 +82,11 @@ export interface Message {
   // URL data (base64) gambar yang dilampirkan user — opsional
   image?: string;
 }
+
+export interface Conversation {
+  id: string;
+  title: string;
+  preview: string;
+  timestamp: Date;
+  messageCount: number;
+}

@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { ChatArea } from "./components/ChatArea";
 import { InputPrompt } from "./components/InputPrompt";
+import { ChatHistory } from "./components/ChatHistory";
 import type { Message } from "@/types/index";
 
 function generateId(): string {
@@ -23,6 +24,9 @@ function buildHistory(messages: Message[]) {
 export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState<
+    string | null
+  >(null);
 
   // Helper: panggil API dengan optional image + history
   const fetchAiResponse = useCallback(
@@ -133,33 +137,53 @@ export default function AIPage() {
     [messages, fetchAiResponse]
   );
 
+  const handleNewChat = useCallback(() => {
+    setMessages([]);
+    setActiveConversationId(null);
+  }, []);
+
+  const handleSelectConversation = useCallback((id: string) => {
+    // Nanti akan di-integrate dengan backend untuk load messages dari conversation id
+    setActiveConversationId(id);
+  }, []);
+
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] w-full mx-auto max-w-2xl lg:max-w-3xl xl:max-w-4xl overflow-x-hidden mt-6">
-      {/* Header */}
-      <div className="flex flex-col items-center gap-1.5 px-6 pb-2">
-        <h1 className="text-2xl font-extrabold text-secondary-foreground">
-          Tanya KalorAI
-        </h1>
-        <p className="text-xs text-muted-foreground text-center max-w-sm">
-          Asisten nutrisi cerdasmu, siap membantu dengan pertanyaan seputar
-          kalori & nutrisi.
-        </p>
+    <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden">
+      {/* Main chat area */}
+      <div className="flex flex-1 flex-col mx-auto w-full max-w-2xl lg:max-w-3xl xl:max-w-4xl overflow-x-hidden mt-6">
+        {/* Header */}
+        <div className="flex flex-col items-center gap-1.5 px-6 pb-2">
+          <h1 className="text-2xl font-extrabold text-secondary-foreground">
+            Tanya KalorAI
+          </h1>
+          <p className="text-xs text-muted-foreground text-center max-w-sm">
+            Asisten nutrisi cerdasmu, siap membantu dengan pertanyaan seputar
+            kalori & nutrisi.
+          </p>
+        </div>
+
+        {/* Chat Area */}
+        <ChatArea
+          messages={messages}
+          isLoading={isLoading}
+          onRegenerate={handleRegenerate}
+        />
+
+        {/* Input Prompt — pinned to bottom */}
+        <div className="sticky bottom-0 w-full px-4 pb-4 pt-2">
+          <InputPrompt onSend={handleSend} isLoading={isLoading} />
+          <p className="mt-2 text-center text-[10px] text-muted-foreground/60">
+            KalorAI bisa membuat kesalahan. Periksa info penting secara mandiri.
+          </p>
+        </div>
       </div>
 
-      {/* Chat Area */}
-      <ChatArea
-        messages={messages}
-        isLoading={isLoading}
-        onRegenerate={handleRegenerate}
+      {/* Chat History sidebar (right side) */}
+      <ChatHistory
+        activeConversationId={activeConversationId}
+        onSelectConversation={handleSelectConversation}
+        onNewChat={handleNewChat}
       />
-
-      {/* Input Prompt — pinned to bottom */}
-      <div className="sticky bottom-0 w-full px-4 pb-4 pt-2">
-        <InputPrompt onSend={handleSend} isLoading={isLoading} />
-        <p className="mt-2 text-center text-[10px] text-muted-foreground/60">
-          KalorAI bisa membuat kesalahan. Periksa info penting secara mandiri.
-        </p>
-      </div>
     </div>
   );
 }
