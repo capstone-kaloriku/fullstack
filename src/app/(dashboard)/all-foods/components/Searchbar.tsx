@@ -26,8 +26,8 @@ function Searchbar() {
     <div className="w-full my-6">
       <form onSubmit={handleSearch}>
         <InputGroup className="px-4 py-6 rounded-lg border border-gray-300 text-muted-foreground">
-          <InputGroupInput 
-            placeholder="Cari makanan Indonesia..." 
+          <InputGroupInput
+            placeholder="Cari makanan Indonesia..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />

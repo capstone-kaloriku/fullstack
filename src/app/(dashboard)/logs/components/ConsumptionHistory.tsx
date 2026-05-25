@@ -164,9 +164,7 @@ function ConsumptionHistory() {
   const weeklyTotal = data.days.reduce((sum, day) => sum + day.totalKalori, 0);
 
   return (
-    <div className="flex flex-col gap-4 w-full">
-      {/* Section header */}
-      <h2 className="text-lg font-bold">Riwayat Konsumsi</h2>
+    <div className="flex flex-col gap-3 w-full">
 
       {/* Week navigator */}
       <Card className="bg-primary-foreground">

@@ -4,6 +4,7 @@ import Tips from "./components/Tips";
 import ConsumptionHistory from "./components/ConsumptionHistory";
 
 import { getAllFoods } from "../actions";
+import { InteractiveCharts } from "./components/InteractiveCharts";
 
 const Logs = async () => {
   const allFoods = await getAllFoods();
@@ -16,6 +17,7 @@ const Logs = async () => {
           {/* Main Content (Left Column on Desktop) */}
           <div className="lg:col-span-7 flex flex-col gap-8 w-full">
             <div className="w-full flex flex-col gap-4">
+              <InteractiveCharts />
               <div className="text-lg font-bold flex justify-between items-center w-full">
                 <span>Sering Dicatat</span>
                 <Link
@@ -37,7 +39,7 @@ const Logs = async () => {
             </div>
           </div>
           {/* Sidebar (Right Column on Desktop) */}
-          <div className="lg:col-span-5 flex flex-col gap-8 w-full border-t pt-6 lg:border-t-0 lg:pt-0">
+          <div className="lg:col-span-5 flex flex-col gap-6 w-full border-t pt-6 lg:border-t-0 lg:pt-0">
             {/* Riwayat Konsumsi — weekly navigation + delete */}
             <div className="w-full flex flex-col">
               <ConsumptionHistory />

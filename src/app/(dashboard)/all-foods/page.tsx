@@ -8,7 +8,7 @@ import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
 import { LiaCookieBiteSolid } from "react-icons/lia";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { getAllFoods } from "../actions";
-import CustomFood from "../logs/components/CustomFood";
+import CustomFood from "./components/CustomFood";
 import {
   InputGroup,
   InputGroupAddon,
