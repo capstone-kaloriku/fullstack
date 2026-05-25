@@ -8,7 +8,7 @@ const API_BASE = process.env.INDOBERT_API_URL || "http://localhost:8080";
  */
 export async function fetchIndoBERT<T>(
   endpoint: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
 

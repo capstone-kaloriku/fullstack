@@ -61,7 +61,7 @@ const IMAGE_DATA_URL_REGEX = /^data:image\/(jpeg|jpg|png|webp);base64,(.+)$/;
 // Identitas, batasan, dan format jawaban.
 // ============================================
 const SYSTEM_PROMPT_BASE =
-  "Kamu adalah NutriAI, nutrition coach dari aplikasi KaloriKu. Vibe-mu santai, ramah, kayak temen yang kebetulan jago gizi.\n\n" +
+  "Kamu adalah KalorAI, nutrition coach dari aplikasi KaloriKu. Vibe-mu santai, ramah, kayak temen yang kebetulan jago gizi.\n\n" +
   "SIAPA KAMU:\n" +
   "- Nutrition coach yang paham makanan Indonesia dari Sabang sampai Merauke\n" +
   "- Tahu kandungan kalori, protein, lemak, karbo, serat makanan Indonesia secara detail\n" +
@@ -69,8 +69,8 @@ const SYSTEM_PROMPT_BASE =
   "- Masakan daerah: Padang, Jawa, Sunda, Betawi, Bali, Manado, Madura, dll\n" +
   "- Kepribadian: ramah, sedikit playful, boleh becanda ringan, tapi tetap informatif\n\n" +
   "INFO MODEL & TEKNOLOGI:\n" +
-  "- Kalau ditanya 'model apa yang dipakai' atau 'kamu pakai AI apa': bilang kamu adalah NutriAI yang dikembangkan oleh Tim KaloriKu\n" +
-  "- Untuk percakapan teks, kamu adalah NutriAI buatan tim KaloriKu\n" +
+  "- Kalau ditanya 'model apa yang dipakai' atau 'kamu pakai AI apa': bilang kamu adalah KalorAI yang dikembangkan oleh Tim KaloriKu\n" +
+  "- Untuk percakapan teks, kamu adalah KalorAI buatan tim KaloriKu\n" +
   "- Untuk analisis gambar/foto makanan, pakai model vision di balik layar\n" +
   "- Jawab santai aja kalau ditanya soal teknologi di balikmu, nggak usah kaku\n\n" +
   "INFO APLIKASI & TIM PENGEMBANG:\n" +
@@ -231,7 +231,7 @@ function sanitizeHistory(raw: unknown): ChatHistoryMessage[] {
 async function callGroqWithImage(
   message: string,
   imageDataUrl: string,
-  history: ChatHistoryMessage[]
+  history: ChatHistoryMessage[],
 ): Promise<string> {
   const completion = await groq.chat.completions.create({
     model: VISION_MODEL,
@@ -247,7 +247,9 @@ async function callGroqWithImage(
         content: [
           {
             type: "text",
-            text: message || "Analisis gambar makanan ini dan berikan informasi nutrisinya.",
+            text:
+              message ||
+              "Analisis gambar makanan ini dan berikan informasi nutrisinya.",
           },
           {
             type: "image_url",
@@ -277,7 +279,11 @@ async function callGroqWithImage(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, image, history: rawHistory } = body as {
+    const {
+      message,
+      image,
+      history: rawHistory,
+    } = body as {
       message: string;
       image?: string;
       history?: unknown;
@@ -286,7 +292,7 @@ export async function POST(request: NextRequest) {
     if (!message || !message.trim()) {
       return NextResponse.json(
         { error: "Pesan tidak boleh kosong" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -298,7 +304,7 @@ export async function POST(request: NextRequest) {
             "Maaf, saya hanya bisa membantu seputar makanan, kalori, dan nutrisi. " +
             "Silakan tanyakan hal yang berkaitan dengan gizi atau pola makan sehat ya! 🥗",
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -307,7 +313,7 @@ export async function POST(request: NextRequest) {
     if (hasImage && !IMAGE_DATA_URL_REGEX.test(image!)) {
       return NextResponse.json(
         { error: "Format gambar tidak valid. Gunakan JPG, PNG, atau WebP." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -353,11 +359,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ response });
   } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : "Internal Server Error";
+    const errMsg =
+      error instanceof Error ? error.message : "Internal Server Error";
     console.error("[Chat API Error]", errMsg);
-    return NextResponse.json(
-      { error: errMsg },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: errMsg }, { status: 500 });
   }
 }
