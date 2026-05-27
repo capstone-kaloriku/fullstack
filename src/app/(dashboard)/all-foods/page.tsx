@@ -166,9 +166,9 @@ const AllFood = () => {
       <div className="max-w-2xl lg:max-w-6xl xl:max-w-full mx-auto px-6 py-6 w-full overflow-x-hidden">
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full gap-6">
               {/* Integrated Searchbar */}
-              <div className="w-full my-6">
+              <div className="w-full flex flex-col gap-4">
                 <h1 className="text-lg font-bold text-primary">
                   Input Makanan Custommu
                 </h1>

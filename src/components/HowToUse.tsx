@@ -43,8 +43,6 @@ const steps = [
 export default function HowToUse() {
   return (
     <>
-
-
       {/* Stepper */}
       <motion.div
         id="how-to"
