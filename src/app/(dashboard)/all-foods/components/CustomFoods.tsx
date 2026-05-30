@@ -24,7 +24,7 @@ function CustomFoods() {
                             <FieldLabel>Deskripsi</FieldLabel>
                             <Textarea className="border-gray-300" />
                         </Field>
-                    <Button>Validasi dengan Kalorai</Button>
+                    <Button>Validasi dengan AI</Button>
                     </FieldGroup>
                 </form>
             </CardContent>
