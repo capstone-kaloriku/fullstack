@@ -2,18 +2,17 @@
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import DisplayFood from "./components/DisplayFood";
-import Category from "./components/Category";
 import Pagination from "./components/Pagination";
 import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
-import { LiaCookieBiteSolid } from "react-icons/lia";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { getAllFoods } from "../actions";
-import CustomFood from "./components/CustomFood";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import PopularCategory from "./components/PopularCategory";
+import { IconCookieFilled } from "@tabler/icons-react";
 
 // ============================================================
 // Constants
@@ -24,28 +23,39 @@ const ITEMS_PER_PAGE = 6;
 const icon = [
   {
     id: 1,
-    icon: <BsSunriseFill size={24} className="text-primary" />,
-    title: "MAKAN PAGI",
+    icon: <BsSunriseFill size={24} />,
+    title: "Makan Pagi",
     filterKey: "sarapan",
   },
   {
     id: 2,
-    icon: <BsFillSunFill size={24} className="text-primary" />,
-    title: "MAKAN SIANG",
+    icon: <BsFillSunFill size={24} />,
+    title: "Makan Siang",
     filterKey: "makan siang",
   },
   {
     id: 3,
-    icon: <BsFillMoonFill size={24} className="text-primary" />,
-    title: "MAKAN MALAM",
+    icon: <BsFillMoonFill size={24} />,
+    title: "Makan Malam",
     filterKey: "makan malam",
   },
   {
     id: 4,
-    icon: <LiaCookieBiteSolid size={24} className="text-primary" />,
-    title: "MAKANAN RINGAN",
+    icon: <IconCookieFilled size={24} />,
+    title: "Makanan Ringan",
     filterKey: "camilan",
   },
+  {
+    id: 5,
+    icon: <IconCookieFilled size={24} />,
+    title: "Rendah Kalori",
+    filterKey: "rendah-kalori",
+  },
+  {
+    id: 6, icon: <IconCookieFilled size={24} />,
+    title: "Vegetarian",
+    filterKey: "vegetarian",
+  }
 ];
 
 // ============================================================
@@ -165,13 +175,11 @@ const AllFood = () => {
     <div className="min-h-screen">
       <div className="max-w-2xl lg:max-w-6xl xl:max-w-full mx-auto px-6 py-6 w-full overflow-x-hidden">
         <div className="flex flex-col gap-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
+          <div className="grid grid-cols-1 gap-4 w-full">
             <div className="flex flex-col w-full gap-6">
               {/* Integrated Searchbar */}
               <div className="w-full flex flex-col gap-4">
-                <h1 className="text-lg font-bold text-primary">
-                  Input Makanan Custommu
-                </h1>
+                <h1 className="text-lg font-bold text-primary">Cari Makanan</h1>
                 <form onSubmit={handleSearchSubmit}>
                   <InputGroup className="px-4 py-6 rounded-lg border border-gray-300 text-muted-foreground">
                     <InputGroupInput
@@ -201,18 +209,12 @@ const AllFood = () => {
               </div>
 
               {!isSearchActive && (
-                <Category
+                <PopularCategory
                   data={icon}
                   activeFilter={activeFilter}
                   onFilter={handleFilter}
                 />
               )}
-            </div>
-            <div className="flex flex-col items-start justify-center w-full gap-4">
-              <h1 className="text-lg font-bold text-primary">
-                Input Makanan Custommu
-              </h1>
-              <CustomFood />
             </div>
           </div>
 
@@ -232,7 +234,7 @@ const AllFood = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
                 </div>
               ) : searchResults.length > 0 ? (
-                <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                <div className="sm:grid sm:grid-cols-2 lg:grid-cols-6 gap-4 w-full">
                   <DisplayFood data={searchResults} />
                 </div>
               ) : (
@@ -252,7 +254,7 @@ const AllFood = () => {
                   <h1 className="text-lg font-bold text-primary">
                     Sering Dimakan
                   </h1>
-                  <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                  <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 w-full">
                     <DisplayFood data={filteredRecently} />
                   </div>
                 </div>
@@ -269,7 +271,7 @@ const AllFood = () => {
                 </div>
                 {paginatedData.length > 0 ? (
                   <>
-                    <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                    <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 w-full">
                       <DisplayFood data={paginatedData} />
                     </div>
                     <div className="mt-4 flex justify-center w-full">
