@@ -11,8 +11,9 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import PopularCategory from "./components/PopularCategory";
 import { IconCookieFilled } from "@tabler/icons-react";
+import HeroCard from "./components/HeroCard";
+import CustomFoods from "./components/CustomFoods";
 
 // ============================================================
 // Constants
@@ -151,7 +152,7 @@ const AllFood = () => {
     : data;
 
   // "Sering Dimakan" — tetap 4 item, tanpa pagination
-  const dataRecently = data.slice(0, 4);
+  const dataRecently = data.slice(0, 6);
   const filteredRecently = activeFilter
     ? dataRecently.filter((item) => item.kategori === activeFilter)
     : dataRecently;
@@ -173,7 +174,7 @@ const AllFood = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-2xl lg:max-w-6xl xl:max-w-full mx-auto px-6 py-6 w-full overflow-x-hidden">
+      <div className="max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto px-6 py-6 w-full overflow-x-hidden">
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-1 gap-4 w-full">
             <div className="flex flex-col w-full gap-6">
@@ -207,13 +208,19 @@ const AllFood = () => {
                   </InputGroup>
                 </form>
               </div>
-
               {!isSearchActive && (
-                <PopularCategory
-                  data={icon}
-                  activeFilter={activeFilter}
-                  onFilter={handleFilter}
-                />
+                <main className="grid grid-cols-3 items-center w-full gap-3">
+                  <article className="col-span-2">
+                    <HeroCard
+                      data={icon}
+                      activeFilter={activeFilter}
+                      onFilter={handleFilter}
+                      />
+                  </article>
+                  <aside>
+                    <CustomFoods/>
+                  </aside>
+                </main>
               )}
             </div>
           </div>
