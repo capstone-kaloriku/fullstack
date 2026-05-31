@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import DisplayFood from "./components/DisplayFood";
 import Pagination from "./components/Pagination";
 import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
-import { FaSearch, FaTimes } from "react-icons/fa";
+import { FaQuestion, FaSearch, FaTimes } from "react-icons/fa";
 import { getAllFoods } from "../actions";
 import {
   InputGroup,
@@ -15,6 +15,7 @@ import { IconCookieFilled } from "@tabler/icons-react";
 import HeroCard from "./components/HeroCard";
 import CustomFoods from "./components/CustomFoods";
 import CustomFoodsModal from "./components/CustomFoodsModal";
+import { Button } from "@/components/ui/button";
 
 // ============================================================
 // Constants
@@ -205,33 +206,36 @@ const AllFood = () => {
                     />
                     <InputGroupAddon>
                       {isSearchActive || searchQuery ? (
-                        <button
+                        <Button
                           type="button"
                           onClick={clearSearch}
+                          variant="ghost"
                           className="focus:outline-none flex items-center justify-center mr-2 text-muted-foreground hover:text-foreground transition-colors">
                           <FaTimes />
-                        </button>
+                        </Button>
                       ) : null}
-                      <button
+                      <Button
                         type="submit"
+                        variant="ghost"
                         className="focus:outline-none flex items-center justify-center">
                         <FaSearch />
-                      </button>
+                      </Button>
                     </InputGroupAddon>
                   </InputGroup>
                 </form>
               </div>
+
               {!isSearchActive && (
-                <main className="grid grid-cols-3 items-center w-full gap-3">
-                  <article className="col-span-2">
+                <main className="grid grid-cols-1 lg:grid-cols-3 items-stretch w-full gap-3">
+                  <article className="h-full">
+                    <CustomFoods openModal={openModal} />
+                  </article>
+                  <aside className="lg:col-span-2 h-full">
                     <HeroCard
                       data={icon}
                       activeFilter={activeFilter}
                       onFilter={handleFilter}
                     />
-                  </article>
-                  <aside>
-                    <CustomFoods openModal={openModal} />
                   </aside>
                 </main>
               )}
@@ -259,7 +263,9 @@ const AllFood = () => {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12 gap-3 text-muted-foreground w-full">
-                  <span className="text-4xl">🔍</span>
+                  <span className="text-4xl">
+                    <FaQuestion />
+                  </span>
                   <p className="text-sm font-medium">
                     Makanan tidak ditemukan untuk &ldquo;{activeSearch}&rdquo;
                   </p>

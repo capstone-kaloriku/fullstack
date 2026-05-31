@@ -22,12 +22,11 @@ const Logs = async () => {
                 <span>Sering Dicatat</span>
                 <Link
                   href="/all-foods"
-                  className="text-sm text-primary hover:underline"
-                >
+                  className="text-sm text-primary hover:underline">
                   Lihat Semua
                 </Link>
               </div>
-              <div className="flex flex-col sm:grid sm:grid-cols-2 gap-4 w-full">
+              <div className="grid grid-cols-2 lg:grid-cols-2 items-stretch gap-4 w-full">
                 {displayData.length > 0 ? (
                   <Frequently data={displayData} />
                 ) : (
@@ -56,4 +55,3 @@ const Logs = async () => {
 };
 
 export default Logs;
-

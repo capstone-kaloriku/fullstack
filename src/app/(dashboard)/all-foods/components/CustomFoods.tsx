@@ -50,7 +50,7 @@ function CustomFoods({ openModal }: { openModal: () => void }) {
   };
 
   return (
-    <Card className="h-full w-full flex flex-col gap-5 my-6">
+    <Card size="sm" className="h-full w-full flex flex-col gap-5 my-6">
       <CardHeader>
         <h1 className="text-2xl font-bold text-primary">Custom Food</h1>
         <CardDescription>
@@ -68,7 +68,11 @@ function CustomFoods({ openModal }: { openModal: () => void }) {
                   <FieldLabel data-invalid={fieldState.invalid}>
                     Nama Makanan
                   </FieldLabel>
-                  <Input className="border-gray-300" {...field} />
+                  <Input
+                    className="border-gray-300"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
@@ -83,7 +87,11 @@ function CustomFoods({ openModal }: { openModal: () => void }) {
                   <FieldLabel data-invalid={fieldState.invalid}>
                     Deskripsi
                   </FieldLabel>
-                  <Textarea className="border-gray-300" {...field} />
+                  <Textarea
+                    className="border-gray-300"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
