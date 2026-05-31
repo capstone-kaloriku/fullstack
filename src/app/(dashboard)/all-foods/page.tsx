@@ -14,6 +14,7 @@ import {
 import { IconCookieFilled } from "@tabler/icons-react";
 import HeroCard from "./components/HeroCard";
 import CustomFoods from "./components/CustomFoods";
+import CustomFoodsModal from "./components/CustomFoodsModal";
 
 // ============================================================
 // Constants
@@ -53,10 +54,11 @@ const icon = [
     filterKey: "rendah-kalori",
   },
   {
-    id: 6, icon: <IconCookieFilled size={24} />,
+    id: 6,
+    icon: <IconCookieFilled size={24} />,
     title: "Vegetarian",
     filterKey: "vegetarian",
-  }
+  },
 ];
 
 // ============================================================
@@ -125,7 +127,7 @@ const AllFood = () => {
     }, 300);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (debounceRef.current) clearTimeout(debounceRef.current);
     performSearch(searchQuery);
@@ -164,6 +166,13 @@ const AllFood = () => {
     return filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [filteredData, currentPage]);
 
+  // Lifting State untuk Dialog
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function openModal() {
+    setIsModalOpen(true);
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -174,6 +183,12 @@ const AllFood = () => {
 
   return (
     <div className="min-h-screen">
+      <CustomFoodsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        foodTitle=""
+        foodDescription=""
+      />
       <div className="max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto px-6 py-6 w-full overflow-x-hidden">
         <div className="flex flex-col gap-8">
           <div className="grid grid-cols-1 gap-4 w-full">
@@ -193,15 +208,13 @@ const AllFood = () => {
                         <button
                           type="button"
                           onClick={clearSearch}
-                          className="focus:outline-none flex items-center justify-center mr-2 text-muted-foreground hover:text-foreground transition-colors"
-                        >
+                          className="focus:outline-none flex items-center justify-center mr-2 text-muted-foreground hover:text-foreground transition-colors">
                           <FaTimes />
                         </button>
                       ) : null}
                       <button
                         type="submit"
-                        className="focus:outline-none flex items-center justify-center"
-                      >
+                        className="focus:outline-none flex items-center justify-center">
                         <FaSearch />
                       </button>
                     </InputGroupAddon>
@@ -215,10 +228,10 @@ const AllFood = () => {
                       data={icon}
                       activeFilter={activeFilter}
                       onFilter={handleFilter}
-                      />
+                    />
                   </article>
                   <aside>
-                    <CustomFoods/>
+                    <CustomFoods openModal={openModal} />
                   </aside>
                 </main>
               )}

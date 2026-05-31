@@ -44,7 +44,7 @@ export function Header() {
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
-          <FadeUpPyramid position="left" delay={0.02}>
+          <FadeUpPyramid position="left" delay={0.02} animateOnMount>
             <NavbarLogo />
           </FadeUpPyramid>
 
@@ -52,10 +52,11 @@ export function Header() {
             className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium hover:text-zinc-800 lg:flex lg:space-x-2"
             position="center"
             delay={0.02}
+            animateOnMount
           >
             <NavItems items={navItems} />
           </FadeUpPyramid>
-          <FadeUpPyramid position="right" delay={0.02}>
+          <FadeUpPyramid position="right" delay={0.02} animateOnMount>
             <div className="flex items-center gap-4">
               <NavbarButton
                 href="/login"

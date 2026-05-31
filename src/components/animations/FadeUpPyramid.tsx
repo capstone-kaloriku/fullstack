@@ -8,6 +8,7 @@ interface FadeUpPyramidProps {
   position?: "left" | "center" | "right";
   delay?: number;
   className?: string;
+  animateOnMount?: boolean;
 }
 
 export function FadeUpPyramid({
@@ -15,6 +16,7 @@ export function FadeUpPyramid({
   position = "center",
   delay = 0,
   className,
+  animateOnMount = false,
 }: FadeUpPyramidProps) {
   const getInitialCoords = () => {
     switch (position) {
@@ -29,12 +31,14 @@ export function FadeUpPyramid({
   };
 
   const initial = { opacity: 0, ...getInitialCoords(), scale: 0.95 };
+  const enter = { opacity: 1, x: 0, y: 0, scale: 1 };
 
   return (
     <motion.div
       initial={initial}
-      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: "-50px" }}
+      animate={animateOnMount ? enter : undefined}
+      whileInView={animateOnMount ? undefined : enter}
+      viewport={animateOnMount ? undefined : { once: true, margin: "-50px" }}
       transition={{
         duration: 0.8,
         ease: [0.22, 1, 0.2, 1], // easeOutQuint for a premium spatial interpolation
