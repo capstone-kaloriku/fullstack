@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FaBowlFood, FaClock, FaSun, FaUtensils } from 'react-icons/fa6';
-import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { FieldGroup } from '@/components/ui/field';
-import { Button } from '@/components/ui/button';
-import { Loader2, Plus } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FaBowlFood, FaClock, FaSun, FaUtensils } from "react-icons/fa6";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FieldGroup } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
+import { Loader2, Plus } from "lucide-react";
 
-import { logFoodConsumption } from '../../../actions';
-import ListSelectedFood from './ui/ListSelectedFood';
-import TagSelectFood from './ui/TagSelectFood';
-import type { SideDish } from '@/types';
+import { logFoodConsumption } from "../../../actions";
+import ListSelectedFood from "./ui/ListSelectedFood";
+import TagSelectFood from "./ui/TagSelectFood";
+import type { SideDish } from "@/types";
 
 // ============================================================
 // Types
@@ -35,38 +35,48 @@ interface FoodLogFormProps {
 // ============================================================
 
 const MEAL_TYPES = [
-  { id: 1, label: 'Pagi', value: 'Pagi' },
-  { id: 2, label: 'Siang', value: 'Siang' },
-  { id: 3, label: 'Malam', value: 'Malam' },
-  { id: 4, label: 'Camilan', value: 'Camilan' },
+  { id: 1, label: "Pagi", value: "Pagi" },
+  { id: 2, label: "Siang", value: "Siang" },
+  { id: 3, label: "Malam", value: "Malam" },
+  { id: 4, label: "Camilan", value: "Camilan" },
 ];
 
 const LAUK_SUGGESTIONS = [
-  'Ayam Goreng', 'Tempe', 'Tahu', 'Telur', 'Ikan', 'Sayur Bayam',
-  'Sayur Lodeh', 'Perkedel', 'Bakwan', 'Tumis Kangkung',
+  "Ayam Goreng",
+  "Tempe",
+  "Tahu",
+  "Telur",
+  "Ikan",
+  "Sayur Bayam",
+  "Sayur Lodeh",
+  "Perkedel",
+  "Bakwan",
+  "Tumis Kangkung",
 ];
 
 // ============================================================
 // Component — Form for logging food consumption
 // ============================================================
 
-function FoodLogForm({ food }: FoodLogFormProps) {
+function PortionInformation({ food }: FoodLogFormProps) {
   // Form state
+  const [mealType, setMealType] = useState<string>("");
+  const [time, setTime] = useState<string>("");
   const [portion, setPortion] = useState<number>(1);
-  const [mealType, setMealType] = useState<string>('');
-  const [time, setTime] = useState<string>('');
+
+  const perPortionCalories = food.kalori ?? 0;
 
   // Side dishes state
   const [sideDishes, setSideDishes] = useState<SideDish[]>([]);
-  const [newLaukNama, setNewLaukNama] = useState<string>('');
+  const [newLaukNama, setNewLaukNama] = useState<string>("");
   const [newLaukPorsi, setNewLaukPorsi] = useState<number>(1);
 
   useEffect(() => {
     // Avoid synchronous state updates during initial render/effect phase
     const timer = setTimeout(() => {
       const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
       setTime(`${hours}:${minutes}`);
     }, 0);
     return () => clearTimeout(timer);
@@ -87,13 +97,14 @@ function FoodLogForm({ food }: FoodLogFormProps) {
     if (!nama) return;
     if (newLaukPorsi <= 0) return;
     setSideDishes((prev) => [...prev, { nama, porsi: newLaukPorsi }]);
-    setNewLaukNama('');
+    setNewLaukNama("");
     setNewLaukPorsi(1);
   }
 
   function handleAddLaukFromSuggestion(nama: string) {
     // Prevent duplicates
-    if (sideDishes.some((d) => d.nama.toLowerCase() === nama.toLowerCase())) return;
+    if (sideDishes.some((d) => d.nama.toLowerCase() === nama.toLowerCase()))
+      return;
     setSideDishes((prev) => [...prev, { nama, porsi: 1 }]);
   }
 
@@ -104,12 +115,8 @@ function FoodLogForm({ food }: FoodLogFormProps) {
   // Handle form submission
   async function handleSubmit() {
     // Validation
-    if (!mealType) {
-      setError('Pilih jenis makanan terlebih dahulu.');
-      return;
-    }
     if (portion <= 0) {
-      setError('Porsi harus lebih dari 0.');
+      setError("Porsi harus lebih dari 0.");
       return;
     }
 
@@ -119,8 +126,8 @@ function FoodLogForm({ food }: FoodLogFormProps) {
     // Refresh displayed submit time to reflect the actual click moment.
     // Note: this is display-only — the database records `logged_at` via `now()`.
     const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
     setTime(`${hours}:${minutes}`);
 
     // Call server action directly (not inside startTransition)
@@ -133,17 +140,17 @@ function FoodLogForm({ food }: FoodLogFormProps) {
     });
 
     if (!result.success) {
-      setError(result.error || 'Gagal menyimpan data konsumsi.');
+      setError(result.error || "Gagal menyimpan data konsumsi.");
       setIsLoading(false);
       return;
     }
 
     // Success — redirect to dashboard
-    router.push('/dashboard');
+    router.push("/dashboard");
   }
 
   return (
-    <FieldGroup>
+    <FieldGroup className="lg:sticky lg:top-24 lg:self-start">
       {/* Error banner */}
       {error && (
         <div className="rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3">
@@ -154,39 +161,16 @@ function FoodLogForm({ food }: FoodLogFormProps) {
       {/* Jam Submit */}
       <div className="w-full">
         <Card className="w-full py-6">
-          <CardHeader className="flex items-center gap-5">
-            <FaClock size={18} className="text-primary" />
-            <CardTitle className="text-lg font-bold">Jam Submit</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col justify-center items-start gap-5">
-            <div className="flex items-center justify-center gap-2 w-full">
-              <InputGroup className="px-4 py-6 flex items-center rounded-lg border border-primary text-primary w-full">
-                <InputGroupInput
-                  type="time"
-                  className="placeholder:text-primary/50 w-full"
-                  placeholder="Waktu submit otomatis"
-                  value={time}
-                  readOnly
-                />
-              </InputGroup>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Porsi */}
-      <div className="w-full">
-        <Card className="w-full py-6">
           <CardHeader className="flex flex-row items-center gap-5">
             <FaBowlFood size={18} className="text-primary" />
             <CardTitle className="text-lg font-bold">Porsi</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col justify-center items-start gap-5">
-            <InputGroup>
+            <InputGroup className="border-gray-300">
               <InputGroupInput
                 min={0}
                 type="number"
-                className="placeholder:text-primary/50 text-primary w-full"
+                className="placeholder:text-primary/50 text-primary w-full "
                 placeholder="Berapa porsi? ..."
                 value={portion}
                 onChange={(e) => setPortion(Number(e.target.value) || 0)}
@@ -194,7 +178,9 @@ function FoodLogForm({ food }: FoodLogFormProps) {
             </InputGroup>
             {/* Live calorie preview */}
             <span className="text-sm text-muted-foreground">
-              Total: <strong className="text-primary">{totalCalories} kcal</strong> ({portion} porsi × {food.kalori} kcal)
+              Total:{" "}
+              <p className="text-primary font-bold">{totalCalories} kcal</p> (
+              {portion} porsi × {perPortionCalories} kcal)
             </span>
           </CardContent>
         </Card>
@@ -208,7 +194,6 @@ function FoodLogForm({ food }: FoodLogFormProps) {
             <CardTitle className="text-lg font-bold">Lauk Makanan</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-
             {/* Lauk yang sudah dipilih */}
             <ListSelectedFood items={sideDishes} onRemove={handleRemoveLauk} />
 
@@ -221,7 +206,12 @@ function FoodLogForm({ food }: FoodLogFormProps) {
                   placeholder="Nama lauk..."
                   value={newLaukNama}
                   onChange={(e) => setNewLaukNama(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddLauk(); } }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddLauk();
+                    }
+                  }}
                 />
               </InputGroup>
               <InputGroup className="w-20">
@@ -239,8 +229,7 @@ function FoodLogForm({ food }: FoodLogFormProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleAddLauk}
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
-              >
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
                 <Plus size={16} />
               </Button>
             </div>
@@ -254,52 +243,22 @@ function FoodLogForm({ food }: FoodLogFormProps) {
         </Card>
       </div>
 
-      {/* Jenis Makanan (meal type) */}
-      <div className="w-full">
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-5">
-            <FaSun size={18} className="text-primary" />
-            <CardTitle className="text-lg font-bold">Jenis Makanan</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col justify-center items-start gap-5">
-            <ToggleGroup
-              value={mealType ? [mealType] : []}
-              onValueChange={(values) => setMealType(values[0] ?? '')}
-              className="grid grid-cols-2 gap-2 rounded-2xl items-center justify-center mx-auto w-full"
-              spacing={2}
-            >
-              {MEAL_TYPES.map((item) => (
-                <ToggleGroupItem
-                  key={item.id}
-                  value={item.value}
-                  className="flex-1 border border-primary aria-pressed:bg-primary aria-pressed:text-secondary"
-                  variant="outline"
-                >
-                  {item.label}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Submit button */}
       <Button
         className="w-full py-6"
         onClick={handleSubmit}
-        disabled={isLoading}
-      >
+        disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 size={20} className="animate-spin mr-2" />
             Menyimpan...
           </>
         ) : (
-          'Simpan'
+          "Simpan"
         )}
       </Button>
     </FieldGroup>
   );
 }
 
-export default FoodLogForm;
+export default PortionInformation;
