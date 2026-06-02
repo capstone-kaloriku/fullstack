@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { TablesUpdate } from "@/lib/supabase/types";
+import type { SideDish } from "@/types";
 
 /**
  * Maps a Supabase food_items row to the frontend FoodSummariesProps shape.
@@ -304,6 +305,7 @@ export async function getTodayConsumption() {
       porsi: portion,
       takaranSaji: food?.base_portion_gram || 0,
       slug: food?.slug || "",
+      sideDishes: (Array.isArray(log.side_dishes) ? log.side_dishes : []) as unknown as SideDish[],
     };
   });
 
@@ -327,6 +329,7 @@ export async function logFoodConsumption(data: {
   portion: number;
   mealType: string;
   totalCalories?: number;
+  sideDishes?: SideDish[];
 }) {
   const supabase = await createClient();
 
@@ -357,6 +360,9 @@ export async function logFoodConsumption(data: {
     consumed_portion: data.portion,
     meal_type: data.mealType,
     total_calories: calories,
+    side_dishes: data.sideDishes && data.sideDishes.length > 0
+      ? JSON.stringify(data.sideDishes)
+      : JSON.stringify([]),
   });
 
   if (error) {
@@ -457,6 +463,7 @@ function mapConsumptionLog(log: any) {
     porsi: portion,
     mealType: (log.meal_type || "") as string,
     loggedAt: log.logged_at as string,
+    sideDishes: (Array.isArray(log.side_dishes) ? log.side_dishes : []) as unknown as SideDish[],
   };
 }
 

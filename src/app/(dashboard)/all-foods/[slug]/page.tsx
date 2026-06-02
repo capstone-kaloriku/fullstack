@@ -1,21 +1,11 @@
 import { PageProps } from "@/types";
 import Image from "next/image";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { FaBowlFood } from "react-icons/fa6";
 import { getFoodBySlug } from "../../actions";
 import FoodLogForm from "./components/FoodLogForm";
-import TagSelectFood from "./components/ui/TagSelectFood";
-import ListSelectedFood from "./components/ui/ListSelectedFood";
 
-
-// Dummy data untuk pecahan lauk, nanti akan diganti dengan data dari DB
-const laukDummy = [
-  { id: 1, label: "Ayam Goreng", jumlah: 1, jenisTakaran: "Potong" },
-  { id: 2, label: "Kerupuk", jumlah: 7, jenisTakaran: "Buah" },
-  { id: 3, label: "Sambal", jumlah: 2, jenisTakaran: "Sendok" },
-  { id: 4, label: "Tahu Goreng", jumlah: 1, jenisTakaran: "Potong" },
-]
 
 const AddFood = async ({ params }: PageProps) => {
   const { slug } = await params;
@@ -58,19 +48,7 @@ const AddFood = async ({ params }: PageProps) => {
               </CardContent>
             </Card>
           </div>
-          <div>
-            <Card>
-              <CardHeader className="flex flex-col items-start gap-2">
-                <h2 className="text-xl font-bold">Detail Lauk</h2>
-                <p className="text-muted-foreground">Ada tambahan dari lauk kamu?</p>
-              </CardHeader>
-              <CardContent className="flex flex-col w-full">
-                <ListSelectedFood data={laukDummy} />
-                <TagSelectFood data={laukDummy} />
-              </CardContent>
-            </Card>
-          </div>
-          {/* Form — client component (handles state + submit) */}
+          {/* Form — client component (handles state + submit, termasuk lauk) */}
           <div className="w-full">
             <FoodLogForm food={{ id: food.id, nama: food.nama, kalori: food.kalori }} />
           </div>

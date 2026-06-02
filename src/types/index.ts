@@ -10,13 +10,14 @@ export interface FoodSummariesProps {
   slug: string;
 }
 
+export interface SideDish {
+  nama: string;
+  porsi: number;
+}
+
 export interface FoodLogEntry {
-  data: {
-    id: number;
-    label: string;
-    jumlah: number;
-    jenisTakaran: string;
-  }[];
+  items: SideDish[];
+  onRemove: (index: number) => void;
 }
 
 export interface persentageProps {

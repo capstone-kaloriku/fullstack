@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Trash2, Loader2 } from 'lucide-react';
 
 import { getConsumptionHistory, deleteConsumptionLog } from '../../actions';
+import type { SideDish } from '@/types';
 
 // ============================================================
 // Types
@@ -22,6 +23,7 @@ interface LogEntry {
   porsi: number;
   mealType: string;
   loggedAt: string;
+  sideDishes?: SideDish[];
 }
 
 interface DayGroup {
@@ -275,6 +277,19 @@ function ConsumptionHistory() {
                         <span className="bg-muted-foreground/10 px-2 py-0.5 rounded-full text-[11px] text-secondary-foreground w-fit">
                           {log.kalori} kcal
                         </span>
+                        {/* Lauk badges */}
+                        {log.sideDishes && log.sideDishes.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {log.sideDishes.map((lauk, i) => (
+                              <span
+                                key={i}
+                                className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium"
+                              >
+                                {lauk.nama} ({lauk.porsi}×)
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
 
