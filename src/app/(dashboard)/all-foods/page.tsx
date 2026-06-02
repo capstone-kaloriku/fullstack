@@ -1,21 +1,26 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import DisplayFood from "./components/DisplayFood";
-import Pagination from "./components/Pagination";
 import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
 import { FaQuestion, FaSearch, FaTimes } from "react-icons/fa";
 import { getAllFoods } from "../actions";
+
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { Button } from "@/components/ui/button";
+
 import { IconCookieFilled } from "@tabler/icons-react";
+
+
 import HeroCard from "./components/HeroCard";
 import CustomFoods from "./components/CustomFoods";
 import CustomFoodsModal from "./components/CustomFoodsModal";
-import { Button } from "@/components/ui/button";
+import Carousel from "./components/Carousel";
+import DisplayFood from "./components/DisplayFood";
+import Pagination from "./components/Pagination";
 
 // ============================================================
 // Constants
@@ -224,7 +229,8 @@ const AllFood = () => {
                   </InputGroup>
                 </form>
               </div>
-
+              {/* Carousel */}
+              <Carousel />
               {!isSearchActive && (
                 <main className="grid grid-cols-1 lg:grid-cols-3 items-stretch w-full gap-3">
                   <article className="h-full">
