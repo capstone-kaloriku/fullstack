@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -29,7 +30,12 @@ const customFoodSchema = z.object({
     .max(50, "Deskripsi maksimal 50 karakter"),
 });
 
-function CustomFoods({ openModal }: { openModal: () => void }) {
+interface CustomFoodsProps {
+  openModal: () => void;
+  onFormChange: (title: string, description: string) => void;
+}
+
+function CustomFoods({ openModal, onFormChange }: CustomFoodsProps) {
   const form = useForm<z.infer<typeof customFoodSchema>>({
     resolver: zodResolver(customFoodSchema),
     defaultValues: {
@@ -37,6 +43,13 @@ function CustomFoods({ openModal }: { openModal: () => void }) {
       description: "",
     },
   });
+
+  const titleValue = form.watch("title");
+  const descriptionValue = form.watch("description");
+
+  useEffect(() => {
+    onFormChange(titleValue, descriptionValue);
+  }, [titleValue, descriptionValue, onFormChange]);
 
   // Fajrin Siapkan fungsi AI nya wok
   const onSubmit = async (data: z.infer<typeof customFoodSchema>) => {

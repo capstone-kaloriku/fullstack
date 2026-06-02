@@ -175,6 +175,15 @@ const AllFood = () => {
   // Lifting State untuk Dialog
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Lifting State untuk Data Form
+  const [foodTitle, setFoodTitle] = useState("");
+  const [foodDescription, setFoodDescription] = useState("");
+
+  function handleFormChange(title: string, description: string) {
+    setFoodTitle(title);
+    setFoodDescription(description);
+  }
+
   function openModal() {
     setIsModalOpen(true);
   }
@@ -192,8 +201,8 @@ const AllFood = () => {
       <CustomFoodsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        foodTitle=""
-        foodDescription=""
+        foodTitle={foodTitle}
+        foodDescription={foodDescription}
       />
       <div className="max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto px-6 py-6 w-full overflow-x-hidden">
         <div className="flex flex-col gap-8">
@@ -234,7 +243,7 @@ const AllFood = () => {
               {!isSearchActive && (
                 <main className="grid grid-cols-1 lg:grid-cols-3 items-stretch w-full gap-3">
                   <article className="h-full">
-                    <CustomFoods openModal={openModal} />
+                    <CustomFoods openModal={openModal} onFormChange={handleFormChange} />
                   </article>
                   <aside className="lg:col-span-2 h-full">
                     <HeroCard
