@@ -413,7 +413,7 @@ export function ChatHistory({
       />
 
       {/* ── Mobile sheet trigger (visible below lg) ── */}
-      <div className="lg:hidden fixed right-4 top-3 z-40">
+      <div className="lg:hidden fixed left-4 top-3 z-40">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger
             render={
@@ -427,7 +427,7 @@ export function ChatHistory({
               </Button>
             }
           />
-          <SheetContent side="right" className="w-[85vw] sm:w-[350px] p-0">
+          <SheetContent side="left" className="w-[85vw] sm:w-[350px] p-0">
             <SheetHeader className="px-4 pt-4 pb-2">
               <SheetTitle className="flex items-center gap-2">
                 <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">

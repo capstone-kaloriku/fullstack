@@ -241,11 +241,11 @@ const AllFood = () => {
               {/* Carousel */}
               <Carousel />
               {!isSearchActive && (
-                <main className="grid grid-cols-1 lg:grid-cols-3 items-stretch w-full gap-3">
-                  <article className="h-full">
+                <main className="grid grid-cols-1 lg:grid-cols-3 w-full gap-3 py-6">
+                  <article className="">
                     <CustomFoods openModal={openModal} onFormChange={handleFormChange} />
                   </article>
-                  <aside className="lg:col-span-2 h-full">
+                  <aside className="lg:col-span-2">
                     <HeroCard
                       data={icon}
                       activeFilter={activeFilter}

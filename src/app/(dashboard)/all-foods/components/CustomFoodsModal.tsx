@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -41,21 +41,21 @@ function CustomFoodsModal({
           <div className="-mx-4 scrollbar-none max-h-[50vh] overflow-auto px-4">
             <FieldGroup>
               <Field>
-                <Label htmlFor="name-1">Nama Makanan</Label>
+                <FieldLabel htmlFor="name">Nama Makanan</FieldLabel>
                 <Input
                   disabled
                   className="border-gray-300"
-                  id="name-1"
+                  id="name"
                   name="name"
                   defaultValue={foodTitle}
                 />
               </Field>
               <Field>
-                <Label htmlFor="username-1">Deskripsi Makanan</Label>
+                <Label htmlFor="description">Deskripsi Makanan</Label>
                 <Textarea
                   className="border-gray-300"
-                  id="username-1"
-                  name="username"
+                  id="description"
+                  name="description"
                   defaultValue={foodDescription}
                 />
               </Field>

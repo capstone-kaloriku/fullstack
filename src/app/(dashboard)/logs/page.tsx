@@ -12,7 +12,7 @@ const Logs = async () => {
 
   return (
     <>
-      <div className="max-w-2xl lg:max-w-6xl xl:max-w-full px-6 py-6 mx-auto w-full overflow-x-hidden">
+      <div className="max-w-2xl lg:max-w-7xl px-6 py-6 mx-auto w-full overflow-x-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Main Content (Left Column on Desktop) */}
           <div className="lg:col-span-7 flex flex-col gap-8 w-full">

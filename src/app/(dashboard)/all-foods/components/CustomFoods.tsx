@@ -13,43 +13,42 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 const customFoodSchema = z.object({
+  imgUrl: z
+    .string()
+    .min(1, "Gambar harus diinput")
+    .max(1000, "Gambar harus diinput"),
   title: z
     .string()
     .min(5, "Nama makanan harus jelas")
     .max(50, "Nama makanan maksimal 50 karakter"),
-  description: z
-    .string()
-    .min(5, "Deskripsi harus diisi")
-    .max(50, "Deskripsi maksimal 50 karakter"),
 });
 
 interface CustomFoodsProps {
   openModal: () => void;
-  onFormChange: (title: string, description: string) => void;
+  onFormChange: (title: string, imageUrl: string) => void;
 }
 
 function CustomFoods({ openModal, onFormChange }: CustomFoodsProps) {
   const form = useForm<z.infer<typeof customFoodSchema>>({
     resolver: zodResolver(customFoodSchema),
     defaultValues: {
+      imgUrl: "",
       title: "",
-      description: "",
     },
   });
 
+  const imageUrlValue = form.watch("imgUrl");
   const titleValue = form.watch("title");
-  const descriptionValue = form.watch("description");
 
   useEffect(() => {
-    onFormChange(titleValue, descriptionValue);
-  }, [titleValue, descriptionValue, onFormChange]);
+    onFormChange(titleValue, imageUrlValue);
+  }, [titleValue, imageUrlValue, onFormChange]);
 
   // Fajrin Siapkan fungsi AI nya wok
   const onSubmit = async (data: z.infer<typeof customFoodSchema>) => {
@@ -74,6 +73,26 @@ function CustomFoods({ openModal, onFormChange }: CustomFoodsProps) {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
+              name="imgUrl"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field>
+                  <FieldLabel data-invalid={fieldState.invalid}>
+                    Foto Makanan
+                  </FieldLabel>
+                  <Input
+                    className="border-gray-300"
+                    type="file"
+                    aria-invalid={fieldState.invalid}
+                    {...field}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
               name="title"
               control={form.control}
               render={({ field, fieldState }) => (
@@ -92,25 +111,7 @@ function CustomFoods({ openModal, onFormChange }: CustomFoodsProps) {
                 </Field>
               )}
             />
-            <Controller
-              name="description"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel data-invalid={fieldState.invalid}>
-                    Deskripsi
-                  </FieldLabel>
-                  <Textarea
-                    className="border-gray-300"
-                    aria-invalid={fieldState.invalid}
-                    {...field}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
+
             <Button type="submit">Validasi dengan AI</Button>
           </FieldGroup>
         </form>

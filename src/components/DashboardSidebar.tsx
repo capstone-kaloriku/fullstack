@@ -10,6 +10,7 @@ import { MdMonitorHeart } from "react-icons/md";
 import { FaAppleAlt, FaHome, FaRobot } from "react-icons/fa";
 import { LogOutIcon } from "lucide-react";
 import { logoutUser } from "@/app/(auth)/logout/actions";
+import Link from "next/link";
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 
@@ -99,8 +100,8 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 }
 export const Logo = () => {
   return (
-    <a
-      href="/dashboard"
+    <Link
+      href="/"
       className="relative z-20 flex items-center py-1 text-sm font-normal text-primary"
     >
       <Image src="/product-logo.png" alt="Logo" width={40} height={40} />
@@ -111,18 +112,18 @@ export const Logo = () => {
       >
         aloriku
       </motion.span>
-    </a>
+    </Link>
   );
 };
 
 export const LogoIcon = () => {
   return (
-    <a
-      href="#"
+    <Link
+      href="/"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
       <Image src="/product-logo.png" alt="Logo" width={50} height={50} />
-    </a>
+    </Link>
   );
 };
 

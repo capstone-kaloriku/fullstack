@@ -76,7 +76,7 @@ const Dashboard = async () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl xl:max-w-full">
+      <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl">
         {/* Daily Nutrition Progress */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 w-full mt-6">
           {daily
