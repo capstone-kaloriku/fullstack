@@ -14,7 +14,9 @@ function ListSelectedFood({ items, onRemove }: FoodLogEntry) {
         >
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-primary">{item.nama}</span>
-            <span className="text-xs text-muted-foreground">{item.porsi} porsi</span>
+            <span className="text-xs text-muted-foreground">
+              {item.porsi} porsi{item.kalori ? ` · ${item.kalori * item.porsi} kcal` : ''}
+            </span>
           </div>
           <Button
             type="button"

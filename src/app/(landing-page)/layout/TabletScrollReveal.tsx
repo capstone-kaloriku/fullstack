@@ -1,7 +1,6 @@
 import { FadeUpPyramid } from '@/components/animations/FadeUpPyramid'
 import { ContainerScroll } from '@/components/ui/container-scroll-animation'
 import Image from 'next/image'
-import React from 'react'
 
 function TabletScrollReveal() {
   return (
@@ -21,11 +20,11 @@ function TabletScrollReveal() {
           }
         >
           <Image
-            src={`/dashboard.png`}
+            src={`/logs.webp`}
             alt="hero"
             height={720}
             width={1400}
-            className="mx-auto rounded-2xl object-cover h-full object-center"
+            className="mx-auto rounded-2xl object-cover object-center"
             draggable={false}
           />
         </ContainerScroll>

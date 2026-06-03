@@ -13,6 +13,7 @@ export interface FoodSummariesProps {
 export interface SideDish {
   nama: string;
   porsi: number;
+  kalori?: number;
 }
 
 export interface FoodLogEntry {

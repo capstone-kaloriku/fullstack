@@ -67,7 +67,7 @@ export async function loginUser(
  */
 export async function loginWithGoogle(): Promise<OAuthResult> {
   const supabase = await createClient();
-  const origin = (await headers()).get('origin') ?? 'http://localhost:3000';
+  const origin = (await headers()).get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL;
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',

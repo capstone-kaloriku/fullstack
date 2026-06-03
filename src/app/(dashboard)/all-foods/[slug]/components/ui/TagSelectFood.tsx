@@ -1,9 +1,14 @@
 import React from 'react';
 import SelectFood from './SelectFood';
 
+interface LaukSuggestion {
+  nama: string;
+  kalori: number;
+}
+
 interface TagSelectFoodProps {
-  suggestions: string[];
-  onAdd: (nama: string) => void;
+  suggestions: LaukSuggestion[];
+  onAdd: (nama: string, kalori: number) => void;
 }
 
 function TagSelectFood({ suggestions, onAdd }: TagSelectFoodProps) {
@@ -12,16 +17,17 @@ function TagSelectFood({ suggestions, onAdd }: TagSelectFoodProps) {
   return (
     <section className="flex flex-col w-full">
       <div className="mb-3">
-        <h3 className="text-sm font-semibold">Saran Lauk</h3>
+        <h3 className="text-sm font-semibold">Isi Lauk</h3>
         <p className="text-xs text-muted-foreground">
           Klik untuk menambahkan lauk ke daftar.
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
-        {suggestions.map((nama) => (
+        {suggestions.map((item) => (
           <SelectFood
-            key={nama}
-            label={nama}
+            key={item.nama}
+            label={item.nama}
+            kalori={item.kalori}
             onAdd={onAdd}
           />
         ))}
@@ -30,4 +36,5 @@ function TagSelectFood({ suggestions, onAdd }: TagSelectFoodProps) {
   );
 }
 
-export default TagSelectFood;
+export default TagSelectFood;
+

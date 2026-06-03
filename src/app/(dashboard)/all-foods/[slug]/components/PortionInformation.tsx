@@ -4,9 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FaBowlFood, FaClock, FaSun, FaUtensils } from "react-icons/fa6";
+import { FaBowlFood, FaUtensils } from "react-icons/fa6";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { FieldGroup } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
@@ -15,11 +14,9 @@ import { logFoodConsumption } from "../../../actions";
 import ListSelectedFood from "./ui/ListSelectedFood";
 import TagSelectFood from "./ui/TagSelectFood";
 import type { SideDish } from "@/types";
+import { getDynamicLaukSuggestions } from "@/actions/food-suggestion";
 
-// ============================================================
 // Types
-// ============================================================
-
 interface FoodData {
   id: string;
   nama: string;
@@ -30,33 +27,7 @@ interface FoodLogFormProps {
   food: FoodData;
 }
 
-// ============================================================
-// Constants — meal type options & lauk suggestions
-// ============================================================
-
-const MEAL_TYPES = [
-  { id: 1, label: "Pagi", value: "Pagi" },
-  { id: 2, label: "Siang", value: "Siang" },
-  { id: 3, label: "Malam", value: "Malam" },
-  { id: 4, label: "Camilan", value: "Camilan" },
-];
-
-const LAUK_SUGGESTIONS = [
-  "Ayam Goreng",
-  "Tempe",
-  "Tahu",
-  "Telur",
-  "Ikan",
-  "Sayur Bayam",
-  "Sayur Lodeh",
-  "Perkedel",
-  "Bakwan",
-  "Tumis Kangkung",
-];
-
-// ============================================================
 // Component — Form for logging food consumption
-// ============================================================
 
 function PortionInformation({ food }: FoodLogFormProps) {
   // Form state
@@ -84,14 +55,21 @@ function PortionInformation({ food }: FoodLogFormProps) {
 
   // Submission state
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestion, setSuggestion] = useState<{ nama: string; kalori: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   // Calculated total calories based on portion
   const totalCalories = Math.round(food.kalori * portion);
 
-  // ---- Lauk handlers ----
+  // Total calories including side dishes
+  const sideDishCalories = sideDishes.reduce(
+    (sum, dish) => sum + (dish.kalori ?? 0) * dish.porsi,
+    0
+  );
+  const totalCaloriesWithDishes = totalCalories + sideDishCalories;
 
+  // ---- Lauk handlers ----
   function handleAddLauk() {
     const nama = newLaukNama.trim();
     if (!nama) return;
@@ -101,11 +79,32 @@ function PortionInformation({ food }: FoodLogFormProps) {
     setNewLaukPorsi(1);
   }
 
-  function handleAddLaukFromSuggestion(nama: string) {
+  // Suggest Lauk
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (!food?.nama) return;
+
+      setIsLoading(true);
+      setSuggestion([]);
+
+      try {
+        const result = await getDynamicLaukSuggestions(food.nama);
+        setSuggestion(result);
+      } catch (err) {
+        console.error("Failed to fetch suggestions", err);
+        setSuggestion([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSuggestions();
+  }, [food.nama]);
+
+  function handleAddLaukFromSuggestion(nama: string, kalori: number) {
     // Prevent duplicates
     if (sideDishes.some((d) => d.nama.toLowerCase() === nama.toLowerCase()))
       return;
-    setSideDishes((prev) => [...prev, { nama, porsi: 1 }]);
+    setSideDishes((prev) => [...prev, { nama, porsi: 1, kalori }]);
   }
 
   function handleRemoveLauk(index: number) {
@@ -135,7 +134,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
       foodId: food.id,
       portion,
       mealType,
-      totalCalories,
+      totalCalories: totalCaloriesWithDishes,
       sideDishes,
     });
 
@@ -178,10 +177,21 @@ function PortionInformation({ food }: FoodLogFormProps) {
             </InputGroup>
             {/* Live calorie preview */}
             <span className="text-sm text-muted-foreground">
-              Total:{" "}
+              Makanan:{" "}
               <p className="text-primary font-bold">{totalCalories} kcal</p> (
               {portion} porsi × {perPortionCalories} kcal)
             </span>
+            {sideDishCalories > 0 && (
+              <span className="text-sm text-muted-foreground">
+                Lauk:{" "}
+                <p className="text-primary font-bold">+{sideDishCalories} kcal</p>
+              </span>
+            )}
+            {sideDishCalories > 0 && (
+              <span className="text-sm font-semibold text-primary border-t border-primary/20 pt-2 w-full">
+                Total: {totalCaloriesWithDishes} kcal
+              </span>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -229,14 +239,15 @@ function PortionInformation({ food }: FoodLogFormProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleAddLauk}
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0">
+                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+              >
                 <Plus size={16} />
               </Button>
             </div>
 
             {/* Saran lauk cepat */}
             <TagSelectFood
-              suggestions={LAUK_SUGGESTIONS}
+              suggestions={suggestion}
               onAdd={handleAddLaukFromSuggestion}
             />
           </CardContent>
@@ -247,7 +258,8 @@ function PortionInformation({ food }: FoodLogFormProps) {
       <Button
         className="w-full py-6"
         onClick={handleSubmit}
-        disabled={isLoading}>
+        disabled={isLoading}
+      >
         {isLoading ? (
           <>
             <Loader2 size={20} className="animate-spin mr-2" />
