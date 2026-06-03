@@ -10,7 +10,7 @@ import {
   MobileNavMenu,
   NavbarButton,
 } from "@/components/layout/resizable-navbar";
-import Link from "next/link";
+import { Link } from "react-scroll";
 import { useState } from "react";
 import { FadeUpPyramid } from "../animations/FadeUpPyramid";
 
@@ -44,7 +44,7 @@ export function Header() {
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
-          <FadeUpPyramid position="left" delay={0.02}>
+          <FadeUpPyramid position="left" delay={0.02} animateOnMount>
             <NavbarLogo />
           </FadeUpPyramid>
 
@@ -52,10 +52,11 @@ export function Header() {
             className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium hover:text-zinc-800 lg:flex lg:space-x-2"
             position="center"
             delay={0.02}
+            animateOnMount
           >
             <NavItems items={navItems} />
           </FadeUpPyramid>
-          <FadeUpPyramid position="right" delay={0.02}>
+          <FadeUpPyramid position="right" delay={0.02} animateOnMount>
             <div className="flex items-center gap-4">
               <NavbarButton
                 href="/login"
@@ -86,9 +87,12 @@ export function Header() {
             {navItems.map((item, idx) => (
               <Link
                 key={`mobile-link-${idx}`}
-                href={item.link}
+                to={item.link}
+                smooth={true}
+                offset={-80}
+                duration={500}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="relative text-neutral-600 dark:text-neutral-300"
+                className="relative text-neutral-600 dark:text-neutral-300 cursor-pointer"
               >
                 <span className="block">{item.name}</span>
               </Link>

@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { TablesUpdate } from "@/lib/supabase/types";
+import type { SideDish } from "@/types";
 
 /**
  * Maps a Supabase food_items row to the frontend FoodSummariesProps shape.
@@ -304,6 +305,7 @@ export async function getTodayConsumption() {
       porsi: portion,
       takaranSaji: food?.base_portion_gram || 0,
       slug: food?.slug || "",
+      sideDishes: (Array.isArray(log.side_dishes) ? log.side_dishes : []) as unknown as SideDish[],
     };
   });
 
@@ -327,6 +329,7 @@ export async function logFoodConsumption(data: {
   portion: number;
   mealType: string;
   totalCalories?: number;
+  sideDishes?: SideDish[];
 }) {
   const supabase = await createClient();
 
@@ -357,6 +360,9 @@ export async function logFoodConsumption(data: {
     consumed_portion: data.portion,
     meal_type: data.mealType,
     total_calories: calories,
+    side_dishes: data.sideDishes && data.sideDishes.length > 0
+      ? JSON.stringify(data.sideDishes)
+      : JSON.stringify([]),
   });
 
   if (error) {
@@ -457,6 +463,7 @@ function mapConsumptionLog(log: any) {
     porsi: portion,
     mealType: (log.meal_type || "") as string,
     loggedAt: log.logged_at as string,
+    sideDishes: (Array.isArray(log.side_dishes) ? log.side_dishes : []) as unknown as SideDish[],
   };
 }
 
@@ -651,3 +658,47 @@ export async function updateHealthProfile(data: {
   return { success: true };
 }
 
+
+/**
+ * Fetch daily calorie totals for the last N days (for chart display).
+ */
+export async function getCalorieChartData(days: number = 90) {
+  const supabase = await createClient();
+
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+  const userId = authUser?.id ?? null;
+
+  if (!userId) {
+    return [];
+  }
+
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(endDate.getDate() - days);
+
+  const { data: logs, error } = await supabase
+    .from("consumption_logs")
+    .select("logged_at, total_calories")
+    .eq("user_id", userId)
+    .gte("logged_at", startDate.toISOString())
+    .lte("logged_at", endDate.toISOString())
+    .order("logged_at", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching calorie chart data:", error.message);
+    return [];
+  }
+
+  // Group by date and sum calories
+  const grouped: Record<string, number> = {};
+  for (const log of logs || []) {
+    const dateKey = new Date(log.logged_at ?? new Date()).toLocaleDateString("sv-SE");
+    grouped[dateKey] = (grouped[dateKey] || 0) + (log.total_calories || 0);
+  }
+
+  return Object.entries(grouped)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, calories]) => ({ date, calories: Math.round(calories) }));
+}

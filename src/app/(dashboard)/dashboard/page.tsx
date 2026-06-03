@@ -10,6 +10,7 @@ import { persentageProps } from "@/types";
 
 import Reminder from "./components/Reminder";
 import { getUserProfile, getTodayConsumption, getAllFoods } from "../actions";
+import { calculateMacrosFromCalories } from "@/lib/nutrition";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
@@ -40,69 +41,44 @@ const Dashboard = async () => {
   // Gunakan targetKalori (custom target user) jika ada, fallback ke TDEE
   const targetKalori = userProfile?.targetKalori ?? kebutuhanHarian.kalori;
 
+  // Target makronutrien dihitung dari targetKalori (bukan dari TDEE).
+  // Ini memastikan progress bar protein/lemak/karbo konsisten dengan target kalori user.
+  // Contoh: user set target 1.500 kkal (defisit), makro ikut 1.500 kkal — bukan TDEE 2.500 kkal.
+  const targetMakro = calculateMacrosFromCalories(targetKalori);
+
   const konsumsiSaatIni = todayConsumption.totals;
 
   const maxKcal = targetKalori;
   const currentKcal = konsumsiSaatIni.kalori;
   const remainingKcal = maxKcal - currentKcal;
-  const remainingPercentage = calculatePercentage({ value: currentKcal, maxValue: maxKcal });
+  const remainingPercentage = calculatePercentage({
+    value: currentKcal,
+    maxValue: maxKcal,
+  });
 
   const daily = Object.entries(konsumsiSaatIni).map(([key, value]) => ({
     name: key,
     value: value,
-    maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
+    // Pakai targetMakro (dari targetKalori) bukan kebutuhanHarian (dari TDEE)
+    // agar progress bar makro konsisten dengan target kalori yang user pilih
+    maxValue: targetMakro[key as keyof typeof targetMakro],
     percentage: calculatePercentage({
       value,
-      maxValue: kebutuhanHarian[key as keyof typeof kebutuhanHarian],
+      maxValue: targetMakro[key as keyof typeof targetMakro],
     }),
   }));
 
   // Use today's consumed foods, or fallback to first 4 foods from catalog
-  const foods = todayConsumption.logs.length > 0
-    ? todayConsumption.logs.slice(0, 4)
-    : allFoods.slice(0, 4);
+  const foods =
+    todayConsumption.logs.length > 0
+      ? todayConsumption.logs.slice(0, 4)
+      : allFoods.slice(0, 4);
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl xl:max-w-full">
-        {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
-        <div className="flex flex-col lg:grid lg:grid-cols-4 items-center md:items-stretch justify-center gap-6 lg:gap-8 mt-6">
-          {/* Circle Progress */}
-          <Card className="flex flex-col md:flex-row justify-center w-full h-full lg:col-span-3">
-            <CardHeader className="hidden md:flex flex-col items-start justify-center w-full space-y-4 md:space-y-5 p-6">
-              <div>
-                <h2 className="text-lg md:text-xl font-semibold text-primary">Statistik Harian</h2>
-                <p className="text-muted-foreground">Sisa Kalori Hari ini</p>
-              </div>
-              <div className="text-xl font-bold">
-                <span className="text-3xl md:text-4xl">{remainingKcal}</span> kcal
-              </div>
-              <div className="text-sm text-muted-foreground max-w-md">
-                <p>Kamu sudah memenuhi {remainingPercentage.toFixed(0)}% target harianmu. Pertahankan momentum energinya!</p>
-              </div>
-              <Button nativeButton={false} render={<Link href="/all-foods" />}>
-                <Plus className="mr-2 h-4 w-4" /> Tambah Makan
-              </Button>
-            </CardHeader>
-            <CardContent className="flex flex-row items-center justify-center p-6">
-              <CircleProgressBar
-                value={currentKcal}
-                maxValue={maxKcal}
-                className="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64"
-              >
-                <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
-              </CircleProgressBar>
-            </CardContent>
-          </Card>
-
-          {/* Reminder Desktop Mode*/}
-          <div className="hidden lg:flex w-full h-full items-stretch">
-            <Reminder />
-          </div>
-
-        </div>
+      <div className="grid grid-cols-1 gap-6 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl">
         {/* Daily Nutrition Progress */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 w-full mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 w-full mt-6">
           {daily
             .filter((_, index) => index !== 0)
             .map((item, index) => (
@@ -129,6 +105,47 @@ const Dashboard = async () => {
             ))}
         </div>
 
+        {/* Hero Section: Circle + Nutrition Cards — side-by-side on desktop */}
+        <div className="flex flex-col lg:grid lg:grid-cols-4 items-center md:items-stretch justify-center gap-6 lg:gap-8 mt-6">
+          {/* Circle Progress */}
+          <Card className="flex flex-col md:flex-row justify-center w-full h-max lg:col-span-3">
+            <CardHeader className="hidden md:flex flex-col items-start justify-center w-full space-y-4 md:space-y-5 p-6">
+              <div>
+                <h2 className="text-lg md:text-xl font-semibold text-primary">
+                  Statistik Harian
+                </h2>
+                <p className="text-muted-foreground">Sisa Kalori Hari ini</p>
+              </div>
+              <div className="text-xl font-bold">
+                <span className="text-3xl md:text-4xl">{remainingKcal}</span>{" "}
+                kcal
+              </div>
+              <div className="text-sm text-muted-foreground max-w-md">
+                <p>
+                  Kamu sudah memenuhi {remainingPercentage.toFixed(0)}% target
+                  harianmu. Pertahankan momentum energinya!
+                </p>
+              </div>
+              <Button nativeButton={false} render={<Link href="/all-foods" />}>
+                <Plus className="mr-2 h-4 w-4" /> Tambah Makan
+              </Button>
+            </CardHeader>
+            <CardContent className="flex flex-row items-center justify-center p-6">
+              <CircleProgressBar
+                value={currentKcal}
+                maxValue={maxKcal}
+                className="w-48 h-48 md:w-56 md:h-56 lg:w-56 lg:h-56">
+                <ProgressBarDetail kcal={remainingKcal} target={maxKcal} />
+              </CircleProgressBar>
+            </CardContent>
+          </Card>
+
+          {/* Reminder Desktop Mode*/}
+          <div className="hidden lg:flex w-full h-max items-stretch">
+            <Reminder />
+          </div>
+        </div>
+
         {/* Reminder Mobile Mode */}
         <div className="w-full lg:hidden mt-2">
           <Reminder />
@@ -140,8 +157,7 @@ const Dashboard = async () => {
             <h2>Ringkasan Makanan Hari Ini</h2>
             <Link
               href="/logs"
-              className="text-secondary-foreground text-sm font-bold hover:underline"
-            >
+              className="text-secondary-foreground text-sm font-bold hover:underline">
               Lihat Semua
             </Link>
           </div>

@@ -10,13 +10,14 @@ export interface FoodSummariesProps {
   slug: string;
 }
 
+export interface SideDish {
+  nama: string;
+  porsi: number;
+}
+
 export interface FoodLogEntry {
-  data: {
-    id: number;
-    label: string;
-    jumlah: number;
-    jenisTakaran: string;
-  }[];
+  items: SideDish[];
+  onRemove: (index: number) => void;
 }
 
 export interface persentageProps {
@@ -79,4 +80,14 @@ export interface Message {
   role: "user" | "ai";
   content: string;
   timestamp: Date;
+  // URL data (base64) gambar yang dilampirkan user — opsional
+  image?: string;
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+  preview: string;
+  timestamp: Date;
+  messageCount: number;
 }

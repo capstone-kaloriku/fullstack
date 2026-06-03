@@ -1,24 +1,34 @@
-import Image from 'next/image'
-import { FoodLogEntry } from '@/types'
+import { Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import type { FoodLogEntry } from '@/types';
 
-function ListSelectedFood({ data }: FoodLogEntry) {
+function ListSelectedFood({ items, onRemove }: FoodLogEntry) {
+  if (items.length === 0) return null;
+
   return (
-    <>
-      {data.map((item) => (
-        <div key={item.id} className="flex gap-4 mb-4">
-          <section className="flex flex-row gap-3 bg-card inset-shadow-sm ring-1 ring-border rounded-xl p-6 w-full">
-            <div className="flex flex-items-center justify-center">
-              <Image src="/profile.jpg" alt="Selected Food" width={50} height={50} />
-            </div>
-            <div className="flex flex-col items-start justify-center">
-              <h3 className="text-primary font-bold text-sm md:text-base lg:text-lg">{item.label}</h3>
-              <p className="text-muted-foreground text-sm md:text-base lg:text-lg">{item.jumlah} {item.jenisTakaran}</p>
-            </div>
-          </section>
+    <div className="flex flex-col gap-2 w-full">
+      {items.map((item, index) => (
+        <div
+          key={index}
+          className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-lg px-4 py-2"
+        >
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-primary">{item.nama}</span>
+            <span className="text-xs text-muted-foreground">{item.porsi} porsi</span>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => onRemove(index)}
+            className="text-destructive hover:text-destructive hover:bg-destructive/10 h-7 w-7 p-0"
+          >
+            <Trash2 size={14} />
+          </Button>
         </div>
       ))}
-    </>
-  )
+    </div>
+  );
 }
 
-export default ListSelectedFood
+export default ListSelectedFood;

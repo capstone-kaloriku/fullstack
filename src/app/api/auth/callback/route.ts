@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 // ============================================================
 // Route Handler — OAuth callback endpoint
@@ -21,12 +21,12 @@ import { createClient } from '@/lib/supabase/server';
  */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  let next = searchParams.get('next') ?? '/dashboard';
+  const code = searchParams.get("code");
+  let next = searchParams.get("next") ?? "/dashboard";
 
   // Ensure next is a relative path
-  if (!next.startsWith('/')) {
-    next = '/dashboard';
+  if (!next.startsWith("/")) {
+    next = "/dashboard";
   }
 
   if (code) {
@@ -42,9 +42,9 @@ export async function GET(request: Request) {
 
       if (user) {
         const { data: existingUser } = await supabase
-          .from('users')
-          .select('user_id')
-          .eq('user_id', user.id)
+          .from("users")
+          .select("user_id")
+          .eq("user_id", user.id)
           .single();
 
         if (!existingUser) {
@@ -52,33 +52,33 @@ export async function GET(request: Request) {
           const name =
             user.user_metadata?.full_name ??
             user.user_metadata?.name ??
-            user.email?.split('@')[0] ??
-            'User';
+            user.email?.split("@")[0] ??
+            "User";
 
-          await supabase.from('users').insert({
+          await supabase.from("users").insert({
             user_id: user.id,
             name,
             email: user.email!,
           });
 
           // New user — redirect to onboarding to collect health data
-          next = '/onboarding';
+          next = "/onboarding";
         } else {
           // Existing user — check if they have a health profile
           const { data: healthProfile } = await supabase
-            .from('health_profiles')
-            .select('profile_id')
-            .eq('user_id', user.id)
+            .from("health_profiles")
+            .select("profile_id")
+            .eq("user_id", user.id)
             .maybeSingle();
 
           if (!healthProfile) {
-            next = '/onboarding';
+            next = "/onboarding";
           }
         }
       }
 
-      const forwardedHost = request.headers.get('x-forwarded-host');
-      const isLocalEnv = process.env.NODE_ENV === 'development';
+      const forwardedHost = request.headers.get("x-forwarded-host");
+      const isLocalEnv = process.env.NODE_ENV === "development";
 
       if (isLocalEnv) {
         return NextResponse.redirect(`${origin}${next}`);
@@ -89,7 +89,10 @@ export async function GET(request: Request) {
       }
     }
 
-    console.error('[auth/callback] exchangeCodeForSession error:', error.message);
+    console.error(
+      "[auth/callback] exchangeCodeForSession error:",
+      error.message,
+    );
   }
 
   // Error — redirect to login with error flag

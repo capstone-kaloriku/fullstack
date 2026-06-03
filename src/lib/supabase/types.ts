@@ -52,6 +52,7 @@ export type Database = {
           logged_at: string | null
           meal_type: string | null
           raw_input_text: string | null
+          side_dishes: Json | null
           total_calories: number | null
           user_id: string | null
         }
@@ -62,6 +63,7 @@ export type Database = {
           logged_at?: string | null
           meal_type?: string | null
           raw_input_text?: string | null
+          side_dishes?: Json | null
           total_calories?: number | null
           user_id?: string | null
         }
@@ -72,6 +74,7 @@ export type Database = {
           logged_at?: string | null
           meal_type?: string | null
           raw_input_text?: string | null
+          side_dishes?: Json | null
           total_calories?: number | null
           user_id?: string | null
         }
