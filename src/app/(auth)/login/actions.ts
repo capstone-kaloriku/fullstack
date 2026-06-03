@@ -62,7 +62,7 @@ export async function loginUser(
 /**
  * Initiates Google OAuth sign-in via Supabase Auth (PKCE flow).
  * Returns the provider redirect URL — the client should navigate
- * to it. After consent, Google redirects back to /auth/callback
+ * to it. After consent, Google redirects back to /api/auth/callback
  * where the code is exchanged for a session.
  */
 export async function loginWithGoogle(): Promise<OAuthResult> {
@@ -72,7 +72,7 @@ export async function loginWithGoogle(): Promise<OAuthResult> {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/api/auth/callback`,
     },
   });
 
