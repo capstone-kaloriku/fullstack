@@ -15,7 +15,7 @@ import ListSelectedFood from "./ui/ListSelectedFood";
 import TagSelectFood from "./ui/TagSelectFood";
 import type { SideDish } from "@/types";
 import type { Database } from "@/lib/supabase/types";
-import { getDynamicLaukSuggestions } from "@/actions/food-suggestion";
+import { getDynamicLaukSuggestions, addManualLauk, saveLaukComponents } from "@/actions/food-suggestion";
 
 // Types
 interface FoodData {
@@ -61,10 +61,12 @@ function PortionInformation({ food }: FoodLogFormProps) {
    */
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
+  const [isAddingLauk, setIsAddingLauk] = useState(false);
   const [suggestion, setSuggestion] = useState<
     { nama: string; kalori: number }[]
   >([]);
   const [error, setError] = useState<string | null>(null);
+  const [laukError, setLaukError] = useState<string | null>(null);
   const router = useRouter();
 
   // Calculated total calories based on portion
@@ -78,25 +80,55 @@ function PortionInformation({ food }: FoodLogFormProps) {
   const totalCaloriesWithDishes = totalCalories + sideDishCalories;
 
   // ---- Lauk handlers ----
-  function handleAddLauk() {
+  async function handleAddLauk() {
     const nama = newLaukNama.trim();
     if (!nama) return;
     if (newLaukPorsi <= 0) return;
-    setSideDishes((prev) => [...prev, { nama, porsi: newLaukPorsi }]);
-    setNewLaukNama("");
-    setNewLaukPorsi(1);
+
+    // Cek duplikat lokal
+    if (sideDishes.some((d) => d.nama.toLowerCase() === nama.toLowerCase())) {
+      setLaukError(`"${nama}" sudah ada di daftar lauk.`);
+      return;
+    }
+
+    setLaukError(null);
+    setIsAddingLauk(true);
+
+    try {
+      // Validasi AI (TIDAK save ke DB — save saat Simpan)
+      const result = await addManualLauk(nama);
+
+      if (!result.success || !result.data) {
+        setLaukError(result.error || "Gagal menambahkan lauk.");
+        return;
+      }
+
+      // Tambah ke state lokal dengan data kalori dari AI
+      const validated = result.data;
+      setSideDishes((prev) => [
+        ...prev,
+        { nama: validated.nama, porsi: newLaukPorsi, kalori: validated.kalori },
+      ]);
+      setNewLaukNama("");
+      setNewLaukPorsi(1);
+    } catch (err) {
+      console.error("Failed to add lauk", err);
+      setLaukError("Terjadi kesalahan saat validasi lauk.");
+    } finally {
+      setIsAddingLauk(false);
+    }
   }
 
-  // Suggest Lauk
+  // Suggest Lauk — DB-first, Groq fallback
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (!food?.nama) return;
+      if (!food?.id || !food?.nama) return;
 
       setIsFetchingSuggestions(true);
       setSuggestion([]);
 
       try {
-        const result = await getDynamicLaukSuggestions(food.nama);
+        const result = await getDynamicLaukSuggestions(food.id, food.nama);
         setSuggestion(result);
       } catch (err) {
         console.error("Failed to fetch suggestions", err);
@@ -106,7 +138,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
       }
     };
     fetchSuggestions();
-  }, [food.nama]);
+  }, [food.id, food.nama]);
 
   function handleAddLaukFromSuggestion(nama: string, kalori: number) {
     // Prevent duplicates
@@ -137,7 +169,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
     const minutes = now.getMinutes().toString().padStart(2, "0");
     setTime(`${hours}:${minutes}`);
 
-    // Call server action directly (not inside startTransition)
+    // 1. Save consumption log
     const result = await logFoodConsumption({
       foodId: food.id,
       portion,
@@ -149,6 +181,15 @@ function PortionInformation({ food }: FoodLogFormProps) {
       setError(result.error || "Gagal menyimpan data konsumsi.");
       setIsSubmitting(false);
       return;
+    }
+
+    // 2. Save lauk ke food_components (hanya yg dipilih user)
+    if (sideDishes.length > 0) {
+      const laukToSave = sideDishes.map((d) => ({
+        nama: d.nama,
+        kalori: d.kalori ?? 0,
+      }));
+      await saveLaukComponents(food.id, laukToSave);
     }
 
     // Success — redirect to dashboard
@@ -221,43 +262,64 @@ function PortionInformation({ food }: FoodLogFormProps) {
               />
 
               {/* Input lauk baru */}
-              <div className="flex gap-2 items-center">
-                <InputGroup className="flex-1">
-                  <InputGroupInput
-                    type="text"
-                    className="placeholder:text-muted-foreground/60 w-full"
-                    placeholder="Nama lauk..."
-                    value={newLaukNama}
-                    onChange={(e) => setNewLaukNama(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        handleAddLauk();
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2 items-center">
+                  <InputGroup className="flex-1">
+                    <InputGroupInput
+                      type="text"
+                      className="placeholder:text-muted-foreground/60 w-full"
+                      placeholder="Nama lauk..."
+                      value={newLaukNama}
+                      disabled={isAddingLauk}
+                      onChange={(e) => {
+                        setNewLaukNama(e.target.value);
+                        setLaukError(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddLauk();
+                        }
+                      }}
+                    />
+                  </InputGroup>
+                  <InputGroup className="w-20">
+                    <InputGroupInput
+                      type="number"
+                      min={1}
+                      className="text-center"
+                      placeholder="Porsi"
+                      value={newLaukPorsi}
+                      disabled={isAddingLauk}
+                      onChange={(e) =>
+                        setNewLaukPorsi(Number(e.target.value) || 1)
                       }
-                    }}
-                  />
-                </InputGroup>
-                <InputGroup className="w-20">
-                  <InputGroupInput
-                    type="number"
-                    min={1}
-                    className="text-center"
-                    placeholder="Porsi"
-                    value={newLaukPorsi}
-                    onChange={(e) =>
-                      setNewLaukPorsi(Number(e.target.value) || 1)
-                    }
-                  />
-                </InputGroup>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddLauk}
-                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
-                >
-                  <Plus size={16} />
-                </Button>
+                    />
+                  </InputGroup>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddLauk}
+                    disabled={isAddingLauk || !newLaukNama.trim()}
+                    className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+                  >
+                    {isAddingLauk ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <Plus size={16} />
+                    )}
+                  </Button>
+                </div>
+                {isAddingLauk && (
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Loader2 size={12} className="animate-spin" />
+                    Memvalidasi lauk dengan AI...
+                  </p>
+                )}
+                {laukError && (
+                  <p className="text-xs text-destructive">{laukError}</p>
+                )}
               </div>
 
               {/* Saran lauk cepat */}
