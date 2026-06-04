@@ -397,10 +397,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
               </div>
 
               {/* Saran lauk cepat */}
-              {/**
-               * @kevin — TagSelectFood sekarang terima selectedNames
-               * agar badge yang sudah diklik berubah jadi ✓ (disabled).
-               */}
+
               <TagSelectFood
                 suggestions={suggestion}
                 onAdd={handleAddLaukFromSuggestion}
