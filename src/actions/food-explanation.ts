@@ -78,7 +78,7 @@ Keluarkan output HANYA dalam format JSON:
           content: `Jelaskan makanan: "${foodName}". Data nutrisi: ${nutrisiText}.`,
         },
       ],
-      model: "llama-3.1-8b-instant",
+      model: "llama-3.3-70b-versatile",
       max_tokens: 400,
       response_format: { type: "json_object" },
     });
