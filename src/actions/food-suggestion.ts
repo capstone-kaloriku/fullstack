@@ -79,9 +79,7 @@ interface AddLaukResult {
  * Hanya return data kalori + validasi.
  * DB save terjadi saat user klik Simpan.
  */
-export async function addManualLauk(
-  laukName: string,
-): Promise<AddLaukResult> {
+export async function addManualLauk(laukName: string): Promise<AddLaukResult> {
   const trimmed = laukName.trim();
 
   if (!trimmed || trimmed.length < 2) {
@@ -145,7 +143,9 @@ export async function saveLaukComponents(
       return { success: false, error: error.message };
     }
 
-    console.log(`[Lauk Save] Saved ${laukList.length} komponen untuk food ${foodId}`);
+    console.log(
+      `[Lauk Save] Saved ${laukList.length} komponen untuk food ${foodId}`,
+    );
     return { success: true };
   } catch (error) {
     console.error("[Lauk Save] Error:", error);
@@ -176,16 +176,16 @@ ATURAN KETAT:
 7. Nama lauk singkat, maks 3 kata. Kalori per 1 porsi standar (bilangan bulat).
 8. Maksimal 4 lauk. Lebih sedikit lebih baik jika memang relevan sedikit.
 
-Output HANYA JSON valid:
+Output HANYA berupa JSON valid dengan format:
 { "suggestions": [{ "nama": "Sambal", "kalori": 30 }, { "nama": "Lalapan", "kalori": 25 }] }
-Jika tidak ada lauk yang relevan: { "suggestions": [] }`,
+Jika tidak ada lauk yang relevan, kembalikan JSON: { "suggestions": [] }`,
       },
       {
         role: "user",
-        content: `Analisa makanan: "${foodName}". Apa saja lauk/pelengkap yang RELEVAN?`,
+        content: `Analisa makanan: "${foodName}". Apa saja lauk/pelengkap yang RELEVAN? Kembalikan hasilnya dalam format JSON.`,
       },
     ],
-    model: "llama-3.1-8b-instant",
+    model: "openai/gpt-oss-120b",
     max_tokens: 300,
     response_format: { type: "json_object" },
   });
@@ -194,7 +194,11 @@ Jika tidak ada lauk yang relevan: { "suggestions": [] }`,
   if (!content) return [];
 
   const parsed = JSON.parse(content);
-  const suggestions: LaukSuggestion[] = (parsed.suggestions || parsed.components || []).slice(0, 4);
+  const suggestions: LaukSuggestion[] = (
+    parsed.suggestions ||
+    parsed.components ||
+    []
+  ).slice(0, 4);
 
   return suggestions;
 }
@@ -211,7 +215,9 @@ interface SingleLaukValidation {
 }
 
 /** Validasi apakah input user adalah lauk/makanan valid */
-async function validateSingleLauk(laukName: string): Promise<SingleLaukValidation> {
+async function validateSingleLauk(
+  laukName: string,
+): Promise<SingleLaukValidation> {
   const chatCompletion = await groq.chat.completions.create({
     messages: [
       {

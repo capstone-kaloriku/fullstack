@@ -24,26 +24,26 @@ import Pagination from "./components/Pagination";
 import FilterCard from "./components/FilterCard";
 
 // Constants
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 12;
 
 const icon = [
   {
     id: 1,
     icon: <BsSunriseFill size={24} />,
-    title: "Makan Pagi",
-    filterKey: "sarapan",
+    title: "Makanan Berat",
+    filterKey: "makanan_berat",
   },
   {
     id: 2,
     icon: <BsFillSunFill size={24} />,
     title: "Makan Siang",
-    filterKey: "makan siang",
+    filterKey: "makan_ringan",
   },
   {
     id: 3,
     icon: <BsFillMoonFill size={24} />,
     title: "Makan Malam",
-    filterKey: "makan malam",
+    filterKey: "camilan",
   },
   {
     id: 4,
@@ -312,7 +312,7 @@ const AllFood = () => {
               <Carousel />
               {!isSearchActive && (
                 <main className="grid grid-cols-1 lg:grid-cols-3 w-full gap-3 py-6">
-                  <article className="flex flex-col gap-3">
+                  <article className="flex flex-col gap-3 h-full">
                     <CustomFoods
                       openModal={openModal}
                       onFormChange={handleFormChange}
@@ -320,7 +320,7 @@ const AllFood = () => {
                       onValidationStart={handleValidationStart}
                     />
                   </article>
-                  <aside className="lg:col-span-2">
+                  <aside className="lg:col-span-2 flex flex-col gap-3 h-full">
                     <FilterCard
                       data={icon}
                       activeFilter={activeFilter}
@@ -336,7 +336,6 @@ const AllFood = () => {
             </div>
           </div>
 
-          {/* ====== Search Results View ====== */}
           {isSearchActive ? (
             <div className="flex flex-col gap-4 w-full">
               <div className="flex items-center justify-between">

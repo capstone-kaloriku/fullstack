@@ -15,7 +15,11 @@ import ListSelectedFood from "./ui/ListSelectedFood";
 import TagSelectFood from "./ui/TagSelectFood";
 import type { SideDish } from "@/types";
 import type { Database } from "@/lib/supabase/types";
-import { getDynamicLaukSuggestions, addManualLauk, saveLaukComponents } from "@/actions/food-suggestion";
+import {
+  getDynamicLaukSuggestions,
+  addManualLauk,
+  saveLaukComponents,
+} from "@/actions/food-suggestion";
 
 // Types
 interface FoodData {
@@ -32,7 +36,9 @@ interface FoodLogFormProps {
 
 function PortionInformation({ food }: FoodLogFormProps) {
   // Form state
-  const [mealType, setMealType] = useState<Database["public"]["Enums"]["meal_category"] | "">(""  );
+  const [mealType, setMealType] = useState<
+    Database["public"]["Enums"]["meal_category"] | ""
+  >("");
   const [time, setTime] = useState<string>("");
   const [portion, setPortion] = useState<number>(1);
 
@@ -69,10 +75,8 @@ function PortionInformation({ food }: FoodLogFormProps) {
   const [laukError, setLaukError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Calculated total calories based on portion
   const totalCalories = Math.round(food.kalori * portion);
 
-  // Total calories including side dishes
   const sideDishCalories = sideDishes.reduce(
     (sum, dish) => sum + (dish.kalori ?? 0) * dish.porsi,
     0,
@@ -141,14 +145,30 @@ function PortionInformation({ food }: FoodLogFormProps) {
   }, [food.id, food.nama]);
 
   function handleAddLaukFromSuggestion(nama: string, kalori: number) {
-    // Prevent duplicates
-    if (sideDishes.some((d) => d.nama.toLowerCase() === nama.toLowerCase()))
+    // If already exists, increment porsi instead of ignoring
+    const existingIndex = sideDishes.findIndex(
+      (d) => d.nama.toLowerCase() === nama.toLowerCase(),
+    );
+    if (existingIndex !== -1) {
+      setSideDishes((prev) =>
+        prev.map((d, i) =>
+          i === existingIndex ? { ...d, porsi: d.porsi + 1 } : d,
+        ),
+      );
       return;
+    }
     setSideDishes((prev) => [...prev, { nama, porsi: 1, kalori }]);
   }
 
   function handleRemoveLauk(index: number) {
     setSideDishes((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleChangePorsi(index: number, newPorsi: number) {
+    if (newPorsi < 1) return;
+    setSideDishes((prev) =>
+      prev.map((d, i) => (i === index ? { ...d, porsi: newPorsi } : d)),
+    );
   }
 
   // Handle form submission
@@ -197,7 +217,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
   }
 
   return (
-    <div className="w-full lg:sticky lg:top-24 lg:self-start">
+    <div className="w-full lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
       <FieldGroup>
         {/* Error banner */}
         {error && (
@@ -232,7 +252,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
               </span>
               {sideDishCalories > 0 && (
                 <span className="text-sm text-muted-foreground">
-                  Lauk:{" "}
+                  Lauk:
                   <p className="text-primary font-bold">
                     +{sideDishCalories} kcal
                   </p>
@@ -259,6 +279,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
               <ListSelectedFood
                 items={sideDishes}
                 onRemove={handleRemoveLauk}
+                onChangePorsi={handleChangePorsi}
               />
 
               {/* Input lauk baru */}

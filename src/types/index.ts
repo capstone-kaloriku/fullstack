@@ -19,6 +19,7 @@ export interface SideDish {
 export interface FoodLogEntry {
   items: SideDish[];
   onRemove: (index: number) => void;
+  onChangePorsi: (index: number, newPorsi: number) => void;
 }
 
 export interface persentageProps {

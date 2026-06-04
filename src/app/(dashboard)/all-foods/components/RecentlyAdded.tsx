@@ -21,7 +21,6 @@ import { Clock, Flame, Leaf, Sparkles, Wheat } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-// ── Skeleton loader for individual items ──
 function RecentlyAddedSkeleton() {
   return (
     <div className="flex items-center gap-3 p-3">
@@ -35,7 +34,6 @@ function RecentlyAddedSkeleton() {
   );
 }
 
-// ── Empty state ──
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
@@ -55,7 +53,6 @@ function EmptyState() {
   );
 }
 
-// ── Nutrition micro-badge ──
 function NutriBadge({
   icon: Icon,
   value,
@@ -109,7 +106,6 @@ function FoodRow({
             sizes="56px"
             className="object-cover transition-transform duration-300 group-hover:scale-110"
           />
-          {/* Subtle gradient overlay on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
 
@@ -152,7 +148,7 @@ export function RecentlyAdded({ items, isLoading }: RecentlyAddedProps) {
   return (
     <Card
       size="sm"
-      className="w-full flex flex-col overflow-hidden border-border/60"
+      className="w-full flex flex-col overflow-hidden border-border/60 flex-1"
     >
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
@@ -177,7 +173,7 @@ export function RecentlyAdded({ items, isLoading }: RecentlyAddedProps) {
 
       <Separator />
 
-      <CardContent className="p-0 flex-1">
+      <CardContent className="p-0 flex-1 flex flex-col min-h-0">
         {isLoading ? (
           <div className="flex flex-col gap-1 p-2">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -187,9 +183,9 @@ export function RecentlyAdded({ items, isLoading }: RecentlyAddedProps) {
         ) : items.length === 0 ? (
           <EmptyState />
         ) : (
-          <ScrollArea className="max-h-[420px]">
+          <ScrollArea className="flex-1">
             <div className="flex flex-col gap-0.5 p-2">
-              {items.map((item, index) => (
+              {items?.slice(0, 4).map((item, index) => (
                 <FoodRow key={item.id} item={item} index={index} />
               ))}
             </div>
