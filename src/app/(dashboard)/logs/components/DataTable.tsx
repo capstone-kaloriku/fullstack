@@ -49,7 +49,6 @@ import {
 } from "@/components/ui/table"
 
 import { getConsumptionHistory, deleteConsumptionLog } from "../../actions"
-import type { SideDish } from "@/types"
 
 // ============================================================
 // Types
@@ -63,7 +62,6 @@ interface LogEntry {
     porsi: number
     mealType: string
     loggedAt: string
-    sideDishes?: SideDish[]
 }
 
 interface DayGroup {
@@ -143,25 +141,25 @@ function getWeekRange(weeksAgo: number) {
 // ============================================================
 
 const MEAL_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
-    Pagi: {
+    makanan_berat: {
         bg: "bg-amber-50 dark:bg-amber-950/40",
         text: "text-amber-700 dark:text-amber-300",
         dot: "bg-amber-400",
     },
-    Siang: {
-        bg: "bg-orange-50 dark:bg-orange-950/40",
-        text: "text-orange-700 dark:text-orange-300",
-        dot: "bg-orange-400",
-    },
-    Malam: {
-        bg: "bg-indigo-50 dark:bg-indigo-950/40",
-        text: "text-indigo-700 dark:text-indigo-300",
-        dot: "bg-indigo-400",
-    },
-    Camilan: {
+    makanan_ringan: {
         bg: "bg-emerald-50 dark:bg-emerald-950/40",
         text: "text-emerald-700 dark:text-emerald-300",
         dot: "bg-emerald-400",
+    },
+    minuman: {
+        bg: "bg-sky-50 dark:bg-sky-950/40",
+        text: "text-sky-700 dark:text-sky-300",
+        dot: "bg-sky-400",
+    },
+    camilan: {
+        bg: "bg-orange-50 dark:bg-orange-950/40",
+        text: "text-orange-700 dark:text-orange-300",
+        dot: "bg-orange-400",
     },
 }
 
@@ -189,7 +187,6 @@ interface FlatLogRow {
     loggedAt: string
     date: string
     dateLabel: string
-    sideDishes?: SideDish[]
 }
 
 // ============================================================
@@ -290,18 +287,6 @@ export function DataTable() {
                                 <span className="text-sm font-semibold truncate max-w-[200px]">
                                     {log.nama}
                                 </span>
-                                {log.sideDishes && log.sideDishes.length > 0 && (
-                                    <div className="flex flex-wrap gap-1">
-                                        {log.sideDishes.map((lauk, i) => (
-                                            <span
-                                                key={i}
-                                                className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded-md bg-primary/8 text-primary font-medium border border-primary/10"
-                                            >
-                                                {lauk.nama} ({lauk.porsi}×)
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
                         </div>
                     )
@@ -319,7 +304,7 @@ export function DataTable() {
                                 className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full font-medium ${style.bg} ${style.text}`}
                             >
                                 <span className={`size-1.5 rounded-full ${style.dot}`} />
-                                {row.original.mealType || "—"}
+                                {row.original.mealType?.replace('_', ' ') || "—"}
                             </span>
                         </div>
                     )
@@ -489,7 +474,7 @@ export function DataTable() {
 
                     {/* Meal type filter */}
                     <Label htmlFor="meal-filter" className="sr-only">
-                        Filter Waktu Makan
+                        Filter Jenis Makanan
                     </Label>
                     <Select
                         value={
@@ -504,10 +489,10 @@ export function DataTable() {
                         }
                     >
                         <SelectTrigger className="h-9 w-[140px]" size="sm" id="meal-filter">
-                            <SelectValue placeholder="Semua Waktu" />
+                            <SelectValue placeholder="Semua Jenis" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Semua Waktu</SelectItem>
+                            <SelectItem value="all">Semua Jenis</SelectItem>
                             {mealTypes.map((type) => (
                                 <SelectItem key={type} value={type}>
                                     {type}

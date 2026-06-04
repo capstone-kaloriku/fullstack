@@ -14,6 +14,7 @@ import { logFoodConsumption } from "../../../actions";
 import ListSelectedFood from "./ui/ListSelectedFood";
 import TagSelectFood from "./ui/TagSelectFood";
 import type { SideDish } from "@/types";
+import type { Database } from "@/lib/supabase/types";
 import { getDynamicLaukSuggestions } from "@/actions/food-suggestion";
 
 // Types
@@ -31,7 +32,7 @@ interface FoodLogFormProps {
 
 function PortionInformation({ food }: FoodLogFormProps) {
   // Form state
-  const [mealType, setMealType] = useState<string>("");
+  const [mealType, setMealType] = useState<Database["public"]["Enums"]["meal_category"] | "">(""  );
   const [time, setTime] = useState<string>("");
   const [portion, setPortion] = useState<number>(1);
 
@@ -135,9 +136,8 @@ function PortionInformation({ food }: FoodLogFormProps) {
     const result = await logFoodConsumption({
       foodId: food.id,
       portion,
-      mealType,
+      mealType: mealType || "makanan_berat",
       totalCalories: totalCaloriesWithDishes,
-      sideDishes,
     });
 
     if (!result.success) {

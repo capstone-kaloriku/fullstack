@@ -50,9 +50,8 @@ export type Database = {
           food_id: string | null
           log_id: string
           logged_at: string | null
-          meal_type: string | null
+          meal_type: Database["public"]["Enums"]["meal_category"] | null
           raw_input_text: string | null
-          side_dishes: Json | null
           total_calories: number | null
           user_id: string | null
         }
@@ -61,9 +60,8 @@ export type Database = {
           food_id?: string | null
           log_id?: string
           logged_at?: string | null
-          meal_type?: string | null
+          meal_type?: Database["public"]["Enums"]["meal_category"] | null
           raw_input_text?: string | null
-          side_dishes?: Json | null
           total_calories?: number | null
           user_id?: string | null
         }
@@ -72,9 +70,8 @@ export type Database = {
           food_id?: string | null
           log_id?: string
           logged_at?: string | null
-          meal_type?: string | null
+          meal_type?: Database["public"]["Enums"]["meal_category"] | null
           raw_input_text?: string | null
-          side_dishes?: Json | null
           total_calories?: number | null
           user_id?: string | null
         }
@@ -92,6 +89,53 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      food_components: {
+        Row: {
+          component_id: string
+          food_id: string
+          name: string
+          calories: number | null
+          protein_gram: number | null
+          carbs_gram: number | null
+          fat_gram: number | null
+          portion_gram: number | null
+          component_type: Database["public"]["Enums"]["component_type"]
+          created_at: string | null
+        }
+        Insert: {
+          component_id?: string
+          food_id: string
+          name: string
+          calories?: number | null
+          protein_gram?: number | null
+          carbs_gram?: number | null
+          fat_gram?: number | null
+          portion_gram?: number | null
+          component_type?: Database["public"]["Enums"]["component_type"]
+          created_at?: string | null
+        }
+        Update: {
+          component_id?: string
+          food_id?: string
+          name?: string
+          calories?: number | null
+          protein_gram?: number | null
+          carbs_gram?: number | null
+          fat_gram?: number | null
+          portion_gram?: number | null
+          component_type?: Database["public"]["Enums"]["component_type"]
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "food_components_food_id_fkey"
+            columns: ["food_id"]
+            isOneToOne: false
+            referencedRelation: "food_items"
+            referencedColumns: ["food_id"]
           },
         ]
       }
@@ -267,7 +311,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      component_type: "utama" | "lauk" | "pelengkap"
+      meal_category: "makanan_berat" | "makanan_ringan" | "minuman" | "camilan"
     }
     CompositeTypes: {
       [_ in never]: never
