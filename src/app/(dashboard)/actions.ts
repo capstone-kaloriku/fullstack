@@ -1,8 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { TablesUpdate } from "@/lib/supabase/types";
-import type { SideDish } from "@/types";
+import type { TablesUpdate, Database } from "@/lib/supabase/types";
+
 
 /**
  * Maps a Supabase food_items row to the frontend FoodSummariesProps shape.
@@ -43,6 +43,28 @@ export async function getAllFoods(searchQuery?: string) {
 
   if (error) {
     console.error("Error fetching food items:", error.message);
+    return [];
+  }
+
+  return data.map(mapFoodItem);
+}
+
+/**
+ * Fetch recently added custom foods (is_verified = false).
+ * Returns newest first, limited to a given count.
+ */
+export async function getRecentlyAddedFoods(limit: number = 10) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("food_items")
+    .select("*")
+    .eq("is_verified", false)
+    .order("food_id", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching recently added foods:", error.message);
     return [];
   }
 
@@ -305,7 +327,6 @@ export async function getTodayConsumption() {
       porsi: portion,
       takaranSaji: food?.base_portion_gram || 0,
       slug: food?.slug || "",
-      sideDishes: (Array.isArray(log.side_dishes) ? log.side_dishes : []) as unknown as SideDish[],
     };
   });
 
@@ -327,9 +348,8 @@ export async function logFoodConsumption(data: {
   foodId?: string;
   rawInputText?: string;
   portion: number;
-  mealType: string;
+  mealType: Database["public"]["Enums"]["meal_category"];
   totalCalories?: number;
-  sideDishes?: SideDish[];
 }) {
   const supabase = await createClient();
 
@@ -360,9 +380,6 @@ export async function logFoodConsumption(data: {
     consumed_portion: data.portion,
     meal_type: data.mealType,
     total_calories: calories,
-    side_dishes: data.sideDishes && data.sideDishes.length > 0
-      ? JSON.stringify(data.sideDishes)
-      : JSON.stringify([]),
   });
 
   if (error) {
@@ -463,7 +480,6 @@ function mapConsumptionLog(log: any) {
     porsi: portion,
     mealType: (log.meal_type || "") as string,
     loggedAt: log.logged_at as string,
-    sideDishes: (Array.isArray(log.side_dishes) ? log.side_dishes : []) as unknown as SideDish[],
   };
 }
 

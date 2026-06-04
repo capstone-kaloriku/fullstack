@@ -27,9 +27,15 @@ const AddFood = async ({ params }: PageProps) => {
       <Header food={food} />
 
       {/* Main Grid Content */}
-      <div className="relative grid grid-cols-1 lg:grid-cols-4 gap-8 justify-items-center px-4 max-w-7xl py-12 mx-auto">
+      <div className="relative grid grid-cols-1 lg:grid-cols-4 gap-8 justify-items-center items-start px-4 max-w-7xl py-12 mx-auto">
         <AdditionalInformation food={food} />
-        <Explaination />
+        <Explaination
+          foodName={food.nama}
+          calories={food.kalori}
+          protein={food.protein}
+          carbs={food.karbo}
+          fat={food.lemak}
+        />
         <PortionInformation food={food} />
       </div>
     </div>

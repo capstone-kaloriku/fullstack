@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { BsFillMoonFill, BsFillSunFill, BsSunriseFill } from "react-icons/bs";
 import { FaQuestion, FaSearch, FaTimes } from "react-icons/fa";
-import { getAllFoods } from "../actions";
+import { getAllFoods, getRecentlyAddedFoods } from "../actions";
 
 import {
   InputGroup,
@@ -14,56 +14,42 @@ import { Button } from "@/components/ui/button";
 
 import { IconCookieFilled } from "@tabler/icons-react";
 
-
-import HeroCard from "./components/HeroCard";
+import type { AIValidationResult } from "@/actions/custom-food";
 import CustomFoods from "./components/CustomFoods";
 import CustomFoodsModal from "./components/CustomFoodsModal";
+import { RecentlyAdded } from "./components/RecentlyAdded";
 import Carousel from "./components/Carousel";
 import DisplayFood from "./components/DisplayFood";
 import Pagination from "./components/Pagination";
+import FilterCard from "./components/FilterCard";
 
-// ============================================================
 // Constants
-// ============================================================
-
-const ITEMS_PER_PAGE = 6;
+const ITEMS_PER_PAGE = 12;
 
 const icon = [
   {
     id: 1,
     icon: <BsSunriseFill size={24} />,
-    title: "Makan Pagi",
-    filterKey: "sarapan",
+    title: "Makanan Berat",
+    filterKey: "makanan_berat",
   },
   {
     id: 2,
     icon: <BsFillSunFill size={24} />,
-    title: "Makan Siang",
-    filterKey: "makan siang",
+    title: "Makanan Ringan",
+    filterKey: "makanan_ringan",
   },
   {
     id: 3,
     icon: <BsFillMoonFill size={24} />,
-    title: "Makan Malam",
-    filterKey: "makan malam",
+    title: "Camilan",
+    filterKey: "camilan",
   },
   {
     id: 4,
     icon: <IconCookieFilled size={24} />,
-    title: "Makanan Ringan",
-    filterKey: "camilan",
-  },
-  {
-    id: 5,
-    icon: <IconCookieFilled size={24} />,
-    title: "Rendah Kalori",
-    filterKey: "rendah-kalori",
-  },
-  {
-    id: 6,
-    icon: <IconCookieFilled size={24} />,
-    title: "Vegetarian",
-    filterKey: "vegetarian",
+    title: "Sarapan",
+    filterKey: "sarapan",
   },
 ];
 
@@ -86,6 +72,20 @@ const AllFood = () => {
   const [activeSearch, setActiveSearch] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Recently Added state
+  const [recentlyAdded, setRecentlyAdded] = useState<
+    Awaited<ReturnType<typeof getRecentlyAddedFoods>>
+  >([]);
+  const [isLoadingRecent, setIsLoadingRecent] = useState(true);
+
+  // AI Validation state
+  const [validationData, setValidationData] =
+    useState<AIValidationResult | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<
+    string | undefined
+  >();
+  const [isValidating, setIsValidating] = useState(false);
+
   useEffect(() => {
     async function fetchFoods() {
       setIsLoading(true);
@@ -95,6 +95,23 @@ const AllFood = () => {
     }
     fetchFoods();
   }, []);
+
+  // Fetch recently added foods
+  const fetchRecentlyAdded = useCallback(async () => {
+    setIsLoadingRecent(true);
+    try {
+      const recent = await getRecentlyAddedFoods(10);
+      setRecentlyAdded(recent);
+    } catch {
+      console.error("Error fetching recently added foods");
+    } finally {
+      setIsLoadingRecent(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRecentlyAdded();
+  }, [fetchRecentlyAdded]);
 
   // Debounced search — triggers 300ms after user stops typing
   const performSearch = useCallback(async (query: string) => {
@@ -178,14 +195,48 @@ const AllFood = () => {
   // Lifting State untuk Data Form
   const [foodTitle, setFoodTitle] = useState("");
   const [foodDescription, setFoodDescription] = useState("");
+  const [foodImage, setFoodImage] = useState("");
 
-  function handleFormChange(title: string, description: string) {
+  function handleFormChange(title: string, imageUrl: string) {
     setFoodTitle(title);
-    setFoodDescription(description);
+    setFoodImage(imageUrl);
   }
 
   function openModal() {
     setIsModalOpen(true);
+  }
+
+  function handleCloseModal(open: boolean) {
+    if (!open) {
+      setIsModalOpen(false);
+      // Reset validation state when modal is closed
+      setValidationData(null);
+      setUploadedImageUrl(undefined);
+      setIsValidating(false);
+    }
+  }
+
+  function handleValidationStart() {
+    setValidationData(null);
+    setUploadedImageUrl(undefined);
+    setIsValidating(true);
+  }
+
+  function handleValidationComplete(
+    data: AIValidationResult,
+    imageUrl?: string,
+  ) {
+    setValidationData(data);
+    setUploadedImageUrl(imageUrl);
+    setIsValidating(false);
+    setFoodDescription(data.deskripsi);
+  }
+
+  function handleSaveSuccess() {
+    // Refresh recently added list after successful save
+    fetchRecentlyAdded();
+    // Also refresh all foods to include the new custom food
+    getAllFoods().then((foods) => setData(foods));
   }
 
   if (isLoading) {
@@ -200,9 +251,14 @@ const AllFood = () => {
     <div className="min-h-screen">
       <CustomFoodsModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleCloseModal}
         foodTitle={foodTitle}
         foodDescription={foodDescription}
+        foodImage={foodImage}
+        validationData={validationData}
+        uploadedImageUrl={uploadedImageUrl}
+        isValidating={isValidating}
+        onSaveSuccess={handleSaveSuccess}
       />
       <div className="max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto px-6 py-6 w-full overflow-x-hidden">
         <div className="flex flex-col gap-8">
@@ -224,14 +280,16 @@ const AllFood = () => {
                           type="button"
                           onClick={clearSearch}
                           variant="ghost"
-                          className="focus:outline-none flex items-center justify-center mr-2 text-muted-foreground hover:text-foreground transition-colors">
+                          className="focus:outline-none flex items-center justify-center mr-2 text-muted-foreground hover:text-foreground transition-colors"
+                        >
                           <FaTimes />
                         </Button>
                       ) : null}
                       <Button
                         type="submit"
                         variant="ghost"
-                        className="focus:outline-none flex items-center justify-center">
+                        className="focus:outline-none flex items-center justify-center"
+                      >
                         <FaSearch />
                       </Button>
                     </InputGroupAddon>
@@ -242,14 +300,23 @@ const AllFood = () => {
               <Carousel />
               {!isSearchActive && (
                 <main className="grid grid-cols-1 lg:grid-cols-3 w-full gap-3 py-6">
-                  <article className="">
-                    <CustomFoods openModal={openModal} onFormChange={handleFormChange} />
+                  <article className="flex flex-col gap-3 h-full">
+                    <CustomFoods
+                      openModal={openModal}
+                      onFormChange={handleFormChange}
+                      onValidationComplete={handleValidationComplete}
+                      onValidationStart={handleValidationStart}
+                    />
                   </article>
-                  <aside className="lg:col-span-2">
-                    <HeroCard
+                  <aside className="lg:col-span-2 flex flex-col gap-3 h-full">
+                    <FilterCard
                       data={icon}
                       activeFilter={activeFilter}
                       onFilter={handleFilter}
+                    />
+                    <RecentlyAdded
+                      items={recentlyAdded}
+                      isLoading={isLoadingRecent}
                     />
                   </aside>
                 </main>
@@ -257,7 +324,6 @@ const AllFood = () => {
             </div>
           </div>
 
-          {/* ====== Search Results View ====== */}
           {isSearchActive ? (
             <div className="flex flex-col gap-4 w-full">
               <div className="flex items-center justify-between">

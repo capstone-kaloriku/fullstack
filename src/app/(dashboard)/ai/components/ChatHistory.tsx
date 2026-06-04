@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import type { Conversation } from "@/types/index";
+import type { ConversationItem } from "@/actions/chat-history";
 import {
   LuMessageSquare,
   LuPlus,
@@ -22,78 +22,18 @@ import {
   LuClock,
   LuPanelRightOpen,
   LuPanelRightClose,
+  LuTrash2,
 } from "react-icons/lu";
 import { BsStars } from "react-icons/bs";
-
-// ─── Dummy Data ────────────────────────────────────────
-// Ini akan diganti dengan data dari API/database nanti
-const DUMMY_CONVERSATIONS: Conversation[] = [
-  {
-    id: "conv-1",
-    title: "Kalori nasi goreng spesial",
-    preview: "Nasi goreng spesial dengan telur dan ayam mengandung sekitar...",
-    timestamp: new Date(),
-    messageCount: 6,
-  },
-  {
-    id: "conv-2",
-    title: "Menu diet sehat seminggu",
-    preview: "Berikut rekomendasi menu diet sehat untuk 7 hari...",
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 jam lalu
-    messageCount: 12,
-  },
-  {
-    id: "conv-3",
-    title: "Protein dalam tempe vs tahu",
-    preview: "Tempe mengandung protein lebih tinggi dibanding tahu...",
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // Kemarin
-    messageCount: 4,
-  },
-  {
-    id: "conv-4",
-    title: "Kebutuhan kalori harian",
-    preview: "Kebutuhan kalori harian tergantung pada usia, berat badan...",
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    messageCount: 8,
-  },
-  {
-    id: "conv-5",
-    title: "Gula darah dan karbohidrat",
-    preview: "Karbohidrat kompleks lebih baik untuk mengontrol gula darah...",
-    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 hari lalu
-    messageCount: 10,
-  },
-  {
-    id: "conv-6",
-    title: "Manfaat buah alpukat",
-    preview: "Alpukat kaya akan lemak sehat, serat, dan vitamin...",
-    timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-    messageCount: 3,
-  },
-  {
-    id: "conv-7",
-    title: "Cara menghitung BMI",
-    preview: "BMI dihitung dengan rumus berat badan (kg) dibagi...",
-    timestamp: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-    messageCount: 5,
-  },
-  {
-    id: "conv-8",
-    title: "Makanan tinggi serat",
-    preview: "Beberapa makanan tinggi serat antara lain oatmeal, brokoli...",
-    timestamp: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-    messageCount: 7,
-  },
-];
 
 // ─── Helper: group conversations by time ──────────────
 interface GroupedConversations {
   label: string;
-  conversations: Conversation[];
+  conversations: ConversationItem[];
 }
 
 function groupConversationsByTime(
-  conversations: Conversation[]
+  conversations: ConversationItem[]
 ): GroupedConversations[] {
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -102,7 +42,7 @@ function groupConversationsByTime(
   const startOf7Days = new Date(startOfToday);
   startOf7Days.setDate(startOf7Days.getDate() - 7);
 
-  const groups: Record<string, Conversation[]> = {
+  const groups: Record<string, ConversationItem[]> = {
     "Hari Ini": [],
     Kemarin: [],
     "7 Hari Terakhir": [],
@@ -110,7 +50,7 @@ function groupConversationsByTime(
   };
 
   for (const conv of conversations) {
-    const t = conv.timestamp;
+    const t = new Date(conv.updated_at);
     if (t >= startOfToday) {
       groups["Hari Ini"].push(conv);
     } else if (t >= startOfYesterday) {
@@ -142,31 +82,33 @@ function formatRelativeTime(date: Date): string {
 }
 
 // ─── Conversation Item ────────────────────────────────
-function ConversationItem({
+function ConversationListItem({
   conversation,
   isActive,
   onClick,
+  onDelete,
 }: {
-  conversation: Conversation;
+  conversation: ConversationItem;
   isActive: boolean;
   onClick: () => void;
+  onDelete: (id: string) => void;
 }) {
   return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "group flex w-full flex-col gap-1 rounded-xl px-3 py-2.5 text-left transition-all duration-200",
-        "hover:bg-muted/80",
-        isActive
-          ? "bg-primary/8 ring-1 ring-primary/20"
-          : "bg-transparent"
-      )}
-    >
-      <div className="flex items-start justify-between gap-2">
+    <div className="relative group/item">
+      <button
+        onClick={onClick}
+        className={cn(
+          "flex w-full flex-col gap-1 rounded-xl px-3 py-2.5 text-left transition-all duration-200 pr-8",
+          "hover:bg-muted/80",
+          isActive
+            ? "bg-primary/8 ring-1 ring-primary/20"
+            : "bg-transparent"
+        )}
+      >
         <div className="flex items-center gap-2 min-w-0">
           <LuMessageSquare
             className={cn(
-              "size-3.5 shrink-0 mt-0.5",
+              "size-3.5 shrink-0",
               isActive ? "text-primary" : "text-muted-foreground/60"
             )}
           />
@@ -179,47 +121,59 @@ function ConversationItem({
             {conversation.title}
           </span>
         </div>
-      </div>
-      <div className="flex items-center justify-between gap-2 pl-5.5">
-        <p className="truncate text-xs text-muted-foreground leading-relaxed">
-          {conversation.preview}
-        </p>
-      </div>
-      <div className="flex items-center gap-2 pl-5.5">
-        <LuClock className="size-3 text-muted-foreground/50" />
-        <span className="text-[10px] text-muted-foreground/60">
-          {formatRelativeTime(conversation.timestamp)}
-        </span>
-        <span className="text-[10px] text-muted-foreground/40">·</span>
-        <span className="text-[10px] text-muted-foreground/60">
-          {conversation.messageCount} pesan
-        </span>
-      </div>
-    </button>
+        {conversation.preview && (
+          <p className="truncate text-xs text-muted-foreground leading-relaxed pl-5">
+            {conversation.preview}
+          </p>
+        )}
+        <div className="flex items-center gap-2 pl-5">
+          <LuClock className="size-3 text-muted-foreground/50" />
+          <span className="text-[10px] text-muted-foreground/60">
+            {formatRelativeTime(new Date(conversation.updated_at))}
+          </span>
+          <span className="text-[10px] text-muted-foreground/40">·</span>
+          <span className="text-[10px] text-muted-foreground/60">
+            {conversation.message_count} pesan
+          </span>
+        </div>
+      </button>
+      {/* Delete button — muncul saat hover */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onDelete(conversation.id); }}
+        className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover/item:opacity-100 transition-opacity p-1 rounded-md hover:bg-destructive/10 hover:text-destructive text-muted-foreground/40"
+        aria-label="Hapus percakapan"
+      >
+        <LuTrash2 className="size-3.5" />
+      </button>
+    </div>
   );
 }
 
 // ─── Conversation List (shared between desktop + mobile) ───
 function ConversationList({
+  conversations,
   activeId,
   onSelect,
   onNewChat,
+  onDelete,
 }: {
+  conversations: ConversationItem[];
   activeId: string | null;
   onSelect: (id: string) => void;
   onNewChat: () => void;
+  onDelete: (id: string) => void;
 }) {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return DUMMY_CONVERSATIONS;
+    if (!search.trim()) return conversations;
     const q = search.toLowerCase();
-    return DUMMY_CONVERSATIONS.filter(
+    return conversations.filter(
       (c) =>
         c.title.toLowerCase().includes(q) ||
-        c.preview.toLowerCase().includes(q)
+        (c.preview ?? "").toLowerCase().includes(q)
     );
-  }, [search]);
+  }, [search, conversations]);
 
   const grouped = useMemo(() => groupConversationsByTime(filtered), [filtered]);
 
@@ -286,11 +240,12 @@ function ConversationList({
                 </div>
                 <div className="flex flex-col gap-0.5">
                   {group.conversations.map((conv) => (
-                    <ConversationItem
+                    <ConversationListItem
                       key={conv.id}
                       conversation={conv}
                       isActive={conv.id === activeId}
                       onClick={() => onSelect(conv.id)}
+                      onDelete={onDelete}
                     />
                   ))}
                 </div>
@@ -316,15 +271,19 @@ function ConversationList({
 function DesktopSidebar({
   isOpen,
   onToggle,
+  conversations,
   activeId,
   onSelect,
   onNewChat,
+  onDelete,
 }: {
   isOpen: boolean;
   onToggle: () => void;
+  conversations: ConversationItem[];
   activeId: string | null;
   onSelect: (id: string) => void;
   onNewChat: () => void;
+  onDelete: (id: string) => void;
 }) {
   return (
     <div
@@ -356,9 +315,11 @@ function DesktopSidebar({
 
           {/* Content */}
           <ConversationList
+            conversations={conversations}
             activeId={activeId}
             onSelect={onSelect}
             onNewChat={onNewChat}
+            onDelete={onDelete}
           />
         </>
       )}
@@ -368,15 +329,19 @@ function DesktopSidebar({
 
 // ─── Main Export: ChatHistory ──────────────────────────
 interface ChatHistoryProps {
+  conversations: ConversationItem[];
   activeConversationId: string | null;
   onSelectConversation: (id: string) => void;
   onNewChat: () => void;
+  onDeleteConversation: (id: string) => void;
 }
 
 export function ChatHistory({
+  conversations,
   activeConversationId,
   onSelectConversation,
   onNewChat,
+  onDeleteConversation,
 }: ChatHistoryProps) {
   const [desktopOpen, setDesktopOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -407,9 +372,11 @@ export function ChatHistory({
       <DesktopSidebar
         isOpen={desktopOpen}
         onToggle={() => setDesktopOpen(false)}
+        conversations={conversations}
         activeId={activeConversationId}
         onSelect={handleSelect}
         onNewChat={onNewChat}
+        onDelete={onDeleteConversation}
       />
 
       {/* ── Mobile sheet trigger (visible below lg) ── */}
@@ -442,8 +409,10 @@ export function ChatHistory({
             <Separator />
             <div className="flex-1 overflow-hidden h-[calc(100vh-8rem)]">
               <ConversationList
+                conversations={conversations}
                 activeId={activeConversationId}
                 onSelect={handleSelect}
+                onDelete={onDeleteConversation}
                 onNewChat={() => {
                   onNewChat();
                   setMobileOpen(false);

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Trash2, Loader2 } from 'lucide-react';
 
 import { getConsumptionHistory, deleteConsumptionLog } from '../../actions';
-import type { SideDish } from '@/types';
+
 
 // ============================================================
 // Types
@@ -23,7 +23,6 @@ interface LogEntry {
   porsi: number;
   mealType: string;
   loggedAt: string;
-  sideDishes?: SideDish[];
 }
 
 interface DayGroup {
@@ -96,10 +95,10 @@ function getWeekRange(weeksAgo: number) {
 // ============================================================
 
 const MEAL_BADGE_COLORS: Record<string, string> = {
-  Pagi: 'bg-amber-100 text-amber-700',
-  Siang: 'bg-orange-100 text-orange-700',
-  Malam: 'bg-indigo-100 text-indigo-700',
-  Camilan: 'bg-green-100 text-green-700',
+  makanan_berat: 'bg-amber-100 text-amber-700',
+  makanan_ringan: 'bg-emerald-100 text-emerald-700',
+  minuman: 'bg-sky-100 text-sky-700',
+  camilan: 'bg-orange-100 text-orange-700',
   custom: 'bg-gray-100 text-gray-700',
 };
 
@@ -265,7 +264,7 @@ function ConsumptionHistory() {
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${MEAL_BADGE_COLORS[log.mealType] || MEAL_BADGE_COLORS.custom}`}
                           >
-                            {log.mealType}
+                            {log.mealType?.replace('_', ' ')}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {log.porsi} porsi
@@ -277,19 +276,6 @@ function ConsumptionHistory() {
                         <span className="bg-muted-foreground/10 px-2 py-0.5 rounded-full text-[11px] text-secondary-foreground w-fit">
                           {log.kalori} kcal
                         </span>
-                        {/* Lauk badges */}
-                        {log.sideDishes && log.sideDishes.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {log.sideDishes.map((lauk, i) => (
-                              <span
-                                key={i}
-                                className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium"
-                              >
-                                {lauk.nama} ({lauk.porsi}×)
-                              </span>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     </div>
 

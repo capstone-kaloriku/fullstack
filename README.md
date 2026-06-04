@@ -28,28 +28,17 @@ Model Regresi untuk estimasi dan kalkulasi data kalori/nutrisi.
 
 Integrasi LLM (Google Gemini / Vertex AI) untuk pemrosesan teks tingkat lanjut.
 
-<<<<<<< HEAD
-Infrastruktur & Deployment: Supabase & Vercel (Free & Hobby Tier)
-
-3. Fitur Utama (Core Features)
-   Smart Text Input (Pencatatan Makanan Berbasis Teks): Pengguna dapat mengetikkan makanan yang mereka konsumsi dalam bahasa alami (misal: "Saya makan satu piring nasi goreng dengan telur mata sapi"). Sistem NLP akan mengekstrak jenis dan porsi makanan.
-=======
 Infrastruktur & Deployment: Supabase, Vercel (Free & Hobby Tier)
 
 3. Fitur Utama (Core Features)
 Smart Text Input (Pencatatan Makanan Berbasis Teks): Pengguna dapat mengetikkan makanan yang mereka konsumsi dalam bahasa alami (misal: "Saya makan satu piring nasi goreng dengan telur mata sapi"). Sistem NLP akan mengekstrak jenis dan porsi makanan.
->>>>>>> 310993b527bfbd155a07a24897974164fe2a7ebb
 
 Estimasi Nutrisi Presisi: Menggunakan model regresi untuk menghitung total kalori, makronutrien (protein, karbohidrat, lemak), dan mikronutrien berdasarkan entitas makanan yang terdeteksi.
 
 Dashboard Interaktif: Antarmuka visual yang dibangun dengan Next.js dan Tailwind CSS untuk menampilkan ringkasan asupan kalori harian, target nutrisi, dan riwayat konsumsi pengguna.
 
 4. Arsitektur Sistem (High-Level Architecture)
-<<<<<<< HEAD
-   Client-Side (User Interface): Pengguna berinteraksi dengan aplikasi web Next.js, memasukkan data makanan harian melalui antarmuka.
-=======
 Client-Side (User Interface): Pengguna berinteraksi dengan aplikasi web Next.js, memasukkan data makanan harian melalui antarmuka.
->>>>>>> 310993b527bfbd155a07a24897974164fe2a7ebb
 
 API Processing: Permintaan dikirim ke server backend/API. Jika input berupa bahasa alami, teks tersebut diproses terlebih dahulu.
 
@@ -62,10 +51,6 @@ Data -> Regresi: Mencocokkan makanan dengan database nutrisi dan menghitung esti
 Database & Cloud: Data hasil pemrosesan disimpan di database, dan seluruh infrastruktur di-hosting serta dikelola melalui Google Cloud Platform.
 
 5. Manajemen Risiko & Rencana Mitigasi
-<<<<<<< HEAD
-   Ambiguitas Input Teks: NLP mungkin kesulitan memproses teks dengan bahasa gaul atau singkatan. Mitigasi: Mengintegrasikan prompt engineering yang kuat pada Gemini/Vertex AI dan memberikan umpan balik (feedback loop) kepada pengguna jika input tidak dikenali.
-=======
 Ambiguitas Input Teks: NLP mungkin kesulitan memproses teks dengan bahasa gaul atau singkatan. Mitigasi: Mengintegrasikan prompt engineering yang kuat pada Gemini/Vertex AI dan memberikan umpan balik (feedback loop) kepada pengguna jika input tidak dikenali.
->>>>>>> 310993b527bfbd155a07a24897974164fe2a7ebb
 
 Akurasi Model Regresi: Ketidakcocokan estimasi kalori untuk makanan lokal/spesifik. Mitigasi: Memperkaya dataset pelatihan dengan data makanan lokal Indonesia.

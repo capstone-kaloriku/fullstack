@@ -40,7 +40,7 @@
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-serif: "Outfit", serif;
   --font-mono: "Space Mono", monospace;
-  --radius: 1.5rem;
+  --radius: 1rem;
   --shadow-x: 0px;
   --shadow-y: 4px;
   --shadow-blur: 20px;
@@ -197,6 +197,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
@@ -209,9 +210,11 @@
   100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   33% {
     transform: translateY(-8px) rotate(1deg);
   }
+
   66% {
     transform: translateY(4px) rotate(-0.5deg);
   }
@@ -222,6 +225,7 @@
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-12px);
   }
@@ -233,6 +237,7 @@
     opacity: 0.2;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.35;
     transform: scale(1.05);
@@ -255,12 +260,15 @@
 .animate-delay-1 {
   animation-delay: 0s;
 }
+
 .animate-delay-2 {
   animation-delay: 2s;
 }
+
 .animate-delay-3 {
   animation-delay: 4s;
 }
+
 .animate-delay-4 {
   animation-delay: 6s;
 }

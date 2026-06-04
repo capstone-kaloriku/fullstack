@@ -1,7 +1,5 @@
 import Link from "next/link";
 import Frequently from "./components/Frequently";
-import Tips from "./components/Tips";
-import ConsumptionHistory from "./components/ConsumptionHistory";
 
 import { getAllFoods } from "../actions";
 import { InteractiveCharts } from "./components/InteractiveCharts";
@@ -30,7 +28,8 @@ const Logs = async () => {
                 <span>Sering Dicatat</span>
                 <Link
                   href="/all-foods"
-                  className="text-sm text-primary hover:underline">
+                  className="text-sm text-primary hover:underline"
+                >
                   Lihat Semua
                 </Link>
               </div>

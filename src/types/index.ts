@@ -13,11 +13,13 @@ export interface FoodSummariesProps {
 export interface SideDish {
   nama: string;
   porsi: number;
+  kalori?: number;
 }
 
 export interface FoodLogEntry {
   items: SideDish[];
   onRemove: (index: number) => void;
+  onChangePorsi: (index: number, newPorsi: number) => void;
 }
 
 export interface persentageProps {
@@ -46,6 +48,23 @@ export interface FrequentlyProps {
     takaranSaji: number;
     slug: string;
   }[];
+}
+
+export interface RecentlyAddedItem {
+  id: string | number;
+  nama: string;
+  gambar: string;
+  kalori: number;
+  karbo: number;
+  protein: number;
+  lemak: number;
+  kategori: string;
+  slug: string;
+}
+
+export interface RecentlyAddedProps {
+  items: RecentlyAddedItem[];
+  isLoading: boolean;
 }
 
 export interface SettingsProps {

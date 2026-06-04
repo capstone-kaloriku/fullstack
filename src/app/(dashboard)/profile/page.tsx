@@ -7,7 +7,7 @@ import {
   ProgressValue,
 } from "@/components/ui/progress";
 import Options from "./components/Option";
-import { getUserProfile } from "../actions";
+import { getUserProfile, getTodayConsumption } from "../actions";
 
 const setting = [
   {
@@ -27,8 +27,10 @@ const setting = [
 ];
 
 const Profile = async () => {
-  const data = await getUserProfile();
-
+  const [data, userData] = await Promise.all([
+    getUserProfile(),
+    getTodayConsumption(),
+  ]);
 
   const namaUser = data?.namaUser || "User";
   const usia = data?.usia || 0;
@@ -36,6 +38,8 @@ const Profile = async () => {
   const beratBadan = data?.beratBadan || 0;
   const tinggiBadan = data?.tinggiBadan || 0;
   const aktivitasFisik = data?.aktivitasFisik || "Ringan";
+  const targetKalori = data?.targetKalori || 0;
+  const kaloriTerpenuhi = userData?.totals || 0;
 
   let bmi = 0;
   let bmiStatus = "-";
@@ -53,11 +57,10 @@ const Profile = async () => {
     }
   }
 
-  const targetBeratBadan = beratBadan > 0 ? beratBadan - 10 : 0;
-
-  const progressPercentage = beratBadan > 0 && targetBeratBadan > 0
-    ? Math.min(Math.round((targetBeratBadan / beratBadan) * 100), 100)
-    : 89;
+  const progressPercentage =
+    targetKalori > 0 && kaloriTerpenuhi.kalori > 0
+      ? (kaloriTerpenuhi.kalori / targetKalori) * 100
+      : 0;
 
   return (
     <div className="w-full mx-auto p-6 max-w-2xl lg:max-w-5xl my-6 overflow-x-hidden">
@@ -101,8 +104,8 @@ const Profile = async () => {
                 <ProgressValue className="text-base font-medium text-primary" />
               </Progress>
               <div className="flex items-center justify-between font-bold text-muted-foreground text-sm">
-                {targetBeratBadan} KG (TARGET){" "}
-                <span>{beratBadan} KG (SEKARANG)</span>
+                {kaloriTerpenuhi.kalori} Kcal (SEKARANG)
+                <span>{targetKalori} Kcal (TARGET)</span>
               </div>
             </CardContent>
           </Card>

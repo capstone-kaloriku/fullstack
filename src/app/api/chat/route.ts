@@ -1,6 +1,8 @@
 // app/api/chat/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import groq from "@/lib/groq-client";
+import { createClient } from "@/lib/supabase/server";
+import { updateConversationTitle } from "@/actions/chat-history";
 
 // ============================================
 // LAYER 1 — Server-side Jailbreak Filter
@@ -188,10 +190,9 @@ const VISION_SYSTEM_PROMPT =
   "- Tutup dengan 1 kalimat ringan (saran atau pertanyaan balik)";
 
 // ============================================
-// CONVERSATION CONTEXT (in-memory only, tanpa DB)
-// Client mengirim seluruh history percakapan → kita inject ke Groq messages.
-// Tidak ada batas jumlah pesan; per pesan tetap di-truncate kalau ekstrem panjang
-// untuk safety (cegah payload meledak).
+// CONVERSATION CONTEXT — DB-first
+// Load history dari Supabase (persistent, cross-device).
+// Fallback ke client-sent history jika user belum login.
 // ============================================
 type ChatHistoryRole = "user" | "assistant";
 interface ChatHistoryMessage {
@@ -199,30 +200,45 @@ interface ChatHistoryMessage {
   content: string;
 }
 
-// Batas panjang content per pesan history (safety net, bukan batas jumlah pesan).
-// 8000 char ≈ ~2000 token, cukup longgar untuk pesan panjang sekalipun.
-const MAX_HISTORY_CONTENT_LEN = 8000;
+// Ambil history dari DB untuk user yang sedang login
+async function loadHistoryFromDB(
+  userId: string,
+  limit = 100,
+): Promise<ChatHistoryMessage[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("chat_history")
+    .select("role, content")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true })
+    .limit(limit);
 
-function sanitizeHistory(raw: unknown): ChatHistoryMessage[] {
-  if (!Array.isArray(raw)) return [];
-  const cleaned: ChatHistoryMessage[] = [];
-  for (const item of raw) {
-    if (!item || typeof item !== "object") continue;
-    const { role, content } = item as Record<string, unknown>;
-    if (role !== "user" && role !== "assistant") continue;
-    if (typeof content !== "string") continue;
-    const trimmed = content.trim();
-    if (!trimmed) continue;
-    // Truncate kalau pesannya ekstrem panjang
-    cleaned.push({
-      role,
-      content:
-        trimmed.length > MAX_HISTORY_CONTENT_LEN
-          ? trimmed.slice(0, MAX_HISTORY_CONTENT_LEN) + "…"
-          : trimmed,
-    });
+  if (error) {
+    console.error("[Chat] Gagal load history dari DB:", error.message);
+    return [];
   }
-  return cleaned;
+
+  return (data ?? []) as ChatHistoryMessage[];
+}
+
+// Simpan sepasang pesan (user + assistant) ke DB dengan conversation_id
+async function saveMessagesToDB(
+  userId: string,
+  conversationId: string,
+  userContent: string,
+  assistantContent: string,
+  imageUrl?: string,
+): Promise<void> {
+  const supabase = await createClient();
+  const rows = [
+    { user_id: userId, conversation_id: conversationId, role: "user" as const, content: userContent, image_url: imageUrl ?? null },
+    { user_id: userId, conversation_id: conversationId, role: "assistant" as const, content: assistantContent, image_url: null },
+  ];
+
+  const { error } = await supabase.from("chat_history").insert(rows);
+  if (error) {
+    console.error("[Chat] Gagal simpan history ke DB:", error.message);
+  }
 }
 
 // ============================================
@@ -282,11 +298,13 @@ export async function POST(request: NextRequest) {
     const {
       message,
       image,
-      history: rawHistory,
+      conversationId,
+      isFirstMessage,
     } = body as {
       message: string;
       image?: string;
-      history?: unknown;
+      conversationId?: string;
+      isFirstMessage?: boolean;
     };
 
     if (!message || !message.trim()) {
@@ -317,15 +335,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Sanitize history dari client ──
-    const sanitized = sanitizeHistory(rawHistory);
-    // Drop trailing user message kalau kontennya sama persis dengan message sekarang
-    const history =
-      sanitized.length > 0 &&
-      sanitized[sanitized.length - 1].role === "user" &&
-      sanitized[sanitized.length - 1].content.trim() === message.trim()
-        ? sanitized.slice(0, -1)
-        : sanitized;
+    // ── Ambil history dari DB (jika user login) ──
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id ?? null;
+
+    const history: ChatHistoryMessage[] = userId
+      ? await loadHistoryFromDB(userId)
+      : [];
+
+    // ── Drop trailing user message jika sama persis (anti-duplikat) ──
+    const trimmedHistory =
+      history.length > 0 &&
+      history[history.length - 1].role === "user" &&
+      history[history.length - 1].content.trim() === message.trim()
+        ? history.slice(0, -1)
+        : history;
 
     // ============================================
     // ROUTING — pisahkan TEXT vs IMAGE (semua via Groq)
@@ -334,7 +359,7 @@ export async function POST(request: NextRequest) {
 
     if (hasImage) {
       // Ada gambar → pakai Groq vision untuk OCR/analisis makanan
-      response = await callGroqWithImage(message, image!, history);
+      response = await callGroqWithImage(message, image!, trimmedHistory);
     } else {
       // Text-only → pakai Groq chat
       const completion = await groq.chat.completions.create({
@@ -344,8 +369,8 @@ export async function POST(request: NextRequest) {
             role: "system",
             content: SYSTEM_PROMPT_BASE,
           },
-          // History percakapan sebelumnya (in-memory dari client)
-          ...history.map((m) => ({ role: m.role, content: m.content })),
+          // History percakapan dari DB
+          ...trimmedHistory.map((m) => ({ role: m.role, content: m.content })),
           {
             role: "user",
             content: message,
@@ -355,6 +380,27 @@ export async function POST(request: NextRequest) {
 
       response =
         completion.choices[0]?.message?.content ?? "Maaf, tidak ada respons.";
+    }
+
+    // ── Simpan pasang pesan ke DB ──
+    if (userId && conversationId) {
+      await saveMessagesToDB(userId, conversationId, message, response, hasImage ? "[image]" : undefined);
+
+      // Update message count
+      const supabase2 = await createClient();
+      const { count } = await supabase2
+        .from("chat_history")
+        .select("*", { count: "exact", head: true })
+        .eq("conversation_id", conversationId);
+      await supabase2
+        .from("conversations")
+        .update({ message_count: count ?? 0, updated_at: new Date().toISOString() })
+        .eq("id", conversationId);
+
+      // Generate judul otomatis dari pesan pertama (async, non-blocking)
+      if (isFirstMessage) {
+        updateConversationTitle(conversationId, message, response).catch(() => {});
+      }
     }
 
     return NextResponse.json({ response });

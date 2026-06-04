@@ -7,10 +7,21 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
 const slides = [
-  { id: 1, src: "/dashboard.png", alt: "Dasbor Nutrisi & Ringkasan Kalori Harian" },
-  { id: 2, src: "/profile.jpg", alt: "Profil Pengguna & Target Kebugaran Personal" },
-  { id: 3, src: "/login-screen.jpg", alt: "Autentikasi Aman & Akses Cepat Capstone Kaloriku" },
-  { id: 4, src: "/step-scan.jpeg", alt: "Langkah Mudah Pindai Kalori Makanan Secara Instan" },
+  {
+    id: 1,
+    src: "/carousel/carousel-ui.jpeg",
+    alt: "Ketahui Riwayat Makanan Mu",
+  },
+  {
+    id: 2,
+    src: "/carousel/carousel-dashboard.jpeg",
+    alt: "Dasbor Harian yang Interaktif",
+  },
+  {
+    id: 3,
+    src: "/carousel/carousel-auth.jpeg",
+    alt: "Autentikasi Aman & Akses Cepat Capstone Kaloriku",
+  },
 ];
 
 export function Carousel() {
@@ -44,11 +55,11 @@ export function Carousel() {
         gsap.fromTo(
           textRef.current,
           { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
         );
       }
     },
-    { dependencies: [index], scope: containerRef }
+    { dependencies: [index], scope: containerRef },
   );
 
   // Setup autoplay & cleanup
@@ -133,8 +144,11 @@ export function Carousel() {
                 key={idx}
                 type="button"
                 onClick={() => goToSlide(idx)}
-                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${idx === index ? "w-6 bg-white" : "w-1.5 bg-white/30 hover:bg-white/60"
-                  }`}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  idx === index
+                    ? "w-6 bg-white"
+                    : "w-1.5 bg-white/30 hover:bg-white/60"
+                }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
             ))}
