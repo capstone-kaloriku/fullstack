@@ -9,9 +9,14 @@ interface LaukSuggestion {
 interface TagSelectFoodProps {
   suggestions: LaukSuggestion[];
   onAdd: (nama: string, kalori: number) => void;
+  /**
+   * @kevin — prop baru: list nama lauk yang sudah dipilih user.
+   * Digunakan untuk menandai badge mana yang sudah aktif (✓).
+   */
+  selectedNames?: string[];
 }
 
-function TagSelectFood({ suggestions, onAdd }: TagSelectFoodProps) {
+function TagSelectFood({ suggestions, onAdd, selectedNames = [] }: TagSelectFoodProps) {
   if (suggestions.length === 0) return null;
 
   return (
@@ -29,6 +34,9 @@ function TagSelectFood({ suggestions, onAdd }: TagSelectFoodProps) {
             label={item.nama}
             kalori={item.kalori}
             onAdd={onAdd}
+            isSelected={selectedNames.some(
+              (n) => n.toLowerCase() === item.nama.toLowerCase()
+            )}
           />
         ))}
       </div>
@@ -37,4 +45,3 @@ function TagSelectFood({ suggestions, onAdd }: TagSelectFoodProps) {
 }
 
 export default TagSelectFood;
-

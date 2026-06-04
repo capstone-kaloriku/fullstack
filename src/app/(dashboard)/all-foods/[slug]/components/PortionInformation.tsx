@@ -54,8 +54,13 @@ function PortionInformation({ food }: FoodLogFormProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Submission state
-  const [isLoading, setIsLoading] = useState(false);
+  /**
+   * @kevin — state dipisah: isSubmitting untuk submit form,
+   * isFetchingSuggestions untuk loading saran lauk dari AI.
+   * Sebelumnya pakai 1 isLoading yg bikin submit button disabled saat fetch.
+   */
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false);
   const [suggestion, setSuggestion] = useState<
     { nama: string; kalori: number }[]
   >([]);
@@ -87,7 +92,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
     const fetchSuggestions = async () => {
       if (!food?.nama) return;
 
-      setIsLoading(true);
+      setIsFetchingSuggestions(true);
       setSuggestion([]);
 
       try {
@@ -97,7 +102,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
         console.error("Failed to fetch suggestions", err);
         setSuggestion([]);
       } finally {
-        setIsLoading(false);
+        setIsFetchingSuggestions(false);
       }
     };
     fetchSuggestions();
@@ -123,7 +128,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
     }
 
     setError(null);
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     // Refresh displayed submit time to reflect the actual click moment.
     // Note: this is display-only — the database records `logged_at` via `now()`.
@@ -142,7 +147,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
 
     if (!result.success) {
       setError(result.error || "Gagal menyimpan data konsumsi.");
-      setIsLoading(false);
+      setIsSubmitting(false);
       return;
     }
 
@@ -256,9 +261,14 @@ function PortionInformation({ food }: FoodLogFormProps) {
               </div>
 
               {/* Saran lauk cepat */}
+              {/**
+               * @kevin — TagSelectFood sekarang terima selectedNames
+               * agar badge yang sudah diklik berubah jadi ✓ (disabled).
+               */}
               <TagSelectFood
                 suggestions={suggestion}
                 onAdd={handleAddLaukFromSuggestion}
+                selectedNames={sideDishes.map((d) => d.nama)}
               />
             </CardContent>
           </Card>
@@ -268,9 +278,9 @@ function PortionInformation({ food }: FoodLogFormProps) {
         <Button
           className="w-full py-6"
           onClick={handleSubmit}
-          disabled={isLoading}
+          disabled={isSubmitting}
         >
-          {isLoading ? (
+          {isSubmitting ? (
             <>
               <Loader2 size={20} className="animate-spin mr-2" />
               Menyimpan...
