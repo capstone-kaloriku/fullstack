@@ -22,6 +22,87 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY!,
 });
 
+// Enum values dari DB
+export type MealCategory = "makanan_berat" | "makanan_ringan" | "camilan" | "minuman";
+
+// Mapping kategori food_items → meal_category (cepat, tanpa AI)
+const CATEGORY_MAP: Record<string, MealCategory> = {
+  makanan_berat: "makanan_berat",
+  makanan_ringan: "makanan_ringan",
+  camilan: "camilan",
+  minuman: "minuman",
+};
+
+// ============================================================
+// 0. Detect meal category (hybrid: DB mapping → AI fallback)
+// ============================================================
+
+/**
+ * Deteksi jenis makanan untuk pre-select pill di form Simpan.
+ *
+ * Flow:
+ *  1. Coba petakan `kategori` dari food_items langsung (instant, no AI)
+ *  2. Jika tidak cocok → tanya Groq AI berdasarkan nama makanan
+ *  3. User tetap bisa override hasil deteksi
+ *
+ * @param foodName  – Nama makanan (untuk prompt AI jika pemetaan gagal)
+ * @param kategori  – Nilai kolom `category` di food_items (opsional)
+ */
+export async function detectMealCategory(
+  foodName: string,
+  kategori?: string,
+): Promise<MealCategory> {
+  // ── 1. Coba mapping langsung ──────────────────────────────
+  if (kategori) {
+    const mapped = CATEGORY_MAP[kategori.toLowerCase().trim()];
+    if (mapped) {
+      console.log(`[MealType] Mapped "${kategori}" → "${mapped}"`);
+      return mapped;
+    }
+  }
+
+  // ── 2. Fallback ke AI ────────────────────────────────────
+  try {
+    console.log(`[MealType] AI detect untuk "${foodName}"...`);
+
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: `Kamu adalah ahli gizi Indonesia.
+Klasifikasikan makanan ke salah satu kategori:
+- "makanan_berat" → nasi, mie, pasta, bubur, lauk berat
+- "makanan_ringan" → gorengan, roti, sandwich, makanan kecil mengenyangkan
+- "camilan" → snack, kue, jajanan, coklat, buah potong
+- "minuman" → air, jus, teh, kopi, susu, minuman lainnya
+
+Output HANYA JSON: { "category": "makanan_berat" }`,
+        },
+        {
+          role: "user",
+          content: `Klasifikasikan: "${foodName}"`,
+        },
+      ],
+      model: "llama-3.1-8b-instant",
+      max_tokens: 50,
+      response_format: { type: "json_object" },
+    });
+
+    const content = chatCompletion.choices[0]?.message?.content;
+    if (!content) return "makanan_berat";
+
+    const parsed = JSON.parse(content);
+    const detected = parsed.category as MealCategory;
+
+    // Validasi output AI — harus salah satu dari 4 nilai valid
+    if (CATEGORY_MAP[detected]) return detected;
+    return "makanan_berat";
+  } catch (error) {
+    console.error("[MealType] AI detect gagal:", error);
+    return "makanan_berat";
+  }
+}
+
 // ============================================================
 // 1. Generate saran lauk (TIDAK save ke DB)
 // ============================================================

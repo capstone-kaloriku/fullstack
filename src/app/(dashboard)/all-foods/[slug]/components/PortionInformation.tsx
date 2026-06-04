@@ -19,6 +19,8 @@ import {
   getDynamicLaukSuggestions,
   addManualLauk,
   saveLaukComponents,
+  detectMealCategory,
+  type MealCategory,
 } from "@/actions/food-suggestion";
 
 // Types
@@ -26,6 +28,7 @@ interface FoodData {
   id: string;
   nama: string;
   kalori: number;
+  kategori?: string; // digunakan untuk auto-detect meal type
 }
 
 interface FoodLogFormProps {
@@ -36,9 +39,8 @@ interface FoodLogFormProps {
 
 function PortionInformation({ food }: FoodLogFormProps) {
   // Form state
-  const [mealType, setMealType] = useState<
-    Database["public"]["Enums"]["meal_category"] | ""
-  >("");
+  const [mealType, setMealType] = useState<MealCategory>("makanan_berat");
+  const [isMealTypeAI, setIsMealTypeAI] = useState(false); // true = di-suggest AI, false = user override
   const [time, setTime] = useState<string>("");
   const [portion, setPortion] = useState<number>(1);
 
@@ -59,6 +61,16 @@ function PortionInformation({ food }: FoodLogFormProps) {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  // Auto-detect meal type — AI suggest, user bisa override
+  useEffect(() => {
+    const detect = async () => {
+      const detected = await detectMealCategory(food.nama, food.kategori);
+      setMealType(detected);
+      setIsMealTypeAI(true);
+    };
+    detect();
+  }, [food.nama, food.kategori]);
 
   /**
    * @kevin — state dipisah: isSubmitting untuk submit form,
@@ -193,7 +205,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
     const result = await logFoodConsumption({
       foodId: food.id,
       portion,
-      mealType: mealType || "makanan_berat",
+      mealType,
       totalCalories: totalCaloriesWithDishes,
     });
 
@@ -234,6 +246,47 @@ function PortionInformation({ food }: FoodLogFormProps) {
               <CardTitle className="text-lg font-bold">Porsi</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col justify-center items-start gap-5">
+              {/* Meal Type Selector — AI pre-select, user bisa override */}
+              <div className="flex flex-col gap-2 w-full">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">
+                    Jenis Makanan
+                  </span>
+                  {isMealTypeAI && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                      AI
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(
+                    [
+                      { value: "makanan_berat", label: "Makanan Berat" },
+                      { value: "makanan_ringan", label: "Makanan Ringan" },
+                      { value: "camilan", label: "Camilan" },
+                      { value: "minuman", label: "Minuman" },
+                    ] as const
+                  ).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => {
+                        setMealType(opt.value);
+                        setIsMealTypeAI(false); // user override → sembunyikan badge AI
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                        mealType === opt.value
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Input porsi */}
               <InputGroup className="border-gray-300">
                 <InputGroupInput
                   min={0}
