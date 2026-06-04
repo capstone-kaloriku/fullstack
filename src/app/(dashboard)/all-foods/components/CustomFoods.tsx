@@ -83,7 +83,11 @@ function CustomFoods({
       formData.append("file", data.imgUrl);
 
       // Call the server action that handles upload + AI validation
-      const result = await processCustomFood(formData, data.title);
+      const result = await processCustomFood(
+        formData,
+        data.title,
+        data.description,
+      );
 
       if (result.success && result.validation) {
         onValidationComplete(result.validation, result.imageUrl);

@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import * as React from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
-import { useIsMobile } from "@/lib/use-mobile"
+import { useIsMobile } from "@/lib/use-mobile";
 import {
   Card,
   CardAction,
@@ -11,67 +11,66 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/toggle-group"
-import { getCalorieChartData } from "@/app/(dashboard)/actions"
+} from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { getCalorieChartData } from "@/app/(dashboard)/actions";
 
 const chartConfig = {
   calories: {
     label: "Kalori",
     color: "var(--primary)",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export function InteractiveCharts() {
-  const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("90d")
-  const [chartData, setChartData] = React.useState<{ date: string; calories: number }[]>([])
-  const [loading, setLoading] = React.useState(true)
+  const isMobile = useIsMobile();
+  const [timeRange, setTimeRange] = React.useState("90d");
+  const [chartData, setChartData] = React.useState<
+    { date: string; calories: number }[]
+  >([]);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     if (isMobile) {
-      setTimeRange("7d")
+      setTimeRange("7d");
     }
-  }, [isMobile])
+  }, [isMobile]);
 
   const handleToggleChange = (value: string[]) => {
-    if (value.length > 0) setTimeRange(value[0])
-  }
+    if (value.length > 0) setTimeRange(value[0]);
+  };
 
   React.useEffect(() => {
     getCalorieChartData(90).then((data) => {
-      setChartData(data)
-      setLoading(false)
-    })
-  }, [])
+      setChartData(data);
+      setLoading(false);
+    });
+  }, []);
 
   const filteredData = React.useMemo(() => {
-    const now = new Date()
-    let daysToSubtract = 90
-    if (timeRange === "30d") daysToSubtract = 30
-    else if (timeRange === "7d") daysToSubtract = 7
+    const now = new Date();
+    let daysToSubtract = 90;
+    if (timeRange === "30d") daysToSubtract = 30;
+    else if (timeRange === "7d") daysToSubtract = 7;
 
-    const startDate = new Date(now)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
+    const startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - daysToSubtract);
 
-    return chartData.filter((item) => new Date(item.date) >= startDate)
-  }, [chartData, timeRange])
+    return chartData.filter((item) => new Date(item.date) >= startDate);
+  }, [chartData, timeRange]);
 
   return (
     <Card className="@container/card">
@@ -79,10 +78,21 @@ export function InteractiveCharts() {
         <CardTitle>Asupan Kalori Harian</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total kalori harian selama {timeRange === "90d" ? "3 bulan" : timeRange === "30d" ? "30 hari" : "7 hari"} terakhir
+            Total kalori harian selama{" "}
+            {timeRange === "90d"
+              ? "3 bulan"
+              : timeRange === "30d"
+                ? "30 hari"
+                : "7 hari"}{" "}
+            terakhir
           </span>
           <span className="@[540px]/card:hidden">
-            {timeRange === "90d" ? "3 bulan" : timeRange === "30d" ? "30 hari" : "7 hari"} terakhir
+            {timeRange === "90d"
+              ? "3 bulan"
+              : timeRange === "30d"
+                ? "30 hari"
+                : "7 hari"}{" "}
+            terakhir
           </span>
         </CardDescription>
         <CardAction>
@@ -105,9 +115,15 @@ export function InteractiveCharts() {
               <SelectValue placeholder="3 Bulan" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="90d" className="rounded-lg">3 Bulan</SelectItem>
-              <SelectItem value="30d" className="rounded-lg">30 Hari</SelectItem>
-              <SelectItem value="7d" className="rounded-lg">7 Hari</SelectItem>
+              <SelectItem value="90d" className="rounded-lg">
+                3 Bulan
+              </SelectItem>
+              <SelectItem value="30d" className="rounded-lg">
+                30 Hari
+              </SelectItem>
+              <SelectItem value="7d" className="rounded-lg">
+                7 Hari
+              </SelectItem>
             </SelectContent>
           </Select>
         </CardAction>
@@ -129,8 +145,16 @@ export function InteractiveCharts() {
             <AreaChart data={filteredData}>
               <defs>
                 <linearGradient id="fillCalories" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--color-calories)" stopOpacity={1.0} />
-                  <stop offset="95%" stopColor="var(--color-calories)" stopOpacity={0.1} />
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-calories)"
+                    stopOpacity={1.0}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-calories)"
+                    stopOpacity={0.1}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
@@ -141,11 +165,11 @@ export function InteractiveCharts() {
                 tickMargin={8}
                 minTickGap={32}
                 tickFormatter={(value) => {
-                  const date = new Date(value)
+                  const date = new Date(value);
                   return date.toLocaleDateString("id-ID", {
                     month: "short",
                     day: "numeric",
-                  })
+                  });
                 }}
               />
               <ChartTooltip
@@ -156,7 +180,7 @@ export function InteractiveCharts() {
                       return new Date(value).toLocaleDateString("id-ID", {
                         month: "short",
                         day: "numeric",
-                      })
+                      });
                     }}
                     indicator="dot"
                   />
@@ -173,5 +197,5 @@ export function InteractiveCharts() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

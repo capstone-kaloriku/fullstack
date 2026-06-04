@@ -26,6 +26,7 @@ export interface AIValidationResult {
 
 export async function validateFoodWithAI(
   foodName: string,
+  description: string,
   imageUrl?: string,
 ): Promise<{ success: boolean; data?: AIValidationResult; error?: string }> {
   try {
@@ -35,6 +36,10 @@ export async function validateFoodWithAI(
 
     const imageContext = imageUrl
       ? `\nGambar makanan telah diupload ke: ${imageUrl}`
+      : "";
+
+    const descriptionContext = description
+      ? `\nDeskripsi Makanan: ${description}`
       : "";
 
     const chatCompletion = await groq.chat.completions.create({
@@ -68,7 +73,7 @@ Keluarkan output HANYA dalam format JSON yang valid:
         },
         {
           role: "user",
-          content: `Validasi makanan berikut: "${foodName.trim()}"${imageContext}`,
+          content: `Validasi makanan berikut: "${foodName.trim()}"${imageContext}${descriptionContext}`,
         },
       ],
       model: "llama-3.1-8b-instant",
@@ -177,6 +182,7 @@ export async function saveCustomFood(data: {
 export async function processCustomFood(
   formData: FormData,
   foodName: string,
+  description: string,
 ): Promise<{
   success: boolean;
   validation?: AIValidationResult;
@@ -197,7 +203,11 @@ export async function processCustomFood(
   }
 
   // --- 2. Validasi dengan AI ---
-  const validationResult = await validateFoodWithAI(foodName, imageUrl);
+  const validationResult = await validateFoodWithAI(
+    foodName,
+    description,
+    imageUrl,
+  );
 
   if (!validationResult.success || !validationResult.data) {
     return { success: false, error: validationResult.error };

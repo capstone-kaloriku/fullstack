@@ -19,8 +19,8 @@ const slides = [
   },
   {
     id: 3,
-    src: "/carousel/carousel-auth.jpeg",
-    alt: "Autentikasi Aman & Akses Cepat Capstone Kaloriku",
+    src: "/carousel/carousel-responsive.jpeg",
+    alt: "Dapat diakses di mana saja, kapan saja",
   },
 ];
 
