@@ -36,32 +36,20 @@ const icon = [
   {
     id: 2,
     icon: <BsFillSunFill size={24} />,
-    title: "Makan Siang",
-    filterKey: "makan_ringan",
+    title: "Makanan Ringan",
+    filterKey: "makanan_ringan",
   },
   {
     id: 3,
     icon: <BsFillMoonFill size={24} />,
-    title: "Makan Malam",
+    title: "Camilan",
     filterKey: "camilan",
   },
   {
     id: 4,
     icon: <IconCookieFilled size={24} />,
-    title: "Makanan Ringan",
-    filterKey: "camilan",
-  },
-  {
-    id: 5,
-    icon: <IconCookieFilled size={24} />,
-    title: "Rendah Kalori",
-    filterKey: "rendah-kalori",
-  },
-  {
-    id: 6,
-    icon: <IconCookieFilled size={24} />,
-    title: "Vegetarian",
-    filterKey: "vegetarian",
+    title: "Sarapan",
+    filterKey: "sarapan",
   },
 ];
 
