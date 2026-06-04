@@ -1,57 +1,159 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { ChatArea } from "./components/ChatArea";
 import { InputPrompt } from "./components/InputPrompt";
 import { ChatHistory } from "./components/ChatHistory";
 import type { Message } from "@/types/index";
+import {
+  getConversations,
+  getChatHistory,
+  createConversation,
+  deleteConversation,
+  type ConversationItem,
+} from "@/actions/chat-history";
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-// Konversi Message[] dari state ke format history yang diterima API.
-// Kirim seluruh percakapan apa adanya (tanpa batas jumlah pesan).
-function buildHistory(messages: Message[]) {
-  return messages
-    .filter((m) => m.content && m.content.trim().length > 0)
-    .map((m) => ({
-      role: m.role === "ai" ? ("assistant" as const) : ("user" as const),
-      content: m.content,
-    }));
-}
-
 export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeConversationId, setActiveConversationId] = useState<
-    string | null
-  >(null);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
-  // Helper: panggil API dengan optional image + history
+  // Track apakah conversation saat ini belum punya pesan (untuk generate judul)
+  const isFirstMessageRef = useRef(true);
+
+  // ── Load daftar conversations saat mount ──
+  useEffect(() => {
+    const load = async () => {
+      setIsLoadingHistory(true);
+      try {
+        const convs = await getConversations();
+        setConversations(convs);
+        // Jika ada conversation terakhir, langsung load pesannya
+        if (convs.length > 0) {
+          const latest = convs[0];
+          setActiveConversationId(latest.id);
+          const history = await getChatHistory(latest.id);
+          setMessages(
+            history.map((h) => ({
+              id: h.id,
+              role: h.role === "assistant" ? ("ai" as const) : ("user" as const),
+              content: h.content,
+              timestamp: new Date(h.created_at),
+            })),
+          );
+          isFirstMessageRef.current = false;
+        }
+      } catch (err) {
+        console.error("Gagal load conversations:", err);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+    load();
+  }, []);
+
+  // ── Pilih conversation dari sidebar ──
+  const handleSelectConversation = useCallback(async (id: string) => {
+    if (id === activeConversationId) return;
+    setActiveConversationId(id);
+    setIsLoadingHistory(true);
+    try {
+      const history = await getChatHistory(id);
+      setMessages(
+        history.map((h) => ({
+          id: h.id,
+          role: h.role === "assistant" ? ("ai" as const) : ("user" as const),
+          content: h.content,
+          timestamp: new Date(h.created_at),
+        })),
+      );
+      isFirstMessageRef.current = false;
+    } catch (err) {
+      console.error("Gagal load pesan:", err);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }, [activeConversationId]);
+
+  // ── Chat Baru ──
+  const handleNewChat = useCallback(() => {
+    setMessages([]);
+    setActiveConversationId(null);
+    isFirstMessageRef.current = true;
+  }, []);
+
+  // ── Hapus conversation ──
+  const handleDeleteConversation = useCallback(async (id: string) => {
+    await deleteConversation(id);
+    setConversations((prev) => prev.filter((c) => c.id !== id));
+    if (activeConversationId === id) {
+      setMessages([]);
+      setActiveConversationId(null);
+      isFirstMessageRef.current = true;
+    }
+  }, [activeConversationId]);
+
+  // ── Kirim pesan ke API ──
   const fetchAiResponse = useCallback(
     async (
       userContent: string,
       image: string | undefined,
-      history: ReturnType<typeof buildHistory>
+      conversationId: string,
+      isFirst: boolean,
     ) => {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userContent, image, history }),
+        body: JSON.stringify({
+          message: userContent,
+          image,
+          conversationId,
+          isFirstMessage: isFirst,
+        }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Terjadi kesalahan pada server");
-      }
+      if (!res.ok) throw new Error(data.error || "Terjadi kesalahan pada server");
       return data.response as string;
     },
-    []
+    [],
   );
 
   const handleSend = useCallback(
     async (content: string, image?: string) => {
+      setIsLoading(true);
+
+      // Jika belum ada conversation aktif → buat baru
+      let convId = activeConversationId;
+      const isFirst = isFirstMessageRef.current;
+
+      if (!convId) {
+        const newId = await createConversation();
+        if (!newId) {
+          setIsLoading(false);
+          return;
+        }
+        convId = newId;
+        setActiveConversationId(newId);
+        // Tambah ke sidebar langsung (optimistic)
+        setConversations((prev) => [
+          {
+            id: newId,
+            title: "Percakapan Baru",
+            preview: null,
+            message_count: 0,
+            updated_at: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+      }
+
       const userMessage: Message = {
         id: generateId(),
         role: "user",
@@ -60,12 +162,11 @@ export default function AIPage() {
         image,
       };
 
-      const historySnapshot = buildHistory(messages);
       setMessages((prev) => [...prev, userMessage]);
-      setIsLoading(true);
+      isFirstMessageRef.current = false;
 
       try {
-        const aiContent = await fetchAiResponse(content, image, historySnapshot);
+        const aiContent = await fetchAiResponse(content, image, convId, isFirst);
         const aiMessage: Message = {
           id: generateId(),
           role: "ai",
@@ -73,79 +174,89 @@ export default function AIPage() {
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, aiMessage]);
-      } catch (error: any) {
-        const errorMessage: Message = {
-          id: generateId(),
-          role: "ai",
-          content: `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+
+        // Update sidebar: judul + preview (refresh setelah title AI generate)
+        if (isFirst) {
+          setTimeout(async () => {
+            const updated = await getConversations();
+            setConversations(updated);
+          }, 2000); // tunggu AI generate judul
+        } else {
+          // Update preview + updated_at di sidebar
+          setConversations((prev) =>
+            prev.map((c) =>
+              c.id === convId
+                ? {
+                    ...c,
+                    preview: aiContent.slice(0, 120),
+                    message_count: c.message_count + 2,
+                    updated_at: new Date().toISOString(),
+                  }
+                : c,
+            ),
+          );
+        }
+      } catch (error: unknown) {
+        const errMsg = error instanceof Error ? error.message : "Terjadi kesalahan";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: generateId(),
+            role: "ai",
+            content: `Maaf, terjadi kesalahan: ${errMsg}. Silakan coba lagi.`,
+            timestamp: new Date(),
+          },
+        ]);
       } finally {
         setIsLoading(false);
       }
     },
-    [messages, fetchAiResponse]
+    [activeConversationId, fetchAiResponse],
   );
 
   const handleRegenerate = useCallback(
     async (aiMessageId: string) => {
+      if (!activeConversationId) return;
+
       const aiIndex = messages.findIndex((m) => m.id === aiMessageId);
       if (aiIndex === -1) return;
 
       let lastUserIndex = -1;
       for (let i = aiIndex - 1; i >= 0; i--) {
-        if (messages[i].role === "user") {
-          lastUserIndex = i;
-          break;
-        }
+        if (messages[i].role === "user") { lastUserIndex = i; break; }
       }
       if (lastUserIndex === -1) return;
 
       const lastUserContent = messages[lastUserIndex].content;
       const lastUserImage = messages[lastUserIndex].image;
-      const historySnapshot = buildHistory(messages.slice(0, lastUserIndex));
 
       setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
       setIsLoading(true);
 
       try {
         const aiContent = await fetchAiResponse(
-          lastUserContent,
-          lastUserImage,
-          historySnapshot
+          lastUserContent, lastUserImage, activeConversationId, false,
         );
-        const aiMessage: Message = {
-          id: generateId(),
-          role: "ai",
-          content: aiContent,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, aiMessage]);
-      } catch (error: any) {
-        const errorMessage: Message = {
-          id: generateId(),
-          role: "ai",
-          content: `Maaf, terjadi kesalahan: ${error.message}. Silakan coba lagi.`,
-          timestamp: new Date(),
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+        setMessages((prev) => [
+          ...prev,
+          { id: generateId(), role: "ai", content: aiContent, timestamp: new Date() },
+        ]);
+      } catch (error: unknown) {
+        const errMsg = error instanceof Error ? error.message : "Terjadi kesalahan";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: generateId(), role: "ai",
+            content: `Maaf, terjadi kesalahan: ${errMsg}. Silakan coba lagi.`,
+            timestamp: new Date(),
+          },
+        ]);
       } finally {
         setIsLoading(false);
       }
     },
-    [messages, fetchAiResponse]
+    [messages, activeConversationId, fetchAiResponse],
   );
-
-  const handleNewChat = useCallback(() => {
-    setMessages([]);
-    setActiveConversationId(null);
-  }, []);
-
-  const handleSelectConversation = useCallback((id: string) => {
-    // Nanti akan di-integrate dengan backend untuk load messages dari conversation id
-    setActiveConversationId(id);
-  }, []);
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full overflow-hidden">
@@ -158,18 +269,18 @@ export default function AIPage() {
           </h1>
           <p className="text-xs text-muted-foreground text-center max-w-sm">
             Asisten nutrisi cerdasmu, siap membantu dengan pertanyaan seputar
-            kalori & nutrisi.
+            kalori &amp; nutrisi.
           </p>
         </div>
 
         {/* Chat Area */}
         <ChatArea
           messages={messages}
-          isLoading={isLoading}
+          isLoading={isLoading || isLoadingHistory}
           onRegenerate={handleRegenerate}
         />
 
-        {/* Input Prompt — pinned to bottom */}
+        {/* Input Prompt */}
         <div className="sticky bottom-0 w-full px-4 pb-4 pt-2">
           <InputPrompt onSend={handleSend} isLoading={isLoading} />
           <p className="mt-2 text-center text-[10px] text-muted-foreground/60">
@@ -178,11 +289,13 @@ export default function AIPage() {
         </div>
       </div>
 
-      {/* Chat History sidebar (right side) */}
+      {/* Chat History sidebar */}
       <ChatHistory
+        conversations={conversations}
         activeConversationId={activeConversationId}
         onSelectConversation={handleSelectConversation}
         onNewChat={handleNewChat}
+        onDeleteConversation={handleDeleteConversation}
       />
     </div>
   );
