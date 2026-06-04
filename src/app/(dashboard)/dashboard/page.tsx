@@ -9,7 +9,7 @@ import FoodSummaries from "./components/FoodSummaries";
 import { persentageProps } from "@/types";
 
 import Reminder from "./components/Reminder";
-import { getUserProfile, getTodayConsumption, getAllFoods } from "../actions";
+import { getUserProfile, getTodayConsumption } from "../actions";
 import { calculateMacrosFromCalories } from "@/lib/nutrition";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -24,10 +24,9 @@ const calculatePercentage = ({ value, maxValue }: persentageProps) => {
 
 const Dashboard = async () => {
   // Fetch data from Supabase
-  const [userProfile, todayConsumption, allFoods] = await Promise.all([
+  const [userProfile, todayConsumption] = await Promise.all([
     getUserProfile(),
     getTodayConsumption(),
-    getAllFoods(),
   ]);
 
   // Fallback values if user profile not found
@@ -68,11 +67,8 @@ const Dashboard = async () => {
     }),
   }));
 
-  // Use today's consumed foods, or fallback to first 4 foods from catalog
-  const foods =
-    todayConsumption.logs.length > 0
-      ? todayConsumption.logs.slice(0, 4)
-      : allFoods.slice(0, 4);
+  // Today's consumed foods — passed directly to FoodSummaries
+  const foods = todayConsumption.logs;
 
   return (
     <>

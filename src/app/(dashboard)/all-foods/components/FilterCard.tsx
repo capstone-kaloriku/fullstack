@@ -20,9 +20,9 @@ import { Input } from "@/components/ui/input";
 
 // NOTEEE BUAT GUA SENDIRI INI KOMPONEN BAKAL GAK KEPAKE KALO DI MOBILE SO USE RESPONSIVE AS YOU CAN
 
-function HeroCard({ data, activeFilter, onFilter }: CategoryProps) {
+function FilterCard({ data, activeFilter, onFilter }: CategoryProps) {
   return (
-    <Card size="sm" className="h-full w-full flex flex-col gap-5 my-6">
+    <Card size="sm" className=" w-full flex flex-col gap-5 my-6">
       <CardHeader className="flex flex-col gap-3">
         <main className="grid grid-cols-2 items-center justify-between w-full gap-3">
           <article className="flex flex-col items-center justify-between w-full gap-3 col-span-2">
@@ -55,11 +55,12 @@ function HeroCard({ data, activeFilter, onFilter }: CategoryProps) {
             return (
               <Button
                 type="button"
-                size="sm"
+                size="xs"
                 onClick={() => onFilter(isActive ? null : item.filterKey)}
                 variant={isActive ? "default" : "outline"}
                 aria-pressed={isActive}
-                key={item.id}>
+                key={item.id}
+              >
                 {item.icon}
                 {item.title}
               </Button>
@@ -71,4 +72,4 @@ function HeroCard({ data, activeFilter, onFilter }: CategoryProps) {
   );
 }
 
-export default HeroCard;
+export default FilterCard;

@@ -1,8 +1,8 @@
-import { Suspense } from 'react';
-import Image from 'next/image';
-import LoginInput from './components/LoginInput';
-import { BackgroundRippleEffect } from '@/components/layout/background-ripple-effect';
-import GlassSurface from '@/components/GlassSurface';
+import { Suspense } from "react";
+import Image from "next/image";
+import LoginInput from "./components/LoginInput";
+import { BackgroundRippleEffect } from "@/components/layout/background-ripple-effect";
+import GlassSurface from "@/components/GlassSurface";
 
 export default function Login() {
   return (
@@ -24,7 +24,7 @@ export default function Login() {
           <div className="mt-4 relative items-center justify-center max-w-lg mx-auto flex lg:hidden">
             <div>
               <Image
-                src="/login-screen.jpg"
+                src="/mobile-login.jpeg"
                 alt="Login Screen Image"
                 className="rounded-3xl ratio-16/9 object-cover"
                 width={384}
@@ -41,7 +41,7 @@ export default function Login() {
                 brightness={100}
                 opacity={0.93}
                 mixBlendMode="normal"
-                className="text-primary-foreground font-bold absolute left-1/2 top-1/2 translate-x-[-50%] -translate-y-[120%] text-sm text-center p-4 rounded-3xl"
+                className="text-primary font-bold absolute left-1/2 top-1/2 translate-x-[-50%] -translate-y-[40%] text-sm text-center p-4 rounded-3xl border border-primary/5"
               >
                 Start your journey to a vibrant version of yourself today.
               </GlassSurface>

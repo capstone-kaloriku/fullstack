@@ -50,6 +50,28 @@ export async function getAllFoods(searchQuery?: string) {
 }
 
 /**
+ * Fetch recently added custom foods (is_verified = false).
+ * Returns newest first, limited to a given count.
+ */
+export async function getRecentlyAddedFoods(limit: number = 10) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("food_items")
+    .select("*")
+    .eq("is_verified", false)
+    .order("food_id", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching recently added foods:", error.message);
+    return [];
+  }
+
+  return data.map(mapFoodItem);
+}
+
+/**
  * Fetch a single food item by slug.
  */
 export async function getFoodBySlug(slug: string) {

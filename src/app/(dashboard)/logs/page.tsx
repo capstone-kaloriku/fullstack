@@ -1,7 +1,5 @@
 import Link from "next/link";
 import Frequently from "./components/Frequently";
-import Tips from "./components/Tips";
-import ConsumptionHistory from "./components/ConsumptionHistory";
 
 import { getAllFoods } from "../actions";
 import { InteractiveCharts } from "./components/InteractiveCharts";

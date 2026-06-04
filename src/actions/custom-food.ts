@@ -4,17 +4,9 @@ import Groq from "groq-sdk";
 import { createClient } from "@/lib/supabase/server";
 import { uploadFoodImage } from "./upload-image";
 
-// ============================================================
-// Custom Food — AI Validation & Save
-// ============================================================
-
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY!,
 });
-
-// -----------------------------------------------------------
-// Types
-// -----------------------------------------------------------
 
 export interface AIValidationResult {
   isValid: boolean;
@@ -30,15 +22,8 @@ export interface AIValidationResult {
   alasan?: string;
 }
 
-// -----------------------------------------------------------
 // 1. Validasi makanan dengan AI (text‑based)
-// -----------------------------------------------------------
 
-/**
- * Kirim nama makanan (+ opsional URL gambar) ke Groq AI.
- * AI akan memvalidasi apakah input adalah makanan sungguhan,
- * lalu mengembalikan estimasi nutrisi.
- */
 export async function validateFoodWithAI(
   foodName: string,
   imageUrl?: string,

@@ -75,9 +75,10 @@ export async function uploadFoodImage(
       },
     });
 
-    // buat publik agar bisa diakses langsung
-    await blob.makePublic();
-
+    // Dengan Uniform Bucket-Level Access (UBLA), tidak bisa menggunakan
+    // object-level ACL (makePublic). Akses publik dikontrol melalui IAM
+    // di level bucket (allUsers → Storage Object Viewer).
+    // URL publik tetap bisa dibentuk langsung:
     const publicUrl = `https://storage.googleapis.com/${process.env.GCP_BUCKET_NAME}/${fileName}`;
 
     return { success: true, url: publicUrl };

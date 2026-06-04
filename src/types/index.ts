@@ -49,6 +49,23 @@ export interface FrequentlyProps {
   }[];
 }
 
+export interface RecentlyAddedItem {
+  id: string | number;
+  nama: string;
+  gambar: string;
+  kalori: number;
+  karbo: number;
+  protein: number;
+  lemak: number;
+  kategori: string;
+  slug: string;
+}
+
+export interface RecentlyAddedProps {
+  items: RecentlyAddedItem[];
+  isLoading: boolean;
+}
+
 export interface SettingsProps {
   data: {
     id: number;
