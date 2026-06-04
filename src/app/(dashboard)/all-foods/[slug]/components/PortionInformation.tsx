@@ -55,7 +55,9 @@ function PortionInformation({ food }: FoodLogFormProps) {
 
   // Submission state
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState<{ nama: string; kalori: number }[]>([]);
+  const [suggestion, setSuggestion] = useState<
+    { nama: string; kalori: number }[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -65,7 +67,7 @@ function PortionInformation({ food }: FoodLogFormProps) {
   // Total calories including side dishes
   const sideDishCalories = sideDishes.reduce(
     (sum, dish) => sum + (dish.kalori ?? 0) * dish.porsi,
-    0
+    0,
   );
   const totalCaloriesWithDishes = totalCalories + sideDishCalories;
 
@@ -149,127 +151,136 @@ function PortionInformation({ food }: FoodLogFormProps) {
   }
 
   return (
-    <FieldGroup className="lg:sticky lg:top-24 lg:self-start">
-      {/* Error banner */}
-      {error && (
-        <div className="rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3">
-          {error}
-        </div>
-      )}
-
-      {/* Jam Submit */}
-      <div className="w-full">
-        <Card className="w-full py-6">
-          <CardHeader className="flex flex-row items-center gap-5">
-            <FaBowlFood size={18} className="text-primary" />
-            <CardTitle className="text-lg font-bold">Porsi</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col justify-center items-start gap-5">
-            <InputGroup className="border-gray-300">
-              <InputGroupInput
-                min={0}
-                type="number"
-                className="placeholder:text-primary/50 text-primary w-full "
-                placeholder="Berapa porsi? ..."
-                value={portion}
-                onChange={(e) => setPortion(Number(e.target.value) || 0)}
-              />
-            </InputGroup>
-            {/* Live calorie preview */}
-            <span className="text-sm text-muted-foreground">
-              Makanan:{" "}
-              <p className="text-primary font-bold">{totalCalories} kcal</p> (
-              {portion} porsi × {perPortionCalories} kcal)
-            </span>
-            {sideDishCalories > 0 && (
-              <span className="text-sm text-muted-foreground">
-                Lauk:{" "}
-                <p className="text-primary font-bold">+{sideDishCalories} kcal</p>
-              </span>
-            )}
-            {sideDishCalories > 0 && (
-              <span className="text-sm font-semibold text-primary border-t border-primary/20 pt-2 w-full">
-                Total: {totalCaloriesWithDishes} kcal
-              </span>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Lauk Makanan */}
-      <div className="w-full">
-        <Card className="w-full py-6">
-          <CardHeader className="flex flex-row items-center gap-5">
-            <FaUtensils size={18} className="text-primary" />
-            <CardTitle className="text-lg font-bold">Lauk Makanan</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {/* Lauk yang sudah dipilih */}
-            <ListSelectedFood items={sideDishes} onRemove={handleRemoveLauk} />
-
-            {/* Input lauk baru */}
-            <div className="flex gap-2 items-center">
-              <InputGroup className="flex-1">
-                <InputGroupInput
-                  type="text"
-                  className="placeholder:text-muted-foreground/60 w-full"
-                  placeholder="Nama lauk..."
-                  value={newLaukNama}
-                  onChange={(e) => setNewLaukNama(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddLauk();
-                    }
-                  }}
-                />
-              </InputGroup>
-              <InputGroup className="w-20">
-                <InputGroupInput
-                  type="number"
-                  min={1}
-                  className="text-center"
-                  placeholder="Porsi"
-                  value={newLaukPorsi}
-                  onChange={(e) => setNewLaukPorsi(Number(e.target.value) || 1)}
-                />
-              </InputGroup>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddLauk}
-                className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
-              >
-                <Plus size={16} />
-              </Button>
-            </div>
-
-            {/* Saran lauk cepat */}
-            <TagSelectFood
-              suggestions={suggestion}
-              onAdd={handleAddLaukFromSuggestion}
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Submit button */}
-      <Button
-        className="w-full py-6"
-        onClick={handleSubmit}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 size={20} className="animate-spin mr-2" />
-            Menyimpan...
-          </>
-        ) : (
-          "Simpan"
+    <div className="w-full lg:sticky lg:top-24 lg:self-start">
+      <FieldGroup>
+        {/* Error banner */}
+        {error && (
+          <div className="rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-sm px-4 py-3">
+            {error}
+          </div>
         )}
-      </Button>
-    </FieldGroup>
+
+        {/* Jam Submit */}
+        <div className="w-full">
+          <Card className="w-full py-6">
+            <CardHeader className="flex flex-row items-center gap-5">
+              <FaBowlFood size={18} className="text-primary" />
+              <CardTitle className="text-lg font-bold">Porsi</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col justify-center items-start gap-5">
+              <InputGroup className="border-gray-300">
+                <InputGroupInput
+                  min={0}
+                  type="number"
+                  className="placeholder:text-primary/50 text-primary w-full "
+                  placeholder="Berapa porsi? ..."
+                  value={portion}
+                  onChange={(e) => setPortion(Number(e.target.value) || 0)}
+                />
+              </InputGroup>
+              {/* Live calorie preview */}
+              <span className="text-sm text-muted-foreground">
+                Makanan:{" "}
+                <p className="text-primary font-bold">{totalCalories} kcal</p> (
+                {portion} porsi × {perPortionCalories} kcal)
+              </span>
+              {sideDishCalories > 0 && (
+                <span className="text-sm text-muted-foreground">
+                  Lauk:{" "}
+                  <p className="text-primary font-bold">
+                    +{sideDishCalories} kcal
+                  </p>
+                </span>
+              )}
+              {sideDishCalories > 0 && (
+                <span className="text-sm font-semibold text-primary border-t border-primary/20 pt-2 w-full">
+                  Total: {totalCaloriesWithDishes} kcal
+                </span>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Lauk Makanan */}
+        <div className="w-full">
+          <Card className="w-full py-6">
+            <CardHeader className="flex flex-row items-center gap-5">
+              <FaUtensils size={18} className="text-primary" />
+              <CardTitle className="text-lg font-bold">Lauk Makanan</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {/* Lauk yang sudah dipilih */}
+              <ListSelectedFood
+                items={sideDishes}
+                onRemove={handleRemoveLauk}
+              />
+
+              {/* Input lauk baru */}
+              <div className="flex gap-2 items-center">
+                <InputGroup className="flex-1">
+                  <InputGroupInput
+                    type="text"
+                    className="placeholder:text-muted-foreground/60 w-full"
+                    placeholder="Nama lauk..."
+                    value={newLaukNama}
+                    onChange={(e) => setNewLaukNama(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddLauk();
+                      }
+                    }}
+                  />
+                </InputGroup>
+                <InputGroup className="w-20">
+                  <InputGroupInput
+                    type="number"
+                    min={1}
+                    className="text-center"
+                    placeholder="Porsi"
+                    value={newLaukPorsi}
+                    onChange={(e) =>
+                      setNewLaukPorsi(Number(e.target.value) || 1)
+                    }
+                  />
+                </InputGroup>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAddLauk}
+                  className="border-primary text-primary hover:bg-primary hover:text-primary-foreground shrink-0"
+                >
+                  <Plus size={16} />
+                </Button>
+              </div>
+
+              {/* Saran lauk cepat */}
+              <TagSelectFood
+                suggestions={suggestion}
+                onAdd={handleAddLaukFromSuggestion}
+              />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Submit button */}
+        <Button
+          className="w-full py-6"
+          onClick={handleSubmit}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 size={20} className="animate-spin mr-2" />
+              Menyimpan...
+            </>
+          ) : (
+            "Simpan"
+          )}
+        </Button>
+      </FieldGroup>
+    </div>
   );
 }
 

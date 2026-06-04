@@ -30,7 +30,8 @@ const Logs = async () => {
                 <span>Sering Dicatat</span>
                 <Link
                   href="/all-foods"
-                  className="text-sm text-primary hover:underline">
+                  className="text-sm text-primary hover:underline"
+                >
                   Lihat Semua
                 </Link>
               </div>
