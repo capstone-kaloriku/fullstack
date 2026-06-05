@@ -1,12 +1,11 @@
 "use server";
 
-import Groq from "groq-sdk";
+// import Groq from "groq-sdk"; // dinonaktifkan — pakai Railway food search
+import { fetchIndoBERT } from "@/lib/indobert-api";
 import { createClient } from "@/lib/supabase/server";
 import { uploadFoodImage } from "./upload-image";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
-});
+// const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! }); // dinonaktifkan
 
 export interface AIValidationResult {
   isValid: boolean;
@@ -22,26 +21,125 @@ export interface AIValidationResult {
   alasan?: string;
 }
 
-// 1. Validasi makanan dengan AI (text‑based)
+interface RailwayFoodDetail {
+  found: boolean;
+  data: Record<string, unknown> | null;
+}
+
+interface RailwayFoodSearch {
+  results: Record<string, unknown>[];
+  total: number;
+}
+
+// Mapping kategori Railway → kategori lokal
+const CATEGORY_ALIASES: Record<string, string> = {
+  makanan_berat: "makanan_berat",
+  makanan_ringan: "makanan_ringan",
+  camilan: "camilan",
+  minuman: "minuman",
+  snack: "camilan",
+  drink: "minuman",
+  main: "makanan_berat",
+};
+
+function normalizeCategory(raw: unknown): string {
+  if (typeof raw !== "string") return "makanan_berat";
+  return CATEGORY_ALIASES[raw.toLowerCase().trim()] ?? "makanan_berat";
+}
+
+function safeNumber(val: unknown, fallback = 0): number {
+  const n = Number(val);
+  return isNaN(n) ? fallback : Math.round(n);
+}
+
+function mapRailwayDataToResult(
+  data: Record<string, unknown>,
+  foodName: string,
+): AIValidationResult {
+  return {
+    isValid: true,
+    nama: String(data.name ?? data.nama ?? foodName),
+    deskripsi: String(
+      data.description ??
+      data.deskripsi ??
+      `${String(data.name ?? foodName)} adalah makanan dengan kandungan gizi yang tercatat dalam knowledge base KaloriKu.`,
+    ),
+    calories: safeNumber(data.calories ?? data.kalori),
+    protein_gram: safeNumber(data.protein_gram ?? data.protein),
+    carbs_gram: safeNumber(data.carbs_gram ?? data.carbs ?? data.karbohidrat),
+    fat_gram: safeNumber(data.fat_gram ?? data.fat ?? data.lemak),
+    base_portion_gram: safeNumber(data.base_portion_gram ?? data.portion_gram, 100),
+    category: normalizeCategory(data.category ?? data.kategori),
+    confidence: 90,
+  };
+}
+
+// 1. Validasi makanan via Railway food search (ganti Groq)
 
 export async function validateFoodWithAI(
   foodName: string,
-  imageUrl?: string,
+  _imageUrl?: string,
 ): Promise<{ success: boolean; data?: AIValidationResult; error?: string }> {
+  if (!foodName || foodName.trim().length < 2) {
+    return { success: false, error: "Nama makanan terlalu pendek." };
+  }
+
+  const trimmed = foodName.trim().toLowerCase();
+
   try {
-    if (!foodName || foodName.trim().length < 2) {
-      return { success: false, error: "Nama makanan terlalu pendek." };
+    // Coba exact match dulu
+    const detail = await fetchIndoBERT<RailwayFoodDetail>(
+      `/api/food/${encodeURIComponent(trimmed)}`,
+    );
+
+    if (detail.found && detail.data) {
+      return { success: true, data: mapRailwayDataToResult(detail.data, foodName) };
     }
 
-    const imageContext = imageUrl
-      ? `\nGambar makanan telah diupload ke: ${imageUrl}`
-      : "";
+    // Fallback ke fuzzy search
+    const search = await fetchIndoBERT<RailwayFoodSearch>(
+      `/api/food/search?q=${encodeURIComponent(trimmed)}&limit=1`,
+    );
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: `Kamu adalah asisten validasi makanan Indonesia yang sangat akurat.
+    if (search.total > 0 && search.results[0]) {
+      return { success: true, data: mapRailwayDataToResult(search.results[0], foodName) };
+    }
+
+    // Tidak ditemukan di knowledge base
+    return {
+      success: true,
+      data: {
+        isValid: false,
+        nama: foodName,
+        deskripsi: "",
+        calories: 0,
+        protein_gram: 0,
+        carbs_gram: 0,
+        fat_gram: 0,
+        base_portion_gram: 0,
+        category: "makanan_berat",
+        confidence: 0,
+        alasan: `"${foodName}" tidak ditemukan di knowledge base. Coba nama lain atau periksa ejaan.`,
+      },
+    };
+  } catch (error) {
+    console.error("[CustomFood] Validasi gagal:", error);
+    return {
+      success: false,
+      error: "Gagal memvalidasi makanan. Pastikan koneksi ke server AI tersedia.",
+    };
+  }
+}
+
+// ── validateFoodWithGroq — dinonaktifkan ──
+// Ganti ke Railway food search di atas.
+/*
+export async function validateFoodWithGroq(foodName: string, imageUrl?: string) {
+  const chatCompletion = await groq.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: `Kamu adalah asisten validasi makanan Indonesia yang sangat akurat.
 Tugasmu: menerima nama makanan dari user, lalu memvalidasi dan mengembalikan estimasi nutrisi.
 
 ATURAN:
@@ -65,43 +163,24 @@ Keluarkan output HANYA dalam format JSON yang valid:
   "confidence": 85,
   "alasan": null
 }`,
-        },
-        {
-          role: "user",
-          content: `Validasi makanan berikut: "${foodName.trim()}"${imageContext}`,
-        },
-      ],
-      model: "llama-3.1-8b-instant",
-      max_tokens: 400,
-      response_format: { type: "json_object" },
-    });
-
-    const content = chatCompletion.choices[0]?.message?.content;
-
-    if (!content) {
-      return { success: false, error: "Response AI kosong." };
-    }
-
-    const parsed: AIValidationResult = JSON.parse(content);
-
-    return { success: true, data: parsed };
-  } catch (error) {
-    console.error("Error validasi AI:", error);
-    return {
-      success: false,
-      error: "Gagal memvalidasi dengan AI: " + (error as Error).message,
-    };
-  }
+      },
+      {
+        role: "user",
+        content: `Validasi makanan berikut: "${foodName.trim()}"${imageUrl ? `\nGambar: ${imageUrl}` : ""}`,
+      },
+    ],
+    model: "llama-3.1-8b-instant",
+    max_tokens: 400,
+    response_format: { type: "json_object" },
+  });
+  const content = chatCompletion.choices[0]?.message?.content;
+  if (!content) return { success: false, error: "Response AI kosong." };
+  return { success: true, data: JSON.parse(content) as AIValidationResult };
 }
+*/
 
-// -----------------------------------------------------------
 // 2. Simpan custom food ke database
-// -----------------------------------------------------------
 
-/**
- * Simpan custom food ke tabel `food_items`.
- * Field `is_verified` di‑set `false` karena ini input user.
- */
 export async function saveCustomFood(data: {
   nama: string;
   calories: number;
@@ -114,16 +193,10 @@ export async function saveCustomFood(data: {
 }): Promise<{ success: boolean; foodId?: string; error?: string }> {
   try {
     const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
 
-    const {
-      data: { user: authUser },
-    } = await supabase.auth.getUser();
+    if (!authUser) return { success: false, error: "User tidak ditemukan." };
 
-    if (!authUser) {
-      return { success: false, error: "User tidak ditemukan." };
-    }
-
-    // Generate slug dari nama
     const slug = data.nama
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
@@ -150,30 +223,18 @@ export async function saveCustomFood(data: {
       .single();
 
     if (error) {
-      return {
-        success: false,
-        error: "Gagal menyimpan makanan: " + error.message,
-      };
+      return { success: false, error: "Gagal menyimpan makanan: " + error.message };
     }
 
     return { success: true, foodId: inserted.food_id };
   } catch (error) {
-    console.error("Error saving custom food:", error);
-    return {
-      success: false,
-      error: "Gagal menyimpan: " + (error as Error).message,
-    };
+    console.error("[CustomFood] Save error:", error);
+    return { success: false, error: "Gagal menyimpan: " + (error as Error).message };
   }
 }
 
-// -----------------------------------------------------------
-// 3. Flow lengkap: Upload → Validasi → Simpan
-// -----------------------------------------------------------
+// 3. Orchestrator: Upload → Validasi → Return untuk konfirmasi modal
 
-/**
- * Orchestrator: upload gambar, validasi AI, lalu simpan ke DB.
- * Ini yang dipanggil dari frontend Custom Food form.
- */
 export async function processCustomFood(
   formData: FormData,
   foodName: string,
@@ -184,7 +245,6 @@ export async function processCustomFood(
   imageUrl?: string;
   error?: string;
 }> {
-  // --- 1. Upload gambar (opsional) ---
   let imageUrl: string | undefined;
   const file = formData.get("file") as File | null;
 
@@ -196,7 +256,6 @@ export async function processCustomFood(
     imageUrl = uploadResult.url;
   }
 
-  // --- 2. Validasi dengan AI ---
   const validationResult = await validateFoodWithAI(foodName, imageUrl);
 
   if (!validationResult.success || !validationResult.data) {
@@ -205,22 +264,14 @@ export async function processCustomFood(
 
   const aiData = validationResult.data;
 
-  // Jika AI bilang bukan makanan valid → kembalikan tanpa simpan
   if (!aiData.isValid) {
     return {
       success: false,
       validation: aiData,
       imageUrl,
-      error: aiData.alasan || "AI mendeteksi input bukan makanan yang valid.",
+      error: aiData.alasan || "Makanan tidak ditemukan di knowledge base.",
     };
   }
 
-  // --- 3. Return hasil validasi (belum simpan) ---
-  // Frontend akan menampilkan modal konfirmasi dulu,
-  // lalu memanggil saveCustomFood() jika user setuju.
-  return {
-    success: true,
-    validation: aiData,
-    imageUrl,
-  };
+  return { success: true, validation: aiData, imageUrl };
 }
