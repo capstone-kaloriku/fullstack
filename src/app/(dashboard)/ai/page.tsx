@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ChatArea } from "./components/ChatArea";
 import { InputPrompt } from "./components/InputPrompt";
 import { ChatHistory } from "./components/ChatHistory";
@@ -18,6 +19,10 @@ function generateId(): string {
 }
 
 export default function AIPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const initialPrompt = searchParams.get("prompt");
+  const hasProcessedPromptRef = useRef(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
@@ -57,6 +62,25 @@ export default function AIPage() {
     };
     load();
   }, []);
+
+  // ── Auto-send prompt dari landing page ──
+  useEffect(() => {
+    if (
+      initialPrompt &&
+      !hasProcessedPromptRef.current &&
+      !isLoadingHistory
+    ) {
+      hasProcessedPromptRef.current = true;
+      // Buat chat baru untuk prompt dari landing page
+      handleNewChat();
+      // Kirim prompt setelah state siap
+      setTimeout(() => {
+        handleSend(initialPrompt);
+      }, 100);
+      // Bersihkan URL search params
+      router.replace("/ai", { scroll: false });
+    }
+  }, [initialPrompt, isLoadingHistory]);
 
   // ── Pilih conversation dari sidebar ──
   const handleSelectConversation = useCallback(async (id: string) => {

@@ -272,3 +272,36 @@
 .animate-delay-4 {
   animation-delay: 6s;
 }
+
+/* ── Hero Prompt Glass Textarea ── */
+.hero-prompt-glass {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.hero-prompt-glass:focus-within {
+  box-shadow:
+    0 0 0 1px rgba(255, 107, 0, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.hero-prompt-textarea {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 0, 0.2) transparent;
+}
+
+.hero-prompt-textarea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.hero-prompt-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hero-prompt-textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 0, 0.2);
+  border-radius: 4px;
+}

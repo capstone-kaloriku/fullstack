@@ -106,7 +106,17 @@ function LoginInput() {
         return;
       }
 
-      router.push('/dashboard');
+      // Redirect ke halaman yang diminta (dari landing page prompt flow)
+      const redirectPath = searchParams.get('redirect');
+      const promptParam = searchParams.get('prompt');
+      if (redirectPath && promptParam) {
+        const params = new URLSearchParams({ prompt: promptParam });
+        router.push(`${redirectPath}?${params.toString()}`);
+      } else if (redirectPath) {
+        router.push(redirectPath);
+      } else {
+        router.push('/dashboard');
+      }
       toast.success('Berhasil masuk!', { description: 'Selamat datang kembali!' });
     } catch {
       setServerError('Terjadi kesalahan. Coba lagi nanti.');
