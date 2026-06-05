@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { updateConversationTitle } from "@/actions/chat-history";
 
-const RAILWAY_API_URL = "https://nlp-kaloriku-production.up.railway.app";
+const RAILWAY_API_URL = process.env.RAILWAY_API_URL;
 
 // ── Jailbreak filter dinonaktifkan ──
 // Railway sudah handle intent classification via IndoBERT.
@@ -180,8 +180,20 @@ async function saveMessagesToDB(
 ): Promise<void> {
   const supabase = await createClient();
   const rows = [
-    { user_id: userId, conversation_id: conversationId, role: "user" as const, content: userContent, image_url: null },
-    { user_id: userId, conversation_id: conversationId, role: "assistant" as const, content: assistantContent, image_url: null },
+    {
+      user_id: userId,
+      conversation_id: conversationId,
+      role: "user" as const,
+      content: userContent,
+      image_url: null,
+    },
+    {
+      user_id: userId,
+      conversation_id: conversationId,
+      role: "assistant" as const,
+      content: assistantContent,
+      image_url: null,
+    },
   ];
 
   const { error } = await supabase.from("chat_history").insert(rows);
@@ -232,7 +244,11 @@ async function callRailwayChat(message: string): Promise<string> {
     throw new Error(`Railway API error: ${res.status}`);
   }
 
-  const data = await res.json() as { intent: string; response: string; food_extracted?: unknown };
+  const data = (await res.json()) as {
+    intent: string;
+    response: string;
+    food_extracted?: unknown;
+  };
   return data.response ?? "Maaf, tidak ada respons.";
 }
 
@@ -256,7 +272,9 @@ export async function POST(request: NextRequest) {
     // if (detectJailbreak(message)) { ... }
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const userId = user?.id ?? null;
 
     // History tetap di-load untuk keperluan UI & penyimpanan,
@@ -281,17 +299,23 @@ export async function POST(request: NextRequest) {
         .eq("conversation_id", conversationId);
       await supabase2
         .from("conversations")
-        .update({ message_count: count ?? 0, updated_at: new Date().toISOString() })
+        .update({
+          message_count: count ?? 0,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", conversationId);
 
       if (isFirstMessage) {
-        updateConversationTitle(conversationId, message, response).catch(() => {});
+        updateConversationTitle(conversationId, message, response).catch(
+          () => {},
+        );
       }
     }
 
     return NextResponse.json({ response });
   } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : "Internal Server Error";
+    const errMsg =
+      error instanceof Error ? error.message : "Internal Server Error";
     console.error("[Chat API Error]", errMsg);
     return NextResponse.json({ error: errMsg }, { status: 500 });
   }
