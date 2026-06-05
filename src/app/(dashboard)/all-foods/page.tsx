@@ -21,6 +21,7 @@ import { RecentlyAdded } from "./components/RecentlyAdded";
 import Carousel from "./components/Carousel";
 import DisplayFood from "./components/DisplayFood";
 import Pagination from "./components/Pagination";
+import { RecommendedFoods } from "./components/RecommendedFoods";
 import FilterCard from "./components/FilterCard";
 
 // Constants
@@ -354,8 +355,9 @@ const AllFood = () => {
               )}
             </div>
           ) : (
-            /* ====== Default View (Sering Dimakan + Semua Makanan) ====== */
+            /* ====== Default View (Rekomendasi + Sering Dimakan + Semua Makanan) ====== */
             <>
+              {!activeFilter && <RecommendedFoods />}
               {filteredRecently.length > 0 && (
                 <div className="flex flex-col gap-4 w-full">
                   <h1 className="text-lg font-bold text-primary">
