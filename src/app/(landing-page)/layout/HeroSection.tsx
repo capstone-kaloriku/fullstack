@@ -2,12 +2,12 @@
 
 import { FadeUpPyramid } from "@/components/animations/FadeUpPyramid";
 import { Button } from "@/components/ui/button";
-import GlassSurface from "@/components/GlassSurface";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useRef, type FormEvent, type KeyboardEvent } from "react";
 import { LuSend, LuLoader, LuSparkles } from "react-icons/lu";
 import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 
 function HeroSection() {
   const [prompt, setPrompt] = useState("");
@@ -85,19 +85,7 @@ function HeroSection() {
 
       <FadeUpPyramid position="center" delay={0.15}>
         <div className="relative z-10 mx-auto mt-8 w-full max-w-3xl px-4">
-          <GlassSurface
-            mixBlendMode="screen"
-            width="100%"
-            height="auto"
-            borderRadius={32}
-            borderWidth={0.08}
-            brightness={0.5}
-            opacity={0.2}
-            blur={14}
-            backgroundOpacity={0.08}
-            saturation={1.2}
-            className="hero-prompt-glass"
-          >
+          <Card className="backdrop-opacity-80 opacity-80">
             <form
               onSubmit={handleSubmit}
               className="flex w-full flex-col gap-2 p-1"
@@ -112,14 +100,13 @@ function HeroSection() {
                 rows={2}
                 aria-label="Prompt input"
                 id="hero-prompt-input"
-                className="hero-prompt-textarea w-full resize-none bg-transparent px-3 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+                className="hero-prompt-textarea max-w-2xl w-full mx-auto resize-none bg-transparent px-3 py-3 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus:outline-none border-gray-300"
                 style={{
                   minHeight: "150px",
                   maxHeight: "160px",
                 }}
               />
 
-              {/* Bottom toolbar */}
               <div className="flex items-center justify-between px-2 pb-1">
                 <div className="flex items-center gap-1.5">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary">
@@ -144,7 +131,7 @@ function HeroSection() {
                 </Button>
               </div>
             </form>
-          </GlassSurface>
+          </Card>
 
           {/* Subtle hint below */}
           <p className="mt-3 text-center text-[11px] text-muted-foreground/50">

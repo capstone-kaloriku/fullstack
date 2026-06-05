@@ -1,5 +1,12 @@
 'use client'
-import React, { useEffect, useRef, useState, useId } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useId,
+  useMemo,
+  useCallback,
+} from 'react';
 
 export interface GlassSurfaceProps {
   children?: React.ReactNode;
@@ -20,24 +27,24 @@ export interface GlassSurfaceProps {
   xChannel?: 'R' | 'G' | 'B';
   yChannel?: 'R' | 'G' | 'B';
   mixBlendMode?:
-  | 'normal'
-  | 'multiply'
-  | 'screen'
-  | 'overlay'
-  | 'darken'
-  | 'lighten'
-  | 'color-dodge'
-  | 'color-burn'
-  | 'hard-light'
-  | 'soft-light'
-  | 'difference'
-  | 'exclusion'
-  | 'hue'
-  | 'saturation'
-  | 'color'
-  | 'luminosity'
-  | 'plus-darker'
-  | 'plus-lighter';
+    | 'normal'
+    | 'multiply'
+    | 'screen'
+    | 'overlay'
+    | 'darken'
+    | 'lighten'
+    | 'color-dodge'
+    | 'color-burn'
+    | 'hard-light'
+    | 'soft-light'
+    | 'difference'
+    | 'exclusion'
+    | 'hue'
+    | 'saturation'
+    | 'color'
+    | 'luminosity'
+    | 'plus-darker'
+    | 'plus-lighter';
   className?: string;
   style?: React.CSSProperties;
 }
@@ -47,16 +54,38 @@ const useDarkMode = () => {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     setIsDark(mediaQuery.matches);
-
     const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
   return isDark;
+};
+
+// Cached support check — run once per session
+let _svgFilterSupport: boolean | null = null;
+let _backdropFilterSupport: boolean | null = null;
+
+const supportsSVGFilters = (): boolean => {
+  if (_svgFilterSupport !== null) return _svgFilterSupport;
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return (_svgFilterSupport = false);
+  }
+  const isWebkit =
+    /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+  const isFirefox = /Firefox/.test(navigator.userAgent);
+  if (isWebkit || isFirefox) return (_svgFilterSupport = false);
+  const div = document.createElement('div');
+  div.style.backdropFilter = 'url(#test)';
+  return (_svgFilterSupport = div.style.backdropFilter !== '');
+};
+
+const supportsBackdropFilter = (): boolean => {
+  if (_backdropFilterSupport !== null) return _backdropFilterSupport;
+  if (typeof window === 'undefined') return (_backdropFilterSupport = false);
+  return (_backdropFilterSupport = CSS.supports('backdrop-filter', 'blur(10px)'));
 };
 
 const GlassSurface: React.FC<GlassSurfaceProps> = ({
@@ -79,7 +108,7 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
   yChannel = 'G',
   mixBlendMode = 'difference',
   className = '',
-  style = {}
+  style = {},
 }) => {
   const uniqueId = useId().replace(/:/g, '-');
   const filterId = `glass-filter-${uniqueId}`;
@@ -95,140 +124,105 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
   const blueChannelRef = useRef<SVGFEDisplacementMapElement>(null);
   const gaussianBlurRef = useRef<SVGFEGaussianBlurElement>(null);
 
+  // Stable refs to avoid stale closures in callbacks
+  const propsRef = useRef({
+    borderRadius, borderWidth, brightness, opacity, blur, displace,
+    distortionScale, redOffset, greenOffset, blueOffset, xChannel, yChannel, mixBlendMode,
+  });
+  propsRef.current = {
+    borderRadius, borderWidth, brightness, opacity, blur, displace,
+    distortionScale, redOffset, greenOffset, blueOffset, xChannel, yChannel, mixBlendMode,
+  };
+
   const isDarkMode = useDarkMode();
 
-  const generateDisplacementMap = () => {
+  // Generate displacement map SVG from current props
+  const generateDisplacementMap = useCallback(() => {
     const rect = containerRef.current?.getBoundingClientRect();
     const actualWidth = rect?.width || 400;
     const actualHeight = rect?.height || 200;
-    const edgeSize = Math.min(actualWidth, actualHeight) * (borderWidth * 0.5);
+    const {
+      borderRadius: br, borderWidth: bw, brightness: brt, opacity: op,
+      blur: blr, mixBlendMode: mBM,
+    } = propsRef.current;
+    const edgeSize = Math.min(actualWidth, actualHeight) * (bw * 0.5);
 
-    const svgContent = `
-      <svg viewBox="0 0 ${actualWidth} ${actualHeight}" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="${redGradId}" x1="100%" y1="0%" x2="0%" y2="0%">
-            <stop offset="0%" stop-color="#0000"/>
-            <stop offset="100%" stop-color="red"/>
-          </linearGradient>
-          <linearGradient id="${blueGradId}" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#0000"/>
-            <stop offset="100%" stop-color="blue"/>
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" fill="black"></rect>
-        <rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" rx="${borderRadius}" fill="url(#${redGradId})" />
-        <rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" rx="${borderRadius}" fill="url(#${blueGradId})" style="mix-blend-mode: ${mixBlendMode}" />
-        <rect x="${edgeSize}" y="${edgeSize}" width="${actualWidth - edgeSize * 2}" height="${actualHeight - edgeSize * 2}" rx="${borderRadius}" fill="hsl(0 0% ${brightness}% / ${opacity})" style="filter:blur(${blur}px)" />
-      </svg>
-    `;
+    const svgContent = `<svg viewBox="0 0 ${actualWidth} ${actualHeight}" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${redGradId}" x1="100%" y1="0%" x2="0%" y2="0%"><stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="red"/></linearGradient><linearGradient id="${blueGradId}" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#0000"/><stop offset="100%" stop-color="blue"/></linearGradient></defs><rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" fill="black"/><rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" rx="${br}" fill="url(#${redGradId})"/><rect x="0" y="0" width="${actualWidth}" height="${actualHeight}" rx="${br}" fill="url(#${blueGradId})" style="mix-blend-mode:${mBM}"/><rect x="${edgeSize}" y="${edgeSize}" width="${actualWidth - edgeSize * 2}" height="${actualHeight - edgeSize * 2}" rx="${br}" fill="hsl(0 0% ${brt}% / ${op})" style="filter:blur(${blr}px)"/></svg>`;
 
     return `data:image/svg+xml,${encodeURIComponent(svgContent)}`;
-  };
+  }, [redGradId, blueGradId]);
 
-  const updateDisplacementMap = () => {
-    feImageRef.current?.setAttribute('href', generateDisplacementMap());
-  };
+  // Apply displacement map and filter attributes — DOM mutations only, no re-render
+  const updateDisplacementMap = useCallback(() => {
+    if (!feImageRef.current) return;
+    feImageRef.current.setAttribute('href', generateDisplacementMap());
 
-  useEffect(() => {
-    updateDisplacementMap();
+    const { distortionScale: ds, redOffset: ro, greenOffset: go, blueOffset: bo,
+      xChannel: xC, yChannel: yC, displace: dp } = propsRef.current;
+
     [
-      { ref: redChannelRef, offset: redOffset },
-      { ref: greenChannelRef, offset: greenOffset },
-      { ref: blueChannelRef, offset: blueOffset }
+      { ref: redChannelRef, offset: ro },
+      { ref: greenChannelRef, offset: go },
+      { ref: blueChannelRef, offset: bo },
     ].forEach(({ ref, offset }) => {
       if (ref.current) {
-        ref.current.setAttribute('scale', (distortionScale + offset).toString());
-        ref.current.setAttribute('xChannelSelector', xChannel);
-        ref.current.setAttribute('yChannelSelector', yChannel);
+        ref.current.setAttribute('scale', (ds + offset).toString());
+        ref.current.setAttribute('xChannelSelector', xC);
+        ref.current.setAttribute('yChannelSelector', yC);
       }
     });
 
-    gaussianBlurRef.current?.setAttribute('stdDeviation', displace.toString());
-  }, [
-    width,
-    height,
-    borderRadius,
-    borderWidth,
-    brightness,
-    opacity,
-    blur,
-    displace,
-    distortionScale,
-    redOffset,
-    greenOffset,
-    blueOffset,
-    xChannel,
-    yChannel,
-    mixBlendMode
-  ]);
+    gaussianBlurRef.current?.setAttribute('stdDeviation', dp.toString());
+  }, [generateDisplacementMap]);
 
+  // One-shot: check SVG support on mount
   useEffect(() => {
     setSvgSupported(supportsSVGFilters());
   }, []);
 
+  // Update filter props whenever relevant props change
+  useEffect(() => {
+    if (!svgSupported) return;
+    updateDisplacementMap();
+  }, [
+    svgSupported,
+    updateDisplacementMap,
+    borderRadius, borderWidth, brightness, opacity, blur, displace,
+    distortionScale, redOffset, greenOffset, blueOffset, xChannel, yChannel, mixBlendMode,
+  ]);
+
+  // Single ResizeObserver with RAF-debounce to avoid expensive repeated calls
   useEffect(() => {
     if (!containerRef.current) return;
+    let rafId: number | null = null;
 
-    const resizeObserver = new ResizeObserver(() => {
-      setTimeout(updateDisplacementMap, 0);
+    const observer = new ResizeObserver(() => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        updateDisplacementMap();
+        rafId = null;
+      });
     });
 
-    resizeObserver.observe(containerRef.current);
+    observer.observe(containerRef.current);
 
     return () => {
-      resizeObserver.disconnect();
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      observer.disconnect();
     };
-  }, []);
+  }, [updateDisplacementMap]);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      setTimeout(updateDisplacementMap, 0);
-    });
-
-    resizeObserver.observe(containerRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    setTimeout(updateDisplacementMap, 0);
-  }, [width, height]);
-
-  const supportsSVGFilters = () => {
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
-      return false;
-    }
-
-    const isWebkit = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-    const isFirefox = /Firefox/.test(navigator.userAgent);
-
-    if (isWebkit || isFirefox) {
-      return false;
-    }
-
-    const div = document.createElement('div');
-    div.style.backdropFilter = `url(#${filterId})`;
-
-    return div.style.backdropFilter !== '';
-  };
-
-  const supportsBackdropFilter = () => {
-    if (typeof window === 'undefined') return false;
-    return CSS.supports('backdrop-filter', 'blur(10px)');
-  };
-
-  const getContainerStyles = (): React.CSSProperties => {
+  // Memoized container styles — recalculated only when visual props change
+  const containerStyles = useMemo((): React.CSSProperties => {
     const baseStyles: React.CSSProperties = {
       ...style,
       width: typeof width === 'number' ? `${width}px` : width,
       height: typeof height === 'number' ? `${height}px` : height,
       borderRadius: `${borderRadius}px`,
+      // Promote to its own compositor layer — avoids repainting siblings
+      willChange: 'transform',
       '--glass-frost': backgroundOpacity,
-      '--glass-saturation': saturation
+      '--glass-saturation': saturation,
     } as React.CSSProperties;
 
     const backdropFilterSupported = supportsBackdropFilter();
@@ -236,72 +230,77 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     if (svgSupported) {
       return {
         ...baseStyles,
-        background: isDarkMode ? `hsl(0 0% 0% / ${backgroundOpacity})` : `hsl(0 0% 100% / ${backgroundOpacity})`,
+        background: isDarkMode
+          ? `hsl(0 0% 0% / ${backgroundOpacity})`
+          : `hsl(0 0% 100% / ${backgroundOpacity})`,
         backdropFilter: `url(#${filterId}) saturate(${saturation})`,
         boxShadow: isDarkMode
           ? `0 0 2px 1px color-mix(in oklch, white, transparent 65%) inset,
              0 0 10px 4px color-mix(in oklch, white, transparent 85%) inset,
-             0px 4px 16px rgba(17, 17, 26, 0.05),
-             0px 8px 24px rgba(17, 17, 26, 0.05),
-             0px 16px 56px rgba(17, 17, 26, 0.05),
-             0px 4px 16px rgba(17, 17, 26, 0.05) inset,
-             0px 8px 24px rgba(17, 17, 26, 0.05) inset,
-             0px 16px 56px rgba(17, 17, 26, 0.05) inset`
+             0px 4px 16px rgba(17,17,26,0.05),
+             0px 8px 24px rgba(17,17,26,0.05),
+             0px 16px 56px rgba(17,17,26,0.05),
+             0px 4px 16px rgba(17,17,26,0.05) inset,
+             0px 8px 24px rgba(17,17,26,0.05) inset,
+             0px 16px 56px rgba(17,17,26,0.05) inset`
           : `0 0 2px 1px color-mix(in oklch, black, transparent 85%) inset,
              0 0 10px 4px color-mix(in oklch, black, transparent 90%) inset,
-             0px 4px 16px rgba(17, 17, 26, 0.05),
-             0px 8px 24px rgba(17, 17, 26, 0.05),
-             0px 16px 56px rgba(17, 17, 26, 0.05),
-             0px 4px 16px rgba(17, 17, 26, 0.05) inset,
-             0px 8px 24px rgba(17, 17, 26, 0.05) inset,
-             0px 16px 56px rgba(17, 17, 26, 0.05) inset`
+             0px 4px 16px rgba(17,17,26,0.05),
+             0px 8px 24px rgba(17,17,26,0.05),
+             0px 16px 56px rgba(17,17,26,0.05),
+             0px 4px 16px rgba(17,17,26,0.05) inset,
+             0px 8px 24px rgba(17,17,26,0.05) inset,
+             0px 16px 56px rgba(17,17,26,0.05) inset`,
       };
-    } else {
-      if (isDarkMode) {
-        if (!backdropFilterSupported) {
-          return {
-            ...baseStyles,
-            background: 'rgba(0, 0, 0, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.1)`
-          };
-        } else {
-          return {
-            ...baseStyles,
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(12px) saturate(1.8) brightness(1.2)',
-            WebkitBackdropFilter: 'blur(12px) saturate(1.8) brightness(1.2)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.1)`
-          };
-        }
-      } else {
-        if (!backdropFilterSupported) {
-          return {
-            ...baseStyles,
-            background: 'rgba(255, 255, 255, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: `inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
-                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.3)`
-          };
-        } else {
-          return {
-            ...baseStyles,
-            background: 'rgba(255, 255, 255, 0.25)',
-            backdropFilter: 'blur(12px) saturate(1.8) brightness(1.1)',
-            WebkitBackdropFilter: 'blur(12px) saturate(1.8) brightness(1.1)',
-            border: '1px solid rgba(255, 255, 255, 0.3)',
-            boxShadow: `0 8px 32px 0 rgba(31, 38, 135, 0.2),
-                        0 2px 16px 0 rgba(31, 38, 135, 0.1),
-                        inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
-                        inset 0 -1px 0 0 rgba(255, 255, 255, 0.2)`
-          };
-        }
-      }
     }
-  };
+
+    if (isDarkMode) {
+      if (!backdropFilterSupported) {
+        return {
+          ...baseStyles,
+          background: 'rgba(0,0,0,0.4)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          boxShadow:
+            'inset 0 1px 0 0 rgba(255,255,255,0.2), inset 0 -1px 0 0 rgba(255,255,255,0.1)',
+        };
+      }
+      return {
+        ...baseStyles,
+        background: 'rgba(255,255,255,0.1)',
+        backdropFilter: 'blur(12px) saturate(1.8) brightness(1.2)',
+        WebkitBackdropFilter: 'blur(12px) saturate(1.8) brightness(1.2)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        boxShadow:
+          'inset 0 1px 0 0 rgba(255,255,255,0.2), inset 0 -1px 0 0 rgba(255,255,255,0.1)',
+      };
+    }
+
+    if (!backdropFilterSupported) {
+      return {
+        ...baseStyles,
+        background: 'rgba(255,255,255,0.4)',
+        border: '1px solid rgba(255,255,255,0.3)',
+        boxShadow:
+          'inset 0 1px 0 0 rgba(255,255,255,0.5), inset 0 -1px 0 0 rgba(255,255,255,0.3)',
+      };
+    }
+
+    return {
+      ...baseStyles,
+      background: 'rgba(255,255,255,0.25)',
+      backdropFilter: 'blur(12px) saturate(1.8) brightness(1.1)',
+      WebkitBackdropFilter: 'blur(12px) saturate(1.8) brightness(1.1)',
+      border: '1px solid rgba(255,255,255,0.3)',
+      boxShadow:
+        `0 8px 32px 0 rgba(31,38,135,0.2),
+         0 2px 16px 0 rgba(31,38,135,0.1),
+         inset 0 1px 0 0 rgba(255,255,255,0.4),
+         inset 0 -1px 0 0 rgba(255,255,255,0.2)`,
+    };
+  }, [
+    style, width, height, borderRadius, backgroundOpacity, saturation,
+    svgSupported, isDarkMode, filterId,
+  ]);
 
   const glassSurfaceClasses =
     'relative flex items-center justify-center overflow-hidden transition-opacity duration-[260ms] ease-out';
@@ -314,17 +313,39 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
     <div
       ref={containerRef}
       className={`${glassSurfaceClasses} ${focusVisibleClasses} ${className}`}
-      style={getContainerStyles()}
+      style={containerStyles}
     >
+      {/* SVG filter — rendered hidden, referenced by backdrop-filter */}
       <svg
         className="w-full h-full pointer-events-none absolute inset-0 opacity-0 -z-10"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
         <defs>
-          <filter id={filterId} colorInterpolationFilters="sRGB" x="0%" y="0%" width="100%" height="100%">
-            <feImage ref={feImageRef} x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="map" />
+          <filter
+            id={filterId}
+            colorInterpolationFilters="sRGB"
+            x="0%"
+            y="0%"
+            width="100%"
+            height="100%"
+          >
+            <feImage
+              ref={feImageRef}
+              x="0"
+              y="0"
+              width="100%"
+              height="100%"
+              preserveAspectRatio="none"
+              result="map"
+            />
 
-            <feDisplacementMap ref={redChannelRef} in="SourceGraphic" in2="map" id="redchannel" result="dispRed" />
+            <feDisplacementMap
+              ref={redChannelRef}
+              in="SourceGraphic"
+              in2="map"
+              result="dispRed"
+            />
             <feColorMatrix
               in="dispRed"
               type="matrix"
@@ -339,7 +360,6 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
               ref={greenChannelRef}
               in="SourceGraphic"
               in2="map"
-              id="greenchannel"
               result="dispGreen"
             />
             <feColorMatrix
@@ -352,7 +372,12 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
               result="green"
             />
 
-            <feDisplacementMap ref={blueChannelRef} in="SourceGraphic" in2="map" id="bluechannel" result="dispBlue" />
+            <feDisplacementMap
+              ref={blueChannelRef}
+              in="SourceGraphic"
+              in2="map"
+              result="dispBlue"
+            />
             <feColorMatrix
               in="dispBlue"
               type="matrix"
@@ -365,7 +390,11 @@ const GlassSurface: React.FC<GlassSurfaceProps> = ({
 
             <feBlend in="red" in2="green" mode="screen" result="rg" />
             <feBlend in="rg" in2="blue" mode="screen" result="output" />
-            <feGaussianBlur ref={gaussianBlurRef} in="output" stdDeviation="0.7" />
+            <feGaussianBlur
+              ref={gaussianBlurRef}
+              in="output"
+              stdDeviation="0.7"
+            />
           </filter>
         </defs>
       </svg>
