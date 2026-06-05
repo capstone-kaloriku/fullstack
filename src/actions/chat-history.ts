@@ -1,7 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import Groq from "groq-sdk";
+// import Groq from "groq-sdk"; // dinonaktifkan — pakai Railway API
+import { fetchIndoBERT } from "@/lib/indobert-api";
 
 // ============================================================
 // Chat History & Conversations — server actions
@@ -13,7 +14,6 @@ import Groq from "groq-sdk";
 //  4. "Chat Baru" → set conversation aktif = null (next message buat conversation baru)
 // ============================================================
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! });
 
 export interface ConversationItem {
   id: string;
@@ -123,26 +123,18 @@ export async function updateConversationTitle(
   aiResponse: string,
 ): Promise<void> {
   try {
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: `Buat judul singkat (maks 6 kata) untuk percakapan ini.
-Judul harus menggambarkan topik utama pertanyaan user.
-Gunakan Bahasa Indonesia. JANGAN pakai tanda kutip.
-Output HANYA judulnya saja, tanpa penjelasan.`,
-        },
-        {
-          role: "user",
-          content: `Pertanyaan: "${userMessage.slice(0, 200)}"\nJawaban AI: "${aiResponse.slice(0, 200)}"`,
-        },
-      ],
-      model: "llama-3.3-70b-versatile",
-      max_tokens: 30,
+    const prompt =
+      `Buat judul singkat maksimal 6 kata untuk percakapan ini. ` +
+      `Gunakan Bahasa Indonesia. Jangan pakai tanda kutip. ` +
+      `Output hanya judulnya saja. ` +
+      `Pertanyaan: "${userMessage.slice(0, 200)}" Jawaban: "${aiResponse.slice(0, 200)}"`;
+
+    const data = await fetchIndoBERT<{ intent: string; response: string }>("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ message: prompt }),
     });
 
-    const title =
-      completion.choices[0]?.message?.content?.trim() ?? "Percakapan Baru";
+    const title = data.response?.trim() ?? "Percakapan Baru";
 
     const supabase = await createClient();
     await supabase

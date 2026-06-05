@@ -99,20 +99,13 @@ export default function AIPage() {
     }
   }, [activeConversationId]);
 
-  // ── Kirim pesan ke API ──
   const fetchAiResponse = useCallback(
-    async (
-      userContent: string,
-      image: string | undefined,
-      conversationId: string,
-      isFirst: boolean,
-    ) => {
+    async (userContent: string, conversationId: string, isFirst: boolean) => {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: userContent,
-          image,
           conversationId,
           isFirstMessage: isFirst,
         }),
@@ -126,10 +119,9 @@ export default function AIPage() {
   );
 
   const handleSend = useCallback(
-    async (content: string, image?: string) => {
+    async (content: string) => {
       setIsLoading(true);
 
-      // Jika belum ada conversation aktif → buat baru
       let convId = activeConversationId;
       const isFirst = isFirstMessageRef.current;
 
@@ -141,7 +133,6 @@ export default function AIPage() {
         }
         convId = newId;
         setActiveConversationId(newId);
-        // Tambah ke sidebar langsung (optimistic)
         setConversations((prev) => [
           {
             id: newId,
@@ -159,14 +150,13 @@ export default function AIPage() {
         role: "user",
         content,
         timestamp: new Date(),
-        image,
       };
 
       setMessages((prev) => [...prev, userMessage]);
       isFirstMessageRef.current = false;
 
       try {
-        const aiContent = await fetchAiResponse(content, image, convId, isFirst);
+        const aiContent = await fetchAiResponse(content, convId, isFirst);
         const aiMessage: Message = {
           id: generateId(),
           role: "ai",
@@ -175,14 +165,12 @@ export default function AIPage() {
         };
         setMessages((prev) => [...prev, aiMessage]);
 
-        // Update sidebar: judul + preview (refresh setelah title AI generate)
         if (isFirst) {
           setTimeout(async () => {
             const updated = await getConversations();
             setConversations(updated);
-          }, 2000); // tunggu AI generate judul
+          }, 2000);
         } else {
-          // Update preview + updated_at di sidebar
           setConversations((prev) =>
             prev.map((c) =>
               c.id === convId
@@ -228,15 +216,12 @@ export default function AIPage() {
       if (lastUserIndex === -1) return;
 
       const lastUserContent = messages[lastUserIndex].content;
-      const lastUserImage = messages[lastUserIndex].image;
 
       setMessages((prev) => prev.filter((m) => m.id !== aiMessageId));
       setIsLoading(true);
 
       try {
-        const aiContent = await fetchAiResponse(
-          lastUserContent, lastUserImage, activeConversationId, false,
-        );
+        const aiContent = await fetchAiResponse(lastUserContent, activeConversationId, false);
         setMessages((prev) => [
           ...prev,
           { id: generateId(), role: "ai", content: aiContent, timestamp: new Date() },
