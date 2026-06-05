@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChatArea } from "./components/ChatArea";
 import { InputPrompt } from "./components/InputPrompt";
@@ -18,7 +18,7 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export default function AIPage() {
+function AIPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialPrompt = searchParams.get("prompt");
@@ -307,5 +307,13 @@ export default function AIPage() {
         onDeleteConversation={handleDeleteConversation}
       />
     </div>
+  );
+}
+
+export default function AIPage() {
+  return (
+    <Suspense fallback={null}>
+      <AIPageContent />
+    </Suspense>
   );
 }
