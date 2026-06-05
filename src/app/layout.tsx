@@ -21,7 +21,7 @@ const beVietnamPro = Be_Vietnam_Pro({
 export const metadata: Metadata = {
   title: "KaloriKU",
   description:
-    "Aplikasi untuk menghitung kalori makanan dan aktivitas fisik, membantu pengguna mencapai tujuan kesehatan mereka dengan mudah dan akurat. Biar gak gendutt wokk",
+    "Aplikasi untuk menghitung kalori makanan dan aktivitas fisik, membantu pengguna mencapai tujuan kesehatan mereka dengan mudah dan akurat. ",
 };
 
 export default function RootLayout({
