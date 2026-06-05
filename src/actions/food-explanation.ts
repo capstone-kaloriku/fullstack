@@ -1,15 +1,8 @@
 "use server";
 
-import Groq from "groq-sdk";
+// import Groq from "groq-sdk"; // dinonaktifkan — pakai Railway API
+import { fetchIndoBERT } from "@/lib/indobert-api";
 import { Redis } from "@upstash/redis";
-
-// ============================================================
-// AI Food Explanation — generate penjelasan makanan via Groq
-// ============================================================
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
-});
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -22,9 +15,15 @@ export interface FoodExplanation {
   tips: string;
 }
 
+interface RailwayChatResponse {
+  intent: string;
+  response: string;
+  food_extracted?: unknown;
+}
+
 /**
- * Generate penjelasan makanan menggunakan Groq AI.
- * Hasilnya di‑cache di Redis selama 7 hari.
+ * Generate penjelasan makanan via Railway /api/chat.
+ * Hasilnya di-cache di Redis selama 7 hari.
  */
 export async function getFoodExplanation(
   foodName: string,
@@ -34,74 +33,61 @@ export async function getFoodExplanation(
   fat?: number,
 ): Promise<FoodExplanation> {
   const normalizedName = foodName.toLowerCase().trim().replace(/\s+/g, " ");
-  const cacheKey = `kaloriku:food_explanation_v1:${normalizedName}`;
+  const cacheKey = `kaloriku:food_explanation_v2:${normalizedName}`;
 
   try {
-    // --- cek cache dulu ---
     const cached = await redis.get<FoodExplanation>(cacheKey);
     if (cached) {
       console.log(`[Explanation] Cache hit: ${foodName}`);
       return cached;
     }
 
-    console.log(`[Explanation] Cache miss: ${foodName}, memanggil Groq...`);
+    console.log(`[Explanation] Cache miss: ${foodName}, memanggil Railway...`);
 
-    // --- build nutrisi context ---
     const nutrisiParts = [`${calories} kcal per porsi`];
     if (protein) nutrisiParts.push(`protein ${protein}g`);
     if (carbs) nutrisiParts.push(`karbohidrat ${carbs}g`);
     if (fat) nutrisiParts.push(`lemak ${fat}g`);
     const nutrisiText = nutrisiParts.join(", ");
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: `Kamu adalah ahli gizi Indonesia yang ramah dan informatif.
-Tugasmu: berikan penjelasan singkat tentang makanan yang diberikan user.
+    const prompt =
+      `Jelaskan makanan "${foodName}" (${nutrisiText}) dalam 3 bagian singkat. ` +
+      `Jawab dengan format JSON: {"ringkasan": "...", "komposisi": "...", "tips": "..."}. ` +
+      `Setiap bagian cukup 2-3 kalimat. Bahasa Indonesia yang mudah dipahami.`;
 
-ATURAN:
-1. Tulis dalam bahasa Indonesia yang mudah dipahami, tidak terlalu formal.
-2. Setiap bagian cukup 2-3 kalimat saja, padat dan informatif.
-3. Jangan mengulangi nama makanan terlalu sering.
-4. Sesuaikan tips dengan jenis makanannya.
-
-Keluarkan output HANYA dalam format JSON:
-{
-  "ringkasan": "Penjelasan singkat tentang makanan ini, asal-usul, dan cara penyajian umum.",
-  "komposisi": "Penjelasan tentang komposisi nutrisi utama dan manfaatnya bagi tubuh.",
-  "tips": "Tips praktis terkait cara mengonsumsi makanan ini agar lebih sehat."
-}`,
-        },
-        {
-          role: "user",
-          content: `Jelaskan makanan: "${foodName}". Data nutrisi: ${nutrisiText}.`,
-        },
-      ],
-      model: "llama-3.3-70b-versatile",
-      max_tokens: 400,
-      response_format: { type: "json_object" },
+    const data = await fetchIndoBERT<RailwayChatResponse>("/api/chat", {
+      method: "POST",
+      body: JSON.stringify({ message: prompt }),
     });
 
-    const content = chatCompletion.choices[0]?.message?.content;
+    // Coba parse JSON dari response Railway
+    const responseText = data.response ?? "";
+    let parsed: FoodExplanation;
 
-    if (!content) {
-      throw new Error("Response Groq kosong");
+    try {
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+    } catch {
+      parsed = null as unknown as FoodExplanation;
     }
 
-    const parsed: FoodExplanation = JSON.parse(content);
+    // Fallback: Railway tidak return JSON → pakai response text sebagai ringkasan
+    if (!parsed?.ringkasan) {
+      parsed = {
+        ringkasan: responseText || `${foodName} adalah makanan dengan kandungan sekitar ${calories} kcal per porsi.`,
+        komposisi: `Mengandung ${nutrisiText}.`,
+        tips: "Konsumsi dalam porsi yang wajar dan seimbangkan dengan sayur serta buah.",
+      };
+    }
 
-    // cache 7 hari
     await redis.set(cacheKey, parsed, { ex: 604800 });
-
     return parsed;
   } catch (error) {
     console.error("[Explanation] Gagal generate:", error);
 
-    // fallback statis jika AI gagal
     return {
       ringkasan: `${foodName} adalah makanan dengan kandungan sekitar ${calories} kcal per porsi. Makanan ini umum dijumpai dalam kuliner Indonesia dan memiliki rasa yang khas.`,
-      komposisi: `Makanan ini mengandung karbohidrat sebagai sumber energi utama, protein untuk memperbaiki jaringan tubuh, dan lemak yang membantu penyerapan vitamin. Keseimbangan nutrisi ini penting untuk menjaga kesehatan.`,
+      komposisi: `Makanan ini mengandung karbohidrat sebagai sumber energi utama, protein untuk memperbaiki jaringan tubuh, dan lemak yang membantu penyerapan vitamin.`,
       tips: `Konsumsi dalam porsi yang wajar dan seimbangkan dengan sayur serta buah. Hindari makan berlebihan dan pastikan asupan air putih yang cukup setiap hari.`,
     };
   }
