@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { updateConversationTitle } from "@/actions/chat-history";
 
-const RAILWAY_API_URL = process.env.RAILWAY_API_URL;
+const RAILWAY_API_URL = process.env.INDOBERT_API_URL;
 
 // ── Jailbreak filter dinonaktifkan ──
 // Railway sudah handle intent classification via IndoBERT.

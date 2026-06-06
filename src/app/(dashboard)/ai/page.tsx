@@ -25,7 +25,9 @@ function AIPageContent() {
   const hasProcessedPromptRef = useRef(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversations, setConversations] = useState<ConversationItem[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [activeConversationId, setActiveConversationId] = useState<
+    string | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
@@ -39,7 +41,6 @@ function AIPageContent() {
       try {
         const convs = await getConversations();
         setConversations(convs);
-        // Jika ada conversation terakhir, langsung load pesannya
         if (convs.length > 0) {
           const latest = convs[0];
           setActiveConversationId(latest.id);
@@ -47,7 +48,8 @@ function AIPageContent() {
           setMessages(
             history.map((h) => ({
               id: h.id,
-              role: h.role === "assistant" ? ("ai" as const) : ("user" as const),
+              role:
+                h.role === "assistant" ? ("ai" as const) : ("user" as const),
               content: h.content,
               timestamp: new Date(h.created_at),
             })),
@@ -63,13 +65,8 @@ function AIPageContent() {
     load();
   }, []);
 
-  // ── Auto-send prompt dari landing page ──
   useEffect(() => {
-    if (
-      initialPrompt &&
-      !hasProcessedPromptRef.current &&
-      !isLoadingHistory
-    ) {
+    if (initialPrompt && !hasProcessedPromptRef.current && !isLoadingHistory) {
       hasProcessedPromptRef.current = true;
       // Buat chat baru untuk prompt dari landing page
       handleNewChat();
@@ -83,27 +80,30 @@ function AIPageContent() {
   }, [initialPrompt, isLoadingHistory]);
 
   // ── Pilih conversation dari sidebar ──
-  const handleSelectConversation = useCallback(async (id: string) => {
-    if (id === activeConversationId) return;
-    setActiveConversationId(id);
-    setIsLoadingHistory(true);
-    try {
-      const history = await getChatHistory(id);
-      setMessages(
-        history.map((h) => ({
-          id: h.id,
-          role: h.role === "assistant" ? ("ai" as const) : ("user" as const),
-          content: h.content,
-          timestamp: new Date(h.created_at),
-        })),
-      );
-      isFirstMessageRef.current = false;
-    } catch (err) {
-      console.error("Gagal load pesan:", err);
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  }, [activeConversationId]);
+  const handleSelectConversation = useCallback(
+    async (id: string) => {
+      if (id === activeConversationId) return;
+      setActiveConversationId(id);
+      setIsLoadingHistory(true);
+      try {
+        const history = await getChatHistory(id);
+        setMessages(
+          history.map((h) => ({
+            id: h.id,
+            role: h.role === "assistant" ? ("ai" as const) : ("user" as const),
+            content: h.content,
+            timestamp: new Date(h.created_at),
+          })),
+        );
+        isFirstMessageRef.current = false;
+      } catch (err) {
+        console.error("Gagal load pesan:", err);
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    },
+    [activeConversationId],
+  );
 
   // ── Chat Baru ──
   const handleNewChat = useCallback(() => {
@@ -113,15 +113,18 @@ function AIPageContent() {
   }, []);
 
   // ── Hapus conversation ──
-  const handleDeleteConversation = useCallback(async (id: string) => {
-    await deleteConversation(id);
-    setConversations((prev) => prev.filter((c) => c.id !== id));
-    if (activeConversationId === id) {
-      setMessages([]);
-      setActiveConversationId(null);
-      isFirstMessageRef.current = true;
-    }
-  }, [activeConversationId]);
+  const handleDeleteConversation = useCallback(
+    async (id: string) => {
+      await deleteConversation(id);
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+      if (activeConversationId === id) {
+        setMessages([]);
+        setActiveConversationId(null);
+        isFirstMessageRef.current = true;
+      }
+    },
+    [activeConversationId],
+  );
 
   const fetchAiResponse = useCallback(
     async (userContent: string, conversationId: string, isFirst: boolean) => {
@@ -136,7 +139,8 @@ function AIPageContent() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Terjadi kesalahan pada server");
+      if (!res.ok)
+        throw new Error(data.error || "Terjadi kesalahan pada server");
       return data.response as string;
     },
     [],
@@ -209,7 +213,8 @@ function AIPageContent() {
           );
         }
       } catch (error: unknown) {
-        const errMsg = error instanceof Error ? error.message : "Terjadi kesalahan";
+        const errMsg =
+          error instanceof Error ? error.message : "Terjadi kesalahan";
         setMessages((prev) => [
           ...prev,
           {
@@ -235,7 +240,10 @@ function AIPageContent() {
 
       let lastUserIndex = -1;
       for (let i = aiIndex - 1; i >= 0; i--) {
-        if (messages[i].role === "user") { lastUserIndex = i; break; }
+        if (messages[i].role === "user") {
+          lastUserIndex = i;
+          break;
+        }
       }
       if (lastUserIndex === -1) return;
 
@@ -245,17 +253,28 @@ function AIPageContent() {
       setIsLoading(true);
 
       try {
-        const aiContent = await fetchAiResponse(lastUserContent, activeConversationId, false);
-        setMessages((prev) => [
-          ...prev,
-          { id: generateId(), role: "ai", content: aiContent, timestamp: new Date() },
-        ]);
-      } catch (error: unknown) {
-        const errMsg = error instanceof Error ? error.message : "Terjadi kesalahan";
+        const aiContent = await fetchAiResponse(
+          lastUserContent,
+          activeConversationId,
+          false,
+        );
         setMessages((prev) => [
           ...prev,
           {
-            id: generateId(), role: "ai",
+            id: generateId(),
+            role: "ai",
+            content: aiContent,
+            timestamp: new Date(),
+          },
+        ]);
+      } catch (error: unknown) {
+        const errMsg =
+          error instanceof Error ? error.message : "Terjadi kesalahan";
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: generateId(),
+            role: "ai",
             content: `Maaf, terjadi kesalahan: ${errMsg}. Silakan coba lagi.`,
             timestamp: new Date(),
           },
